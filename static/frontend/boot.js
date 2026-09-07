@@ -1,4 +1,4 @@
-/* v6.0.13: validate modular frontend core and publish readiness. */
+/* v6.0.14: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
