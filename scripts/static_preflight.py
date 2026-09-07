@@ -40,7 +40,10 @@ def main()->int:
     run([sys.executable,'tests/v596_learning_concurrency_test.py'],timeout=20)
     run([sys.executable,'tests/v596_concurrent_write_load_test.py'],timeout=30)
     print('PASS: v5.9.6 concurrent write locking + CSRF/idempotency/isolation contracts')
+    run([sys.executable,'tests/v597_user_login_department_test.py'],timeout=40)
+    print('PASS: v5.9.7 department-aware user/admin login contract')
     run(['node','--check','static/app.js'],timeout=20)
+    run(['node','--check','static/auth_department.js'],timeout=20)
     print('PASS: JavaScript syntax')
     json.loads((ROOT/'deploy/observability/grafana-dashboard-v5.7.json').read_text(encoding='utf-8'))
     print('PASS: Grafana dashboard JSON')
@@ -57,7 +60,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.9.6 concurrent multi-user write integrity preflight')
+    print('PASS: v5.9.7 test-ready user login + department + admin preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
