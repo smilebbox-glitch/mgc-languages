@@ -1,0 +1,8 @@
+MGC Languages v5.7.3 technical increment
+Scope: Modular Core phase 1 / stable ASGI runtime boundary
+Database migration: none
+Legacy FastAPI object: preserved
+Deployment entrypoint: asgi:app
+New package: mgc_core
+New regression shard: v573
+Safety principle: contract-preserving extraction before feature growth
