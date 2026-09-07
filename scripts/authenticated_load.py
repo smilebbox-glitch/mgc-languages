@@ -65,6 +65,7 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=8.0)
     parser.add_argument("--max-p95-ms", type=float)
     parser.add_argument("--min-success-rate", type=float)
+    parser.add_argument("--report-file", help="Optional JSON report path; never contains session tokens")
     args = parser.parse_args()
 
     data = json.loads(Path(args.sessions_file).read_text(encoding="utf-8"))
@@ -127,7 +128,10 @@ def main() -> int:
         "thresholds": {"max_p95_ms": max_p95_ms},
         "failure_examples": failures[:10],
     }
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    rendered = json.dumps(report, ensure_ascii=False, indent=2)
+    print(rendered)
+    if args.report_file:
+        Path(args.report_file).write_text(rendered + "\n", encoding="utf-8")
 
     if success_rate + 1e-9 < min_success_rate:
         print(f"FAIL: authenticated success rate {success_rate:.3f}% is below {min_success_rate:.3f}%")
