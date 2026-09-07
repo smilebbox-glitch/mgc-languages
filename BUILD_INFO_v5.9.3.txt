@@ -1,0 +1,34 @@
+MGC Languages v5.9.3 — Multi-user LAN Readiness
+
+Primary goal:
+- allow colleagues on other computers to open one shared MGC Languages deployment over the office LAN.
+
+Runtime:
+- modular ASGI entrypoint: asgi:app
+- bind: 0.0.0.0 behind nginx
+- configurable WEB_CONCURRENCY (1..16), LAN default 2
+- PostgreSQL persistence
+- nginx is the only host-published service
+
+One-click Windows:
+- start-lan.cmd
+- automatic LAN IPv4 detection
+- automatic local secret generation
+- explicit LAN trusted hosts
+- printed colleague URL
+- stop-lan.cmd preserves PostgreSQL data
+
+Verification:
+- tests/v593_multi_user_deployment_test.py
+- release shard v593
+- scripts/multi_user_smoke.py
+- focused ci-v593 PostgreSQL/app/nginx + concurrent edge smoke
+
+Compatibility:
+- Alembic head c57d0a31f570 unchanged
+- runtime APP_VERSION unchanged
+- no UI/content/XP/SRS/terminology changes
+- Putonghua (普通话) scope unchanged
+
+Capacity:
+- no fixed user-count claim until load testing on the target MGC server.
