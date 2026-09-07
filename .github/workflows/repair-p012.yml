@@ -1,0 +1,55 @@
+name: Repair p012 payload
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/p012.repair'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rebuild exact p.part012
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, re
+
+          def norm(path):
+              return re.sub(rb'\s+', b'', Path(path).read_bytes())
+
+          a1 = norm('.bootstrap/p.part012a1')
+          a2 = norm('.bootstrap/p.part012a2')
+          b = norm('.bootstrap/p.part012b')
+          assert len(a1) == 4500, len(a1)
+          assert len(a2) == 4500, len(a2)
+          assert len(b) == 9000, len(b)
+          payload = a1 + a2 + b
+          expected = '0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88'
+          actual = hashlib.sha256(payload).hexdigest()
+          print('p012 sha256:', actual)
+          assert len(payload) == 18000
+          assert actual == expected, (actual, expected)
+          Path('.bootstrap/p.part012').write_bytes(payload)
+          PY
+      - name: Commit repair and trigger baseline import
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n%s\n' \
+            '8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5' \
+            'trigger=p012-repaired' > .bootstrap/p.complete
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .bootstrap/p.part012 .bootstrap/p.complete
+          git commit -m 'chore: repair verified p012 payload'
+          git push origin HEAD:main
