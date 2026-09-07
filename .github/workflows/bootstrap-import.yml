@@ -1,4 +1,4 @@
-name: Restore MGC Languages v5.7.1 clean baseline
+name: Audit MGC Languages v5.7.1 archive
 
 on:
   push:
@@ -8,17 +8,17 @@ on:
       - '.github/workflows/bootstrap-import.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  restore:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Verify archived baseline
+      - name: Audit archived baseline
         shell: bash
         run: |
           set -euo pipefail
@@ -29,53 +29,31 @@ jobs:
           test -s "$checksum_file"
 
           expected="$(tr -d '\r\n ' < "$checksum_file")"
-          test "${#expected}" -eq 64
-          printf '%s  %s\n' "$expected" "$archive" | sha256sum -c -
+          actual="$(sha256sum "$archive" | awk '{print $1}')"
+          echo "EXPECTED_SHA256=$expected"
+          echo "ACTUAL_SHA256=$actual"
+
+          echo '--- XZ TEST ---'
           xz -t "$archive"
+          echo 'XZ_OK=1'
 
-      - name: Extract archived baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf /tmp/mgc-v571
-          mkdir -p /tmp/mgc-v571
-          tar -xJf .bootstrap/v571.tar.xz -C /tmp/mgc-v571
+          echo '--- ARCHIVE LIST ---'
+          tar -tJf "$archive" | sed -n '1,250p'
 
-          source_dir='/tmp/mgc-v571'
-          shopt -s dotglob nullglob
-          entries=("$source_dir"/*)
-          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
-            source_dir="${entries[0]}"
+          echo '--- EXTRACTED STRUCTURE ---'
+          rm -rf /tmp/mgc-v571-audit
+          mkdir -p /tmp/mgc-v571-audit
+          tar -xJf "$archive" -C /tmp/mgc-v571-audit
+          find /tmp/mgc-v571-audit -maxdepth 4 -type f -printf '%P\n' | sort | sed -n '1,300p'
+
+          echo '--- VERSION HINTS ---'
+          grep -RInE 'v?5\.7\.1|version|MGC Languages|mgc-languages' /tmp/mgc-v571-audit \
+            --include='README*' --include='package.json' --include='pyproject.toml' \
+            --include='docker-compose*.yml' --include='docker-compose*.yaml' \
+            --include='*.md' 2>/dev/null | sed -n '1,200p' || true
+
+          if [ "$actual" = "$expected" ]; then
+            echo 'CHECKSUM_MATCH=1'
+          else
+            echo 'CHECKSUM_MATCH=0'
           fi
-
-          test -d "$source_dir"
-          echo "SOURCE_DIR=$source_dir" >> "$GITHUB_ENV"
-
-      - name: Replace bootstrap repository with verified source tree
-        shell: bash
-        run: |
-          set -euo pipefail
-          rsync -a --delete \
-            --exclude='.git/' \
-            --exclude='.bootstrap/' \
-            --exclude='.github/workflows/bootstrap-import.yml' \
-            "$SOURCE_DIR"/ ./
-
-          rm -rf .bootstrap
-          rm -f .github/workflows/bootstrap-import.yml
-
-      - name: Commit restored v5.7.1 baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-
-          if git diff --cached --quiet; then
-            echo 'No changes to commit'
-            exit 0
-          fi
-
-          git commit -m 'chore: restore verified MGC Languages v5.7.1 baseline'
-          git push origin HEAD:restore-v5.7.1-clean
