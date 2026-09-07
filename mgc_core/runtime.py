@@ -28,6 +28,10 @@ from .terminology_admin_router_bridge import (
     TerminologyAdminRouterBindingReport,
     bind_terminology_admin_router,
 )
+from .users_manager_router_bridge import (
+    UsersManagerRouterBindingReport,
+    bind_users_manager_router,
+)
 from .workflow_bridge import WorkflowBindingReport, bind_legacy_workflows
 
 
@@ -40,8 +44,8 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # Ordering is intentional: governance consumes the extracted client fingerprint;
     # learning binds before user services; services bind before workflows. Active
     # routers are replaced only after the FastAPI object exists. Auth core binds
-    # before auth/learning/practice-game/terminology/pronunciation routers.
-    # Terminology admin also requires extracted terminology and governance services.
+    # before auth/learning/practice-game/terminology/pronunciation/users-manager routers.
+    # Terminology and users/manager routers also require extracted services/governance.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -63,6 +67,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_practice_games_router(module, application)
     bind_terminology_admin_router(module, application)
     bind_pronunciation_router(module, application)
+    bind_users_manager_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -108,6 +113,9 @@ TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT: TerminologyAdminRouterBindingReport = g
 PRONUNCIATION_ROUTER_BINDING_REPORT: PronunciationRouterBindingReport = getattr(
     _legacy_module, "MGC_PRONUNCIATION_ROUTER_BINDING_REPORT"
 )
+USERS_MANAGER_ROUTER_BINDING_REPORT: UsersManagerRouterBindingReport = getattr(
+    _legacy_module, "MGC_USERS_MANAGER_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -125,6 +133,7 @@ __all__ = [
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
+    "USERS_MANAGER_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
