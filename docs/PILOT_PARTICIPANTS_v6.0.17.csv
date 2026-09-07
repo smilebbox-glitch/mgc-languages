@@ -1,0 +1,8 @@
+participant_code,department,role,track,wave,start_date,status,notes
+P01,R&D,user,chinese,1,,planned,
+P02,Качество,user,chinese,1,,planned,
+P03,Производство,user,english,1,,planned,
+P04,Логистика,user,english,1,,planned,
+P05,Закупки,user,chinese,1,,planned,
+M01,R&D,manager,both,1,,planned,
+A01,IT,admin,both,1,,planned,
