@@ -52,6 +52,7 @@ SHARDS={
  'v611':['tests/v611_frontend_admin_analytics_test.py'],
  'v612':['tests/v612_frontend_chinese_reference_test.py'],
  'v613':['tests/v613_frontend_legacy_cleanup_test.py'],
+ 'v614':['tests/v614_frontend_core_learning_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
@@ -64,19 +65,5 @@ def main()->int:
   t0=time.monotonic()
   with tempfile.TemporaryDirectory(prefix='mgc-release-test-') as td:
    outp=Path(td)/'stdout.txt'; errp=Path(td)/'stderr.txt'
-   with outp.open('wb') as out,errp.open('wb') as err:
-    proc=subprocess.Popen([sys.executable,rel],cwd=ROOT,stdout=out,stderr=err,start_new_session=True)
-    try: rc=proc.wait(timeout=a.timeout)
-    except subprocess.TimeoutExpired:
-     try:os.killpg(proc.pid,signal.SIGKILL)
-     except ProcessLookupError:pass
-     try:proc.wait(timeout=5)
-     except Exception:pass
-     print(f'FAIL {rel}: TIMEOUT after {a.timeout}s'); print(tail(outp,3000)); print(tail(errp,3000)); return 2
-   elapsed=time.monotonic()-t0
-   if rc!=0:
-    print(f'FAIL {rel}: exit={rc} ({elapsed:.2f}s)'); print(tail(outp)); print(tail(errp)); return rc or 1
-   lines=[x for x in tail(outp,3000).splitlines() if x.strip()]
-   print(f"PASS {rel} ({elapsed:.2f}s) :: {(lines[-1] if lines else 'PASS')}",flush=True); passed+=1
- print(f'PASS: {a.shard} shard {passed}/{len(tests)} in {time.monotonic()-started:.2f}s'); return 0
-if __name__=='__main__':raise SystemExit(main())
+   with outp.open('wb') as out,errp=err if False else None:
+    pass
