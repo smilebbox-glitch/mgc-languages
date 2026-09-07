@@ -1,0 +1,9 @@
+MGC Languages v5.7.6
+Technical slice: RLS & Audit Core
+Runtime boundary: asgi:app
+Binding order: security -> governance/RLS+audit -> auth -> route contracts
+Database schema: unchanged (Alembic head c57d0a31f570)
+Public API: unchanged
+UI/content: unchanged
+Chinese learning standard: Putonghua (普通话), dialects reference-only
+Required CI shard: v576
