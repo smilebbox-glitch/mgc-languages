@@ -1,0 +1,30 @@
+MGC Languages v5.8.4 — Practice & Games Router Extraction
+
+Technical increment only; runtime APP_VERSION fallback remains unchanged.
+
+Runtime entrypoint: asgi:app
+
+New HTTP owner:
+- mgc/routers/practice_games.py
+
+New runtime bridge:
+- mgc_core/practice_games_router_bridge.py
+
+Active routes moved: 4
+- POST /api/practice/result
+- POST /api/games/{game_type}/start
+- POST /api/games/{session_id}/finish
+- POST /api/learning/question-attempt
+
+Business workflow owner remains:
+- mgc/services/practice_games.py
+
+Relevant runtime order:
+security -> governance -> learning -> services -> workflows -> auth -> auth router -> learning router -> practice/games router -> route contracts
+
+Required release shard:
+- v584
+
+Schema migration: none
+Alembic head: c57d0a31f570
+Chinese learning standard: Путунхуа (普通话) — стандартный китайский
