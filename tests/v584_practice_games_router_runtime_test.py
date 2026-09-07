@@ -38,6 +38,7 @@ import asgi  # noqa: E402
 assert asgi.app is app.app
 assert asgi.CONTRACT_REPORT.ok
 assert asgi.WORKFLOW_BINDING_REPORT.ok
+assert asgi.WORKFLOW_BINDING_REPORT.user_scoped_practice_sessions
 assert asgi.AUTH_BINDING_REPORT.ok
 report = asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT
 assert report.ok
@@ -53,6 +54,7 @@ assert report.auth_core_bound
 assert report.workflow_service_bound
 assert report.learning_service_captured
 assert report.terminology_service_captured
+assert report.user_scoped_practice_sessions
 
 expected = {
     ("POST", "/api/practice/result"),
@@ -79,7 +81,8 @@ mount_index = next(
 assert all(index < mount_index for index in route_indexes.values())
 
 bindings = app._legacy.MGC_PRACTICE_GAME_WORKFLOW_BINDINGS
-for name in ("save_practice_result", "start_game", "finish_game", "question_attempt"):
+assert bindings.save_practice_result.__module__ == "mgc.services.practice_isolation"
+for name in ("start_game", "finish_game", "question_attempt"):
     assert getattr(bindings, name).__module__ == "mgc.services.practice_games"
 assert app._legacy.current_user.__module__ == "mgc.auth_core"
 assert app._legacy.save_practice_result.__module__ == "mgc.routers.practice_games"
@@ -199,4 +202,4 @@ paths = schema.json()["paths"]
 for _method, path in expected:
     assert path in paths
 
-print("OK: v5.8.4 four active practice/game routes execute from mgc.routers.practice_games over extracted workflows")
+print("OK: v5.8.4 router remains stable while v5.9.8 scopes practice idempotency per user")

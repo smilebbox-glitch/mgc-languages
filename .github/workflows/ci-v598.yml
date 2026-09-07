@@ -1,0 +1,24 @@
+name: mgc-languages-v598-session-isolation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v598-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  session-user-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: v5.9.8 session and user isolation
+        run: python scripts/run_release_tests.py --shard v598 --timeout 90
+      - name: Static preflight
+        run: python scripts/static_preflight.py
