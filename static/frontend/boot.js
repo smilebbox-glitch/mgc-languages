@@ -29,6 +29,7 @@
     if (missingDom.length) throw new Error('Frontend DOM contract missing: ' + missingDom.join(', '));
 
     frontend.markReady();
+    frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
       detail: {version: frontend.version, modules: frontend.list()}
     }));
