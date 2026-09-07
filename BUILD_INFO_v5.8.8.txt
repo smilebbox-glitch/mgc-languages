@@ -1,0 +1,51 @@
+MGC Languages v5.8.8
+Technical increment: User & Manager Router Extraction
+
+Scope
+- 6 active FastAPI routes move to mgc.routers.users_manager.
+- Existing business handlers remain migration fallback in mgc/legacy_app.py.
+- Production asgi:app replaces active APIRoutes through mgc_core.user_manager_router_bridge.
+
+Routes
+GET   /api/admin/users
+GET   /api/admin/users/{user_id}/learning-stats
+PATCH /api/admin/users/{user_id}/role
+PATCH /api/admin/users/{user_id}/department
+GET   /api/manager/team
+GET   /api/manager/team/{user_id}/learning-stats
+
+Required extracted dependencies
+- mgc.auth_core current_user / require_roles
+- mgc.services.users user_view / user_admin_stats / manager department policy
+- mgc.governance_core audit_event
+
+Binding invariants
+- route_count = 6
+- admin_route_count = 4
+- manager_route_count = 2
+- mutation_route_count = 2
+- exact payload-schema parity
+- route names preserved
+- response classes preserved
+- root StaticFiles ordering preserved
+- router endpoint module = mgc.routers.users_manager
+- Auth Core bound
+- User Service bound
+- manager policy bound
+- Governance Core bound
+
+Release shard
+v588:
+- tests/v588_user_manager_router_core_test.py
+- tests/v588_user_manager_router_runtime_test.py
+
+Compatibility
+- no database migration
+- Alembic head remains c57d0a31f570
+- runtime APP_VERSION fallback remains 5.7.1
+- no frontend/content change
+- Putonghua learning standard unchanged
+
+Stacking
+Base: refactor/v5.8.7-tts-core (PR #22)
+Merge only after v5.8.5, v5.8.6 and v5.8.7 are validated and merged in order, then re-run full v5.8.8 CI/Docker against main.
