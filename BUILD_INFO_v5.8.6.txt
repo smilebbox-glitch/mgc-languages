@@ -1,0 +1,49 @@
+MGC Languages technical increment: v5.8.6 Pronunciation Router Extraction
+
+Runtime entrypoint: asgi:app
+Runtime APP_VERSION fallback: 5.7.1 (unchanged)
+Alembic head: c57d0a31f570 (unchanged)
+
+New router:
+- mgc/routers/pronunciation.py
+
+New runtime bridge:
+- mgc_core/pronunciation_router_bridge.py
+
+Route ownership:
+- GET /api/pronunciation/status
+- POST /api/pronunciation/audio
+- GET /api/pronunciation/audio only when TTS_LEGACY_GET_ENABLED=true
+
+Runtime binding order relevant to this increment:
+security -> governance -> learning -> services -> system/observability -> workflows -> auth core -> auth/learning/practice-games/terminology-admin/pronunciation routers -> route contracts
+
+Compatibility invariants:
+- exact PronunciationPayload schema
+- environment-driven TTS_MAX_CHARS
+- legacy GET conditional registration
+- legacy GET deprecated flag
+- Auth Core current_user
+- original TTS handlers captured by the extracted router
+- offline synthesis/cache/circuit-breaker unchanged
+- browser fallback unchanged
+- server_audio feature flag and pilot TTS quota unchanged
+
+Required release shard:
+- v586
+
+Docker image assertions:
+- PRONUNCIATION_ROUTER_BINDING_REPORT.ok
+- route_count == 3 with default TTS_LEGACY_GET_ENABLED=true
+- status_route_count == 1
+- post_audio_route_count == 1
+- legacy_get_route_count == 1
+- router_module_owned
+- auth_core_bound
+- payload_schema_preserved
+- tts_max_chars_preserved
+- legacy_tts_handlers_captured
+- espeak-ng present
+
+Chinese learning standard remains:
+Путунхуа (普通话) — стандартный китайский.
