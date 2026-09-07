@@ -18,7 +18,6 @@ venv/
 *.db
 *.sqlite
 *.sqlite3
-/data/
 backups/
 restore-work/
 tts-cache/
