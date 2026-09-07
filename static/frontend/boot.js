@@ -1,4 +1,4 @@
-/* v6.0.1: validate modular frontend core and publish readiness. */
+/* v6.0.2: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -7,6 +7,7 @@
 
   try {
     const requiredModules = [
+      'error-boundary',
       'legacy-app',
       'service-status',
       'api-client',
