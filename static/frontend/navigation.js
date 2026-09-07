@@ -1,4 +1,4 @@
-/* v6.0.5: canonical navigation/session-view facade. */
+/* v6.0.6: canonical navigation/session-view facade. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -16,6 +16,9 @@
     }
     if (frontend.has('support-notifications') && frontend.get('support-notifications').owns(view)) {
       return frontend.get('support-notifications').navigate(view);
+    }
+    if (frontend.has('assistant-knowledge') && frontend.get('assistant-knowledge').owns(view)) {
+      return frontend.get('assistant-knowledge').navigate(view);
     }
     return legacy().setView(view);
   }
