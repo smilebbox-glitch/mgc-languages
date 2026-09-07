@@ -1,0 +1,42 @@
+name: mgc-languages-ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt
+      - run: bash scripts/static_preflight.sh
+
+  regression:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Regression shard — ${{ matrix.shard }}
+        run: python scripts/run_release_tests.py --shard "${{ matrix.shard }}" --timeout 75
+
+  image:
+    runs-on: ubuntu-latest
+    needs: [static, regression]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t mgc-languages:ci-v571 .
+      - name: Verify offline TTS exists in image
+        run: docker run --rm --entrypoint python mgc-languages:ci-v571 -c "import shutil; assert shutil.which('espeak-ng')"
