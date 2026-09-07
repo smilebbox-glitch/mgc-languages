@@ -138,8 +138,17 @@ assert "Введите пароль для admin" in launcher
 assert "MGC_ADMIN_DEPARTMENT=Администрация" in launcher
 assert "MGC_ADMIN_SYNC_CREDENTIALS=true" in launcher
 
-# The user-facing recommended test password must remain out-of-band, not committed.
-for source in (index_source, auth_ui_source, sync_source, entrypoint, launcher):
+reset_source = (ROOT / "scripts/set_admin_password_windows.ps1").read_text(encoding="utf-8")
+assert 'Read-Host "Новый пароль для admin" -AsSecureString' in reset_source
+assert "ZeroFreeBSTR" in reset_source
+assert 'Set-EnvValue $EnvFile "MGC_ADMIN_PASSWORD" $password' in reset_source
+assert "--force-recreate app" in reset_source
+assert (ROOT / "set-admin-password.cmd").exists()
+assert "set_admin_password_windows.ps1" in (ROOT / "set-admin-password.cmd").read_text(encoding="utf-8")
+
+# User-facing recommended test passwords remain out-of-band, not committed.
+for source in (index_source, auth_ui_source, sync_source, entrypoint, launcher, reset_source):
     assert "MGC-Test-Admin#0809!" not in source
+    assert "MGC-Test-Admin!0809X" not in source
 
 print("PASS: v5.9.7 user registration/login captures department and admin credentials stay configurable")
