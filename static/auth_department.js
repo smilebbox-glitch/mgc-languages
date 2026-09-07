@@ -1,4 +1,4 @@
-/* v5.9.9: department-aware auth module registered through MGCFrontend. */
+/* v6.0.0: department-aware auth module over frontend API/state/navigation core. */
 (function () {
   'use strict';
 
@@ -6,11 +6,21 @@
 
   function install() {
     if (installed) return;
+    const frontend = window.MGCFrontend;
+    if (!frontend) throw new Error('MGCFrontend runtime is missing');
+    for (const name of ['api-client', 'app-state', 'navigation']) {
+      if (!frontend.has(name)) throw new Error('Auth frontend dependency is missing: ' + name);
+    }
+
     const form = document.querySelector('#authForm');
     const department = document.querySelector('#department');
     const username = document.querySelector('#username');
     if (!form || !department || !username) return;
     installed = true;
+
+    const apiClient = frontend.get('api-client');
+    const appState = frontend.get('app-state');
+    const navigation = frontend.get('navigation');
 
     username.addEventListener('input', function () {
       if (username.value.trim().toLowerCase() === 'admin' && !department.value) {
@@ -18,11 +28,6 @@
       }
     });
 
-    /*
-     * Capture phase intentionally runs before the historical bubble listener
-     * installed by static/app.js. Department therefore stays isolated from the
-     * large legacy bundle while preserving the existing auth flow.
-     */
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -38,33 +43,21 @@
         return;
       }
 
-      const legacy = window.MGCFrontend && window.MGCFrontend.has('legacy-app')
-        ? window.MGCFrontend.get('legacy-app')
-        : null;
-      const request = legacy ? legacy.api : api;
-      const currentState = legacy ? legacy.getState() : state;
       const payload = {
         username: username.value.trim(),
         password: document.querySelector('#password').value,
         display_name: document.querySelector('#displayName').value.trim() || null,
         department: selectedDepartment
       };
-      const endpoint = currentState.authMode === 'register' ? '/api/register' : '/api/login';
+      const endpoint = appState.get('authMode') === 'register' ? '/api/register' : '/api/login';
 
       try {
         if (submit) submit.disabled = true;
-        const result = await request(endpoint, {method: 'POST', body: JSON.stringify(payload)});
-        currentState.user = result.user;
-        currentState.language = result.user.preferred_language || 'chinese';
-        if (legacy) {
-          legacy.showApp();
-          await legacy.loadLanguage();
-          await legacy.setView('home');
-        } else {
-          showApp();
-          await loadLanguage();
-          await setView('home');
-        }
+        const result = await apiClient.request(endpoint, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        await navigation.enterUserSession(result.user);
       } catch (error) {
         if (message) message.textContent = error.message;
       } finally {
@@ -74,7 +67,8 @@
   }
 
   const moduleApi = Object.freeze({install: install});
-  if (window.MGCFrontend && !window.MGCFrontend.has('auth-department')) {
+  if (!window.MGCFrontend) throw new Error('MGCFrontend runtime is missing');
+  if (!window.MGCFrontend.has('auth-department')) {
     window.MGCFrontend.register('auth-department', moduleApi);
   }
 

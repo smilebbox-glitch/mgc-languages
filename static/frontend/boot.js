@@ -1,41 +1,30 @@
-/* v5.9.9: bridge the legacy frontend bundle into the modular registry. */
+/* v6.0.0: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
   const frontend = window.MGCFrontend;
   if (!frontend) throw new Error('MGCFrontend runtime is missing');
 
-  function requireFunction(name, value) {
-    if (typeof value !== 'function') throw new Error('Frontend contract missing function: ' + name);
-    return value;
-  }
-
   try {
-    if (typeof state === 'undefined' || !state) {
-      throw new Error('Frontend contract missing state');
+    const requiredModules = [
+      'legacy-app',
+      'service-status',
+      'api-client',
+      'app-state',
+      'navigation',
+      'auth-department'
+    ];
+    const missingModules = requiredModules.filter(function (name) { return !frontend.has(name); });
+    if (missingModules.length) {
+      throw new Error('Frontend modules missing: ' + missingModules.join(', '));
     }
-
-    const legacy = {
-      api: requireFunction('api', api),
-      getState: function () { return state; },
-      setView: requireFunction('setView', setView),
-      loadLanguage: requireFunction('loadLanguage', loadLanguage),
-      showApp: requireFunction('showApp', showApp),
-      showAuth: requireFunction('showAuth', showAuth),
-      toast: requireFunction('toast', toast),
-      escapeHtml: requireFunction('esc', esc),
-      query: requireFunction('$', $),
-      queryAll: requireFunction('$$', $$)
-    };
-
-    if (!frontend.has('legacy-app')) frontend.register('legacy-app', legacy);
 
     const requiredDomIds = [
       'authView', 'authForm', 'username', 'department', 'password',
       'appView', 'main', 'sidebar', 'logoutButton', 'toast'
     ];
-    const missing = requiredDomIds.filter(function (id) { return !document.getElementById(id); });
-    if (missing.length) throw new Error('Frontend DOM contract missing: ' + missing.join(', '));
+    const missingDom = requiredDomIds.filter(function (id) { return !document.getElementById(id); });
+    if (missingDom.length) throw new Error('Frontend DOM contract missing: ' + missingDom.join(', '));
 
     frontend.markReady();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {

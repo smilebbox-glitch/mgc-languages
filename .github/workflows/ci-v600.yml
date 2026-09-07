@@ -1,0 +1,40 @@
+name: mgc-languages-v600-frontend-core
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v600-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-api-state-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend shell regression
+        run: python scripts/run_release_tests.py --shard v599 --timeout 45
+      - name: Frontend API/state core
+        run: python scripts/run_release_tests.py --shard v600 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/app.js
+          node --check static/auth_department.js
+          for file in static/frontend/*.js; do node --check "$file"; done
+      - name: Asset ownership contract
+        run: |
+          grep -q '/frontend/legacy_bridge.js' static/index.html
+          grep -q '/frontend/api_client.js' static/index.html
+          grep -q '/frontend/app_state.js' static/index.html
+          grep -q '/frontend/navigation.js' static/index.html
+          grep -q "frontend.register('api-client'" static/frontend/api_client.js
+          grep -q "frontend.register('app-state'" static/frontend/app_state.js
+          grep -q "frontend.register('navigation'" static/frontend/navigation.js
