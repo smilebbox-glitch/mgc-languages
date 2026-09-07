@@ -11,6 +11,7 @@ from .auth_router_bridge import AuthRouterBindingReport, bind_auth_router
 from .contracts import RouteContractReport, validate_route_contract
 from .governance_bridge import GovernanceBindingReport, bind_legacy_governance
 from .learning_bridge import LearningBindingReport, bind_legacy_learning
+from .learning_router_bridge import LearningRouterBindingReport, bind_learning_router
 from .observability_bridge import ObservabilityRouterBindingReport, bind_observability_router
 from .router_bridge import RouterBindingReport, bind_system_router
 from .security_bridge import SecurityBindingReport, bind_legacy_security
@@ -27,8 +28,9 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # Ordering is intentional: governance consumes the extracted client fingerprint;
     # learning binds before user services; services bind before workflows. Active
     # system/observability APIRoutes are replaced after the FastAPI object exists.
-    # Auth core must bind before the auth router so newly extracted auth endpoints
-    # capture extracted current_user/session primitives rather than legacy helpers.
+    # Auth core binds before auth and learning routers so newly extracted endpoints
+    # depend directly on extracted current_user/session primitives. Learning router
+    # also requires the already-bound XP/SRS and terminology services.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -46,6 +48,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_legacy_workflows(module, application)
     bind_legacy_auth(module, application)
     bind_auth_router(module, application)
+    bind_learning_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -79,6 +82,9 @@ AUTH_BINDING_REPORT: AuthBindingReport = getattr(
 AUTH_ROUTER_BINDING_REPORT: AuthRouterBindingReport = getattr(
     _legacy_module, "MGC_AUTH_ROUTER_BINDING_REPORT"
 )
+LEARNING_ROUTER_BINDING_REPORT: LearningRouterBindingReport = getattr(
+    _legacy_module, "MGC_LEARNING_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -92,6 +98,7 @@ __all__ = [
     "WORKFLOW_BINDING_REPORT",
     "AUTH_BINDING_REPORT",
     "AUTH_ROUTER_BINDING_REPORT",
+    "LEARNING_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
