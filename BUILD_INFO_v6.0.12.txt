@@ -1,0 +1,61 @@
+MGC Languages v6.0.12
+=====================
+
+Release theme
+-------------
+Chinese Reference / Putonghua Foundations frontend extraction.
+
+Frontend ownership
+------------------
+Canonical module:
+  static/frontend/chinese_reference.js
+
+Owned view:
+  chinese-basics
+
+Preserved contracts
+-------------------
+- GET /api/chinese/foundations
+- pilot feature flag: chinese_reference
+- Chinese-only view availability
+- Tone Lab: 5 rounds using tones 1-4
+- practice submission kind: tone_lab
+- practice topic: Pinyin · тоны
+- XP awarded through the existing /api/practice/result workflow via legacy submitPractice compatibility helper
+- Pinyin and reading visibility continues to use existing learning preferences/body classes
+
+Learning standard
+-----------------
+Primary course standard:
+  Путунхуа (普通话)
+
+Reference-only rule:
+  regional/dialect examples are informational only and are not part of the main learning track, tests, XP or final exam.
+
+Audio rule:
+  Putonghua examples may use pronunciation audio.
+  Regional comparison variants are not voiced with the standard Mandarin TTS voice.
+
+Staged compatibility
+--------------------
+Historical functions remain in static/app.js:
+- toneLabStart
+- renderToneLabRound
+- renderChineseBasics
+
+They are retained only as rollback fallback declarations. Active navigation routes chinese-basics to the new module.
+
+Verification assets
+-------------------
+- tests/v612_frontend_chinese_reference_test.py
+- release shard: v612
+- .github/workflows/ci-v612.yml
+- scripts/static_preflight.py integration
+
+Unchanged
+---------
+- backend API/OpenAPI
+- ORM/Alembic schema and head c57d0a31f570
+- XP/SRS backend rules
+- data/chinese_foundations.json content
+- runtime APP_VERSION
