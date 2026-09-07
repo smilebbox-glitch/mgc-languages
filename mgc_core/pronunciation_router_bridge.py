@@ -38,6 +38,7 @@ class PronunciationRouterBindingReport:
     root_mount_order_preserved: bool
     router_module_owned: bool
     auth_core_bound: bool
+    tts_core_bound: bool
     legacy_tts_handlers_captured: bool
 
 
@@ -80,7 +81,7 @@ def bind_pronunciation_router(
     module: ModuleType,
     application: FastAPI,
 ) -> PronunciationRouterBindingReport:
-    """Replace pronunciation APIRoutes while preserving the existing TTS engine."""
+    """Replace pronunciation APIRoutes over the extracted stateful TTS core."""
     existing = getattr(module, "MGC_PRONUNCIATION_ROUTER_BINDING_REPORT", None)
     if isinstance(existing, PronunciationRouterBindingReport) and existing.ok:
         return existing
@@ -88,6 +89,18 @@ def bind_pronunciation_router(
     if getattr(getattr(module, "current_user", None), "__module__", "") != "mgc.auth_core":
         raise RuntimeError("pronunciation router must bind after extracted current_user")
     auth_core_bound = True
+
+    tts_report = getattr(module, "MGC_TTS_BINDING_REPORT", None)
+    tts_bindings = getattr(module, "MGC_TTS_CORE_BINDINGS", None)
+    tts_core_bound = bool(
+        tts_report
+        and getattr(tts_report, "ok", False)
+        and tts_bindings
+        and module._tts_health is tts_bindings.health
+        and module._pronunciation_response is tts_bindings.pronunciation_response
+    )
+    if not tts_core_bound:
+        raise RuntimeError("pronunciation router must bind after extracted TTS core")
 
     required = (
         "db_session",
@@ -218,6 +231,7 @@ def bind_pronunciation_router(
             and root_mount_order_preserved
             and router_module_owned
             and auth_core_bound
+            and tts_core_bound
             and legacy_tts_handlers_captured
         ),
         route_count=len(replaced),
@@ -233,10 +247,11 @@ def bind_pronunciation_router(
         root_mount_order_preserved=root_mount_order_preserved,
         router_module_owned=router_module_owned,
         auth_core_bound=auth_core_bound,
+        tts_core_bound=tts_core_bound,
         legacy_tts_handlers_captured=legacy_tts_handlers_captured,
     )
     if not report.ok:
-        raise RuntimeError("v5.8.6 pronunciation router binding failed closed")
+        raise RuntimeError("v5.8.7 pronunciation/TTS binding failed closed")
     module.MGC_PRONUNCIATION_ROUTER_BINDING_REPORT = report
     return report
 
