@@ -2,8 +2,9 @@ name: Bootstrap import v5.7.1
 
 on:
   push:
+    branches: [main]
     paths:
-      - '.bootstrap/w.complete'
+      - '.bootstrap/v571.complete'
 
 permissions:
   contents: write
@@ -15,14 +16,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Reconstruct and verify release archive
+      - name: Verify and extract release archive
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/w.part* | base64 --decode > /tmp/mgc-v571.tar.xz
-          echo "ba4f3c1b032a3263e2003bf7f94af630cba35dc29ab3908ed37492cbbaf1f822  /tmp/mgc-v571.tar.xz" | sha256sum -c -
+          echo "ef921e9b06be0eea85e58b10b689d1f3c9a1c79b9ff1fc95332d5fb12cdb2b26  .bootstrap/v571.tar.xz" | sha256sum -c -
           mkdir -p /tmp/mgc-v571
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
+          tar -xJf .bootstrap/v571.tar.xz -C /tmp/mgc-v571
       - name: Import repository contents
         shell: bash
         run: |
