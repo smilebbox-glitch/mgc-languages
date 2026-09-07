@@ -1,0 +1,53 @@
+MGC Languages — Technical Increment v5.8.7
+
+Name: Users & Manager Router Extraction
+Runtime entrypoint: asgi:app
+Base increment: v5.8.6 Pronunciation Router Extraction
+
+Active router ownership added:
+- GET /api/admin/users
+- GET /api/admin/users/{user_id}/learning-stats
+- PATCH /api/admin/users/{user_id}/role
+- PATCH /api/admin/users/{user_id}/department
+- GET /api/manager/team
+- GET /api/manager/team/{user_id}/learning-stats
+
+Router module:
+- mgc/routers/users_manager.py
+
+Runtime bridge:
+- mgc_core/users_manager_router_bridge.py
+
+Required binding order:
+security -> governance -> learning -> services -> workflows -> auth -> extracted routers -> route contracts
+
+Required upstream cores/services:
+- mgc.auth_core
+- mgc.governance_core
+- mgc.services.users
+- mgc.services.terminology
+
+RBAC contract:
+- admin user endpoints: admin only
+- manager team endpoints: manager or admin
+- manager employee visibility: same department only
+- admin manager view: all departments
+
+Release shard:
+- v587
+  - tests/v587_users_manager_router_core_test.py
+  - tests/v587_users_manager_router_runtime_test.py
+
+Docker binding verifier:
+- scripts/verify_runtime_bindings.py
+
+Database schema change: none
+Alembic head: c57d0a31f570
+Runtime APP_VERSION fallback: unchanged
+UI/content change: none
+Chinese learning standard: Путунхуа (普通话) — стандартный китайский
+
+Stacking state:
+- v5.8.5 PR #19 must merge first
+- v5.8.6 PR #20 must merge second
+- v5.8.7 must then be retargeted to current main and revalidated
