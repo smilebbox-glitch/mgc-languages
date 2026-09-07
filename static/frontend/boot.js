@@ -1,4 +1,4 @@
-/* v6.0.15: validate modular frontend core and publish readiness. */
+/* v6.0.17: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -12,6 +12,7 @@
       'service-status',
       'api-client',
       'app-state',
+      'pilot-home',
       'learning',
       'practice-games',
       'support-notifications',
@@ -42,7 +43,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list()}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.17'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
