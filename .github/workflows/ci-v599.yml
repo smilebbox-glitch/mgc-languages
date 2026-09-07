@@ -1,0 +1,43 @@
+name: mgc-languages-v599-frontend-shell
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v599-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend shell contract
+        run: python scripts/run_release_tests.py --shard v599 --timeout 30
+      - name: JavaScript syntax
+        run: |
+          node --check static/app.js
+          node --check static/auth_department.js
+          node --check static/frontend/runtime.js
+          node --check static/frontend/boot.js
+      - name: Registry runtime smoke
+        run: |
+          node - <<'JS'
+          require('./static/frontend/runtime.js');
+          const f=globalThis.MGCFrontend;
+          if (!f || f.version !== '5.9.9') process.exit(2);
+          f.register('test-module', {ok:true});
+          if (!f.has('test-module') || !f.get('test-module').ok) process.exit(3);
+          let duplicate=false;
+          try { f.register('test-module', {}); } catch (_) { duplicate=true; }
+          if (!duplicate) process.exit(4);
+          console.log('PASS: frontend module registry runtime smoke');
+          JS
