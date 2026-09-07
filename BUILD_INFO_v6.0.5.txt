@@ -1,0 +1,31 @@
+MGC Languages v6.0.5
+Scope: Frontend Support & Notifications
+
+Active view ownership:
+- notifications
+
+Support surface:
+- toast messages
+- service-status show/clear facade
+- privacy-safe error-boundary reporting
+
+Notification parity:
+- GET /api/notifications/settings
+- PUT /api/notifications/settings
+- GET /api/notifications/pending
+- POST /api/notifications/{id}/read
+- Browser Notifications permission + opt-in
+- learning_nudges pilot feature gate
+
+Architecture:
+- support-notifications module loaded after practice-games and before navigation
+- navigation delegates notifications to frontend.support-notifications
+- capture-phase interception prevents duplicate legacy dispatch
+- modular API client and app-state own active notification data flow
+- legacy notification functions remain staged fallback only
+
+Compatibility:
+- backend API/OpenAPI unchanged
+- ORM/Alembic unchanged (c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话), learning content, XP/SRS scoring and game workflows unchanged
