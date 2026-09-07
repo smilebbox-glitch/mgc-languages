@@ -64,6 +64,8 @@ def main()->int:
     print('PASS: v6.0.7 final assessment module ownership contract')
     run([sys.executable,'tests/v608_frontend_manager_admin_test.py'],timeout=30)
     print('PASS: v6.0.8 manager/admin module ownership contract')
+    run([sys.executable,'tests/v609_frontend_content_governance_test.py'],timeout=30)
+    print('PASS: v6.0.9 content governance module ownership contract')
     for rel in [
         'static/app.js','static/auth_department.js','static/frontend/runtime.js',
         'static/frontend/error_boundary.js','static/frontend/legacy_bridge.js',
@@ -71,8 +73,8 @@ def main()->int:
         'static/frontend/app_state.js','static/frontend/learning.js',
         'static/frontend/practice_games.js','static/frontend/support_notifications.js',
         'static/frontend/assistant_knowledge.js','static/frontend/final_assessment.js',
-        'static/frontend/manager_admin.js','static/frontend/navigation.js',
-        'static/frontend/session_lifecycle.js','static/frontend/boot.js'
+        'static/frontend/content_governance.js','static/frontend/manager_admin.js',
+        'static/frontend/navigation.js','static/frontend/session_lifecycle.js','static/frontend/boot.js'
     ]:
         run(['node','--check',rel],timeout=20)
     print('PASS: JavaScript syntax')
@@ -91,7 +93,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v6.0.8 frontend manager/admin module preflight')
+    print('PASS: v6.0.9 frontend content governance module preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
