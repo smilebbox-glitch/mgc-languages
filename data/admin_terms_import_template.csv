@@ -1,0 +1,3 @@
+language,shop,topic,subtopic,level,term,pronunciation,reading,translation,example,example_translation,tags,source_type,source_ref,status
+chinese,Сварка,Сварка кузова,Robot welding,A2,焊枪,hànqiāng,хань-цян,сварочные клещи,请检查焊枪。,Проверьте сварочные клещи.,pilot welding,engineering_document,WI-WELD-001,review
+english,Quality,Качество и APQP,Inspection,A1,inspection,/ɪnˈspɛkʃən/,инспекшн,проверка,Please complete the inspection.,Пожалуйста выполните проверку.,quality,company_standard,QUALITY-GLOSSARY-001,review
