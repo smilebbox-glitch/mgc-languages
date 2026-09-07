@@ -1,4 +1,4 @@
-name: v5.7.3 safe config extraction
+name: v5.7.3 safe database extraction
 
 on:
   push:
@@ -19,55 +19,32 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Extract configuration module without behavior changes
+      - name: Extract database bootstrap without behavior changes
         run: |
           python - <<'PY'
           from pathlib import Path
 
           app_path = Path('app.py')
           source = app_path.read_text(encoding='utf-8')
-          start_marker = 'ROOT = Path(__file__).resolve().parent\n'
-          end_marker = 'logger = logging.getLogger("mgc.languages")\n'
+          start_marker = 'if DATABASE_URL.startswith("postgres://"):\n'
+          end_marker = 'SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)\n'
           start = source.index(start_marker)
-          end = source.index(end_marker)
-          block = source[start:end]
-
-          block = block.replace(
-              'ROOT = Path(__file__).resolve().parent\n',
-              'ROOT = Path(__file__).resolve().parents[1]\n',
-              1,
-          )
-
-          package = Path('mgc')
-          package.mkdir(exist_ok=True)
-          (package / '__init__.py').write_text(
-              '"""MGC Languages application package.\n\nModules are extracted incrementally from the legacy app.py while preserving public runtime contracts.\n"""\n',
-              encoding='utf-8',
-          )
-          config_text = (
-              '"""Environment-driven configuration for MGC Languages.\n\nExtracted from app.py in v5.7.3 without changing defaults or validation bounds.\n"""\n\n'
-              'import os\n'
-              'import shutil\n'
-              'from pathlib import Path\n\n'
-              + block
-          ).rstrip() + '\n'
-          (package / 'config.py').write_text(config_text, encoding='utf-8')
+          end = source.index(end_marker) + len(end_marker)
 
           replacement = (
-              '# v5.7.3: configuration extracted into a dependency-light module.\n'
-              '# Re-exported here to preserve the historical app.<SETTING> compatibility contract.\n'
-              'from mgc.config import *  # noqa: F401,F403,E402\n\n'
+              '# v5.7.3: database engine/session bootstrap extracted from the API module.\n'
+              'from mgc.database import DATABASE_URL, SessionLocal, engine  # noqa: E402\n'
           )
           app_path.write_text(source[:start] + replacement + source[end:], encoding='utf-8')
 
-          compile(Path('mgc/config.py').read_text(encoding='utf-8'), 'mgc/config.py', 'exec')
+          compile(Path('mgc/database.py').read_text(encoding='utf-8'), 'mgc/database.py', 'exec')
           compile(app_path.read_text(encoding='utf-8'), 'app.py', 'exec')
           PY
-      - name: Commit extracted configuration module
+      - name: Commit database bootstrap extraction
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app.py mgc/__init__.py mgc/config.py
+          git add app.py mgc/database.py
           git diff --cached --check
-          git commit -m 'refactor: extract environment configuration module'
+          git commit -m 'refactor: extract database engine and session bootstrap'
           git push origin HEAD:refactor/v5.7.3-config-bootstrap
