@@ -1,0 +1,48 @@
+name: mgc-languages-v593-multi-user
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v593-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  multi-user-lan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Static multi-user deployment contract
+        run: python tests/v593_multi_user_deployment_test.py
+      - name: Validate entrypoint shell
+        run: bash -n scripts/entrypoint.sh
+      - name: Validate LAN compose model
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml config >/tmp/mgc-lan-compose.txt
+      - name: Start PostgreSQL + modular ASGI + nginx LAN profile
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml up -d --build
+      - name: Wait for edge readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/health/ready >/tmp/ready.json; then
+              cat /tmp/ready.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs
+          exit 1
+      - name: Concurrent edge smoke
+        run: python scripts/multi_user_smoke.py --base-url http://127.0.0.1:8080 --clients 20 --requests 200 --max-p95-ms 5000
+      - name: Verify modular ASGI inside LAN app container
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T app python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+      - name: Diagnostics
+        if: failure()
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs || true
+      - name: Stop LAN profile
+        if: always()
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml down -v || true
