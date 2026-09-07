@@ -1,44 +1,62 @@
-name: Verify canonical repaired MGC Languages v5.7.1 archive
+name: Restore verified MGC Languages v5.7.1 from Library release
 
 on:
   push:
-    branches: [main]
+    branches:
+      - restore-v5.7.1-original-library
     paths:
-      - '.github/workflows/bootstrap-import.yml'
+      - '.bootstrap/library-v571.complete'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  verify:
+  restore:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Repair only independently proven transport defect and verify archive
+      - name: Reconstruct and verify original Library ZIP
         shell: bash
         run: |
           set -euo pipefail
-          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
-
-          python3 -c "import pathlib; norm=lambda p: bytes(c for c in pathlib.Path(p).read_bytes() if c in b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='); ps=[f'.bootstrap/p.part{i:03d}' for i in range(6)]; qs=[f'.bootstrap/q.part{i:03d}' for i in range(5)]; P=b''.join(norm(p) for p in ps); Q=b''.join(norm(q) for q in qs); assert P[:18000]==Q[:18000], 'prefix mismatch before proven defect'; assert P[18001:40001]==Q[18000:40000], 'streams do not realign after one-byte defect'; assert P[18000:18001]==b'V', 'unexpected defect byte'; repaired=P[:18000]+P[18001:]; pathlib.Path('/tmp/mgc-v571.b64').write_bytes(repaired); print('ORIGINAL_P_CHARS='+str(len(P))); print('REPAIRED_B64_CHARS='+str(len(repaired))); print('Q_CROSSCHECK_OK=1')"
-
-          base64 --decode /tmp/mgc-v571.b64 > /tmp/mgc-v571.tar.xz
-          actual="$(sha256sum /tmp/mgc-v571.tar.xz | awk '{print $1}')"
+          expected='6c520665bfd9151a77b52b9a129b18a4c2ae54027983249d618aed6f8a5c9de7'
+          cat .bootstrap/library-v571.part* | base64 --decode > /tmp/MGC_Languages_v5.7.1_Observability_Recovery.zip
+          actual="$(sha256sum /tmp/MGC_Languages_v5.7.1_Observability_Recovery.zip | awk '{print $1}')"
           echo "EXPECTED_SHA256=$expected"
           echo "ACTUAL_SHA256=$actual"
           test "$actual" = "$expected"
+          unzip -t /tmp/MGC_Languages_v5.7.1_Observability_Recovery.zip
 
-          xz -t /tmp/mgc-v571.tar.xz
-          echo 'XZ_OK=1'
+      - name: Extract verified release
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/mgc-v571-library
+          mkdir -p /tmp/mgc-v571-library
+          unzip -q /tmp/MGC_Languages_v5.7.1_Observability_Recovery.zip -d /tmp/mgc-v571-library
+          source_dir='/tmp/mgc-v571-library/MGC_Languages_v5.7.1_Observability_Recovery'
+          test -f "$source_dir/app.py"
+          test -f "$source_dir/BUILD_INFO_v5.7.1.txt"
+          test -f "$source_dir/RELEASE_VERIFICATION_v5.7.1.txt"
+          echo "SOURCE_DIR=$source_dir" >> "$GITHUB_ENV"
 
-          rm -rf /tmp/mgc-v571-source
-          mkdir -p /tmp/mgc-v571-source
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571-source
-          echo 'TAR_OK=1'
-          echo "FILE_COUNT=$(find /tmp/mgc-v571-source -type f | wc -l)"
-          echo '--- SOURCE TREE ---'
-          find /tmp/mgc-v571-source -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,450p'
-          echo 'CANONICAL_V571_VERIFIED=1'
+      - name: Replace bootstrap tree with verified source release
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete --exclude='.git/' "$SOURCE_DIR"/ ./
+          test -f app.py
+          test -f BUILD_INFO_v5.7.1.txt
+
+      - name: Commit clean v5.7.1 source baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore: restore verified MGC Languages v5.7.1 Library baseline'
+          git push origin HEAD:restore-v5.7.1-original-library
