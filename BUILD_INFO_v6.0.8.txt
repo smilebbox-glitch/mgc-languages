@@ -1,0 +1,41 @@
+MGC Languages v6.0.8
+Scope: Frontend Manager & Admin Boundary
+
+Owned views:
+- manager
+- admin
+
+Manager implementation:
+- canonical module: static/frontend/manager_admin.js
+- GET /api/manager/team
+- GET /api/manager/team/{id}/learning-stats
+- department-scoped access remains manager-only
+- managerTeam stored through modular app-state
+
+Admin implementation:
+- canonical navigation/role boundary is manager-admin module
+- roles remain admin/editor only
+- complex Admin / Analytics renderer remains staged behind legacy_bridge.renderAdmin
+- existing analytics, terminology, pilot governance, IT dashboard, telemetry and maintenance behavior is unchanged
+
+Frontend integration:
+- manager_admin.js loads after final_assessment.js and before navigation.js
+- navigation delegates manager/admin to manager-admin
+- boot requires manager-admin
+- capture-phase interception prevents duplicate legacy navigation
+- error-boundary receives manager/admin navigation/detail failures
+
+Verification:
+- tests/v608_frontend_manager_admin_test.py
+- scripts/run_release_tests.py --shard v608
+- scripts/static_preflight.py includes v608 and JS syntax guard
+- .github/workflows/ci-v608.yml
+
+Compatibility:
+- historical renderManager/renderAdmin remain in static/app.js
+- admin renderer exposed through legacy_bridge as staged adapter
+- no backend API/OpenAPI changes
+- no ORM/Alembic changes
+- Alembic head remains c57d0a31f570
+- no Putonghua/content changes
+- no runtime APP_VERSION change
