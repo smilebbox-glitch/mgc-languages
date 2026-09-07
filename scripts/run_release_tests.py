@@ -28,6 +28,7 @@ SHARDS={
  'v587':['tests/v587_tts_core_test.py','tests/v587_tts_runtime_test.py'],
  'v588':['tests/v588_user_manager_router_core_test.py','tests/v588_user_manager_router_runtime_test.py'],
  'v589':['tests/v589_pilot_admin_router_core_test.py','tests/v589_pilot_admin_router_runtime_test.py'],
+ 'v590':['tests/v590_admin_ops_router_core_test.py','tests/v590_admin_ops_router_runtime_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
