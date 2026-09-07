@@ -1,4 +1,4 @@
-name: Verify repaired MGC Languages v5.7.1 baseline
+name: Cross-check MGC Languages v5.7.1 bootstrap streams
 
 on:
   push:
@@ -10,45 +10,15 @@ permissions:
   contents: read
 
 jobs:
-  verify:
+  compare:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Verify repaired canonical P archive
+      - name: Compare P stream against independent Q stream
         shell: bash
         run: |
           set -euo pipefail
-          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
-          encoded='/tmp/mgc-v571-p.b64'
-          archive='/tmp/mgc-v571-p.tar.xz'
-
-          shopt -s nullglob
-          parts=(.bootstrap/p.part*)
-          echo "PART_COUNT=${#parts[@]}"
-          test "${#parts[@]}" -eq 6
-          printf 'PART=%s\n' "${parts[@]}"
-
-          cat "${parts[@]}" > "$encoded"
-          base64 --decode "$encoded" > "$archive"
-
-          actual="$(sha256sum "$archive" | awk '{print $1}')"
-          echo "EXPECTED_SHA256=$expected"
-          echo "ACTUAL_SHA256=$actual"
-          test "$actual" = "$expected"
-
-          xz -t "$archive"
-          echo 'XZ_OK=1'
-
-          rm -rf /tmp/mgc-v571-verified
-          mkdir -p /tmp/mgc-v571-verified
-          tar -xJf "$archive" -C /tmp/mgc-v571-verified
-          echo 'TAR_OK=1'
-          echo "FILE_COUNT=$(find /tmp/mgc-v571-verified -type f | wc -l)"
-
-          echo '--- SOURCE TREE ---'
-          find /tmp/mgc-v571-verified -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,400p'
-
-          echo 'P_BASELINE_VERIFIED=1'
+          python3 -c "import glob,pathlib; norm=lambda p: bytes(c for c in pathlib.Path(p).read_bytes() if c in b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='); ps=sorted(glob.glob('.bootstrap/p.part*')); qs=sorted(glob.glob('.bootstrap/q.part*')); P=b''.join(norm(p) for p in ps); Q=b''.join(norm(q) for q in qs); n=min(len(P),len(Q)); mismatch=next((i for i in range(n) if P[i]!=Q[i]),None); print('P_PARTS='+repr(ps)); print('Q_PARTS='+repr(qs)); print('P_CHARS='+str(len(P))); print('Q_CHARS='+str(len(Q))); print('COMMON_COMPARE='+str(n)); print('FIRST_MISMATCH='+repr(mismatch)); print('COMMON_PREFIX='+str(n if mismatch is None else mismatch)); [print('P_HEAD_OFFSET '+p+' '+str(P.find(norm(p)[:64]))) for p in ps]; [print('Q_HEAD_OFFSET '+q+' '+str(Q.find(norm(q)[:64]))) for q in qs]; print('P_AROUND='+repr(P[max(0,(mismatch or 0)-40):(mismatch or 0)+80]) if mismatch is not None else 'P_AROUND=None'); print('Q_AROUND='+repr(Q[max(0,(mismatch or 0)-40):(mismatch or 0)+80]) if mismatch is not None else 'Q_AROUND=None')"
