@@ -1,0 +1,29 @@
+MGC Languages v5.9.6 — Concurrent Write Integrity
+
+Scope: harden same-user concurrent write transactions on top of v5.9.5 authenticated load tooling.
+
+Production hardening:
+- race-safe PilotDailyUsage creation
+- race-safe GamificationProfile creation
+- PostgreSQL row locking for quota/XP updates
+- savepoint recovery for first-row unique races
+- locked XP spending path
+
+Verification:
+- tests/v596_learning_concurrency_test.py
+- tests/v596_concurrent_write_load_test.py
+- release shard v596
+- focused PostgreSQL + ASGI + nginx write gate
+- 50 users x 5 concurrent practice writes = 250 rows
+- 50 duplicate replays
+- exact XP/profile/daily-usage checks
+
+Compatibility:
+- no DB/Alembic schema change; head c57d0a31f570
+- no runtime APP_VERSION bump
+- no API/OpenAPI change
+- XP formulas and rewards unchanged
+- frontend/content unchanged
+- Putonghua (普通话) remains primary Chinese standard
+
+Stacked on v5.9.5; do not merge until previous stack and full CI/Docker are green.
