@@ -2,7 +2,9 @@ name: mgc-languages-ci
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: mgc-languages-ci-${{ github.workflow }}-${{ github.ref }}
