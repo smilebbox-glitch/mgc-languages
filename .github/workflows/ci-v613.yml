@@ -26,6 +26,7 @@ jobs:
           python scripts/run_release_tests.py --shard v613 --timeout 45
       - name: JavaScript syntax
         run: |
+          node --check static/frontend/learning.js
           node --check static/frontend/legacy_bridge.js
           node --check static/frontend/legacy_retirement.js
           node --check static/frontend/navigation.js
@@ -39,9 +40,12 @@ jobs:
           grep -q "'renderExam'" static/frontend/legacy_retirement.js
           grep -q "'renderAssistant'" static/frontend/legacy_retirement.js
           grep -q "'renderNotifications'" static/frontend/legacy_retirement.js
+          grep -q "'renderHome'" static/frontend/legacy_retirement.js
+          grep -q "'renderCourse30'" static/frontend/legacy_retirement.js
           grep -q "bridge.surface = Object.freeze(Object.keys(bridge))" static/frontend/legacy_bridge.js
           ! grep -q "renderManager:" static/frontend/legacy_bridge.js
           ! grep -q "renderAdmin:" static/frontend/legacy_bridge.js
-          grep -q "renderLearningHome:" static/frontend/legacy_bridge.js
+          ! grep -q "renderLearningHome:" static/frontend/legacy_bridge.js
+          ! grep -q "renderLearningCourse30:" static/frontend/legacy_bridge.js
           grep -q "renderPracticeRoleplay:" static/frontend/legacy_bridge.js
           grep -q "'legacy-retirement'" static/frontend/boot.js
