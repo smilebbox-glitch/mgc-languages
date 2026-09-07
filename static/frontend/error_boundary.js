@@ -13,8 +13,8 @@
   function scrub(value) {
     let text = String(value == null ? '' : value);
     text = text.replace(/(authorization\s*:\s*bearer\s+)[^\s]+/ig, '$1[redacted]');
-    text = text.replace(/(mgc_(?:session|csrf)=)[^;\s]+/ig, '$1[redacted]');
-    text = text.replace(/((?:password|token|secret)=)[^&\s]+/ig, '$1[redacted]');
+    text = text.replace(/(mgc_(?:session|csrf)\s*[:=]\s*)[^;,\s]+/ig, '$1[redacted]');
+    text = text.replace(/(["']?(?:password|token|secret)["']?\s*[:=]\s*["']?)[^"',;\s&]+/ig, '$1[redacted]');
     return text.slice(0, 500);
   }
 
@@ -60,12 +60,21 @@
     return events.map(function (item) { return Object.assign({}, item); });
   }
 
-  function clear() {
-    events.splice(0, events.length);
-    statusShown = false;
+  function reconcile() {
+    if (events.length) {
+      markDegraded();
+      return 'degraded';
+    }
     if (document && document.documentElement && frontend.diagnostics.ready) {
       document.documentElement.dataset.mgcFrontend = 'ready';
     }
+    return 'ready';
+  }
+
+  function clear() {
+    events.splice(0, events.length);
+    statusShown = false;
+    return reconcile();
   }
 
   window.addEventListener('error', function (event) {
@@ -80,6 +89,7 @@
   frontend.register('error-boundary', {
     record: record,
     snapshot: snapshot,
+    reconcile: reconcile,
     clear: clear,
     maxEvents: MAX_EVENTS
   });
