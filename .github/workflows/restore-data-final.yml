@@ -1,0 +1,83 @@
+name: Finalize verified language data recovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/restore-data-final.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild and verify v5.7.1 data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, re, subprocess
+
+          expected = {
+            '000':'f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879','001':'7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b','002':'70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41','003':'98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a','004':'a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b','005':'3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a','006':'3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160','007':'8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec','008':'870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7','009':'40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8','010':'fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3','011':'ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124','012':'0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88','013':'1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47','014':'2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7','015':'0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78','016':'34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb','017':'a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d','018':'de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f','019':'6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16','020':'5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8','021':'5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8','022':'2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff','023':'5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4'
+          }
+          prefixes = {
+            '000': b'/Td6WFoAAATm1rRGBMDQnxOAoLoBIQEWAAAAAOM3etLkwTXv',
+            '005': b'7/O8CckQGjPdromMQJFyj6f6nezHHNzDPmqUNM19wUM/tQIi',
+            '017': b'76DijmVrJRclrxrQcQ2TEiW0QphwjU1FLS1uS8bPsrXL+J/a',
+            '018': b'bAxw/s58BJOqfM6IhZTqk7w8PKLXKuhpyg45nLxXIbzAZ+aE',
+            '019': b'7sdCPd5N1VvkvRuCwhB6uSwZWXIlF7D3glTxHIadFBuUtQWw',
+            '021': b'qgqlHnazf1hk3nSqTDn+5DlyA+QQMXgjkPvWscsG+7MILGup',
+          }
+          exact_commit = {idx: '4739d6823c3b' for idx in expected}
+          exact_commit.update({'002':'94ea1932c775','003':'94ea1932c775','004':'94ea1932c775'})
+          for idx in prefixes:
+              exact_commit.pop(idx, None)
+
+          def norm(b): return re.sub(rb'\s+', b'', b)
+          out = Path('/tmp/chunks'); out.mkdir(parents=True, exist_ok=True)
+          for idx, wanted in expected.items():
+              if idx in exact_commit:
+                  data = norm(subprocess.check_output(['git','show',f"{exact_commit[idx]}:.bootstrap/p.part{idx}"]))
+              else:
+                  source = norm(subprocess.check_output(['git','show',f'origin/diag-artifact:.bootstrap/p.part{idx}']))
+                  start = source.find(prefixes[idx])
+                  if start < 0:
+                      raise SystemExit(f'prefix not found for {idx}')
+                  data = source[start:start+18000]
+              if hashlib.sha256(data).hexdigest() != wanted:
+                  raise SystemExit(f'SHA mismatch for {idx}')
+              (out / f'p.part{idx}').write_bytes(data)
+              print('verified', idx)
+          PY
+
+          : > /tmp/payload.b64
+          for i in $(seq 0 23); do printf -v idx '%03d' "$i"; cat "/tmp/chunks/p.part${idx}" >> /tmp/payload.b64; done
+          base64 --decode /tmp/payload.b64 > /tmp/mgc-v571.tar.xz
+          echo '8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz' | sha256sum -c -
+          xz -t /tmp/mgc-v571.tar.xz
+          rm -rf /tmp/mgc-v571 && mkdir -p /tmp/mgc-v571
+          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
+          echo '1b1e23fa79676bb1017d746d45d0638498bc96a5e1bcba26167590de36c4d221  /tmp/mgc-v571/data/chinese.json' | sha256sum -c -
+
+      - name: Commit verified source data
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf data
+          cp -a /tmp/mgc-v571/data ./data
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f data
+          git commit -m 'fix: restore verified language source data'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
