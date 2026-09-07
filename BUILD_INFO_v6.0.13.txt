@@ -1,0 +1,76 @@
+MGC Languages v6.0.13
+=====================
+
+Release focus
+-------------
+Legacy frontend runtime cleanup and compatibility-surface reduction.
+
+Branch
+------
+refactor/v6.0.13-legacy-frontend-cleanup
+
+Base
+----
+refactor/v6.0.12-chinese-reference-putonghua
+
+New frontend module
+-------------------
+static/frontend/legacy_retirement.js
+
+Retired runtime globals
+-----------------------
+24 superseded globals covering:
+- notifications
+- assistant / knowledge
+- final assessment
+- manager
+- admin analytics / governance / IT operations
+- Chinese Reference / Tone Lab
+
+Remaining allowed legacy renderer dependencies
+----------------------------------------------
+Learning:
+- renderHome
+- renderTopics
+- renderQuiz
+- renderCourse30
+
+Practice:
+- renderRoleplay
+- renderGames
+- renderXP
+
+Shared compatibility primitives remain for:
+- session bootstrap
+- language loading
+- shared state access
+- navigation fallback
+- DOM helpers
+- toast / service status
+- practice result / session IDs
+- Putonghua learning banner
+
+Important staged-cleanup note
+-----------------------------
+Historical renderer declarations are still physically present in `static/app.js` in v6.0.13.
+They are no longer exposed through the compatibility bridge and are set to `undefined` at runtime after their modular replacement owners have loaded.
+Physical source deletion is intentionally deferred until learning/practice and remaining shared lifecycle primitives are migrated.
+
+Verification contract
+---------------------
+- tests/v613_frontend_legacy_cleanup_test.py
+- release shard: v613
+- static preflight integration
+- .github/workflows/ci-v613.yml
+- node --check: legacy_bridge.js / legacy_retirement.js / boot.js
+
+Compatibility unchanged
+-----------------------
+- Backend API / OpenAPI
+- ORM / Alembic
+- Alembic head c57d0a31f570
+- data/chinese_foundations.json
+- Putonghua learning standard
+- XP / SRS rules
+- notification backend
+- runtime APP_VERSION

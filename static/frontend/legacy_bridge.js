@@ -1,4 +1,4 @@
-/* v6.0.8: isolate historical app.js globals behind one compatibility adapter. */
+/* v6.0.13: isolate only the remaining shared app.js compatibility surface. */
 (function () {
   'use strict';
 
@@ -15,7 +15,7 @@
   }
 
   if (!frontend.has('legacy-app')) {
-    frontend.register('legacy-app', {
+    const bridge = {
       getState: function () { return state; },
       boot: requireFunction('boot', boot),
       bindStaticEvents: requireFunction('bindStaticEvents', bindStaticEvents),
@@ -33,8 +33,6 @@
       renderPracticeRoleplay: requireFunction('renderRoleplay', renderRoleplay),
       renderPracticeGames: requireFunction('renderGames', renderGames),
       renderPracticeXP: requireFunction('renderXP', renderXP),
-      renderManager: requireFunction('renderManager', renderManager),
-      renderAdmin: requireFunction('renderAdmin', renderAdmin),
       newSessionId: requireFunction('newSessionId', newSessionId),
       submitPractice: requireFunction('submitPractice', submitPractice),
       setServiceStatus: requireFunction('setServiceStatus', setServiceStatus),
@@ -42,6 +40,8 @@
       escapeHtml: requireFunction('esc', esc),
       query: requireFunction('$', $),
       queryAll: requireFunction('$$', $$)
-    });
+    };
+    bridge.surface = Object.freeze(Object.keys(bridge));
+    frontend.register('legacy-app', bridge);
   }
 })();
