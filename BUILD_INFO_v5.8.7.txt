@@ -1,0 +1,68 @@
+MGC Languages technical increment: v5.8.7 TTS Core Extraction
+
+Runtime entrypoint: asgi:app
+Runtime APP_VERSION fallback: 5.7.1 (unchanged)
+Alembic head: c57d0a31f570 (unchanged)
+
+New core:
+- mgc/tts_core.py
+
+New runtime bridge:
+- mgc_core/tts_bridge.py
+
+Extracted responsibilities:
+- TTS semaphore and mutable runtime state
+- deterministic SHA-256 disk cache
+- disk cache validation/pruning/write
+- circuit breaker
+- LRU synthesis cache (maxsize=256)
+- offline espeak-ng/espeak subprocess synthesis
+- bilingual health probes
+- pronunciation WAV response/fallback
+
+Runtime ordering relevant to this increment:
+security -> governance -> learning -> services -> TTS core -> system/observability -> workflows -> auth core -> extracted routers -> route contracts
+
+Observability invariant:
+- mgc_core.observability_bridge reads the exact TTS runtime lock/state objects returned by mgc.tts_core.
+- No copied or parallel TTS counters.
+
+Compatibility invariants:
+- cache key prefix v5.3.2
+- RIFF + minimum 512-byte disk cache validation
+- configured cache TTL/max size and 80% prune target
+- LRU maxsize 256
+- circuit threshold/cooldown
+- concurrency semaphore + timeout
+- synthesis speed formula
+- Chinese/English voice selection
+- health TTL and bilingual probes
+- existing metric counters
+- 90/60 TTS rate limit
+- browser fallback and failure messages
+- WAV response headers
+- pronunciation feature flag/quota semantics
+
+Required release shard:
+- v587
+
+Docker assertions include:
+- TTS_BINDING_REPORT.ok
+- cache_bound
+- circuit_bound
+- synthesis_bound
+- health_bound
+- pronunciation_response_bound
+- state_bound
+- config_preserved
+- lru_cache_preserved
+- observability_state_compatible
+- hooks_captured
+- module_owned
+- PRONUNCIATION_ROUTER_BINDING_REPORT.tts_core_bound
+- espeak-ng present
+
+Historical TTS functions remain physically in mgc/legacy_app.py as migration fallback; production asgi:app rebinds them to mgc.tts_core.
+
+Chinese learning standard remains:
+Путунхуа (普通话) — стандартный китайский.
