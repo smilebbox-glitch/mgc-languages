@@ -33,6 +33,12 @@ validate_int UVICORN_KEEP_ALIVE_SECONDS "$keep_alive" 1 60
 python scripts/capacity_preflight.py
 python scripts/migrate_safe.py
 
+# LAN/pilot deployments can explicitly keep the bootstrap admin credentials in
+# sync with .env.lan. This runs once before Uvicorn forks workers, avoiding
+# multi-worker credential-update races. Production requires a second explicit
+# ALLOW_ADMIN_CREDENTIAL_RESET=true guard inside the sync utility.
+python scripts/sync_admin_credentials.py
+
 exec uvicorn asgi:app \
   --host 0.0.0.0 \
   --port 8000 \

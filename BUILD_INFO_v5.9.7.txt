@@ -1,0 +1,35 @@
+MGC Languages v5.9.7 — User Login & Department Onboarding
+
+Purpose:
+- make tomorrow's local-office pilot usable by real employees;
+- require department selection in browser auth;
+- persist department in the existing User model;
+- provide a stable configurable admin account for the LAN profile.
+
+Browser auth:
+- registration: display name + username + department + password;
+- login: username + department + password;
+- ordinary-user department mismatch -> 401;
+- admin department is not treated as an authentication secret.
+
+LAN admin:
+- username: admin;
+- department: Администрация;
+- password: supplied locally at first launch or in .env.lan;
+- MGC_ADMIN_SYNC_CREDENTIALS=true in LAN profile;
+- sync occurs after migrations and before Uvicorn workers start;
+- production requires explicit ALLOW_ADMIN_CREDENTIAL_RESET=true.
+
+Verification:
+- tests/v597_user_login_department_test.py
+- release shard v597
+- .github/workflows/ci-v597.yml
+- Docker LAN registration/admin login acceptance flow
+
+Compatibility:
+- no Alembic migration;
+- Alembic head remains c57d0a31f570;
+- runtime APP_VERSION unchanged;
+- existing API clients may omit department;
+- OIDC unchanged;
+- learning content and Путунхуа (普通话) unchanged.

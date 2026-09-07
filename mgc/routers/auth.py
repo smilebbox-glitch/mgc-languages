@@ -14,6 +14,11 @@ class AuthPayload(BaseModel):
     username: str = Field(min_length=3, max_length=80)
     password: str = Field(min_length=6, max_length=200)
     display_name: str | None = Field(default=None, max_length=120)
+    department: str | None = Field(default=None, max_length=160)
+
+
+def _normalized_department(value: str | None) -> str:
+    return " ".join((value or "").strip().split())[:160]
 
 
 def build_auth_router(
@@ -59,10 +64,12 @@ def build_auth_router(
             raise HTTPException(400, "Логин: латинские буквы, цифры, точка, дефис или подчёркивание")
         if db.scalar(select(user_model).where(user_model.username == username)):
             raise HTTPException(409, "Такой логин уже зарегистрирован")
+        department = _normalized_department(payload.department) or "General"
         user = user_model(
             username=username,
             display_name=(payload.display_name or username).strip() or username,
             password_hash=make_password_hash(payload.password),
+            department=department,
         )
         db.add(user)
         db.flush()
@@ -73,6 +80,7 @@ def build_auth_router(
             target_type="user",
             target_id=str(user.id),
             request=request,
+            metadata={"department": department},
         )
         db.commit()
         db.refresh(user)
@@ -93,6 +101,11 @@ def build_auth_router(
         )
         if not user or not verify_password(payload.password, user.password_hash):
             raise HTTPException(401, "Неверный логин или пароль")
+        supplied_department = _normalized_department(payload.department)
+        if user.role != "admin" and supplied_department:
+            actual_department = _normalized_department(getattr(user, "department", "")) or "General"
+            if supplied_department.casefold() != actual_department.casefold():
+                raise HTTPException(401, "Неверный логин, пароль или отдел")
         audit_event(
             db,
             "auth.login",
@@ -100,6 +113,7 @@ def build_auth_router(
             target_type="user",
             target_id=str(user.id),
             request=request,
+            metadata={"department": getattr(user, "department", "General")},
         )
         db.commit()
         return create_login_session(db, user, response)

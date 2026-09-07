@@ -1,0 +1,103 @@
+name: mgc-languages-v597-test-login
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v597-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  user-login-department:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt
+      - name: v5.9.7 user/admin login contract
+        run: python scripts/run_release_tests.py --shard v597 --timeout 75
+      - name: Frontend syntax
+        run: |
+          node --check static/app.js
+          node --check static/auth_department.js
+      - name: Entrypoint syntax
+        run: bash -n scripts/entrypoint.sh
+      - name: Prepare isolated LAN environment
+        run: |
+          cp .env.lan.example .env.v597
+          sed -i 's/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=v597-ci-db-password-123456/' .env.v597
+          sed -i 's/MGC_ADMIN_PASSWORD=.*/MGC_ADMIN_PASSWORD=V597-CI-Admin!1234/' .env.v597
+          sed -i 's/OIDC_STATE_SECRET=.*/OIDC_STATE_SECRET=v597-ci-oidc-state-secret-32-bytes-123456/' .env.v597
+          sed -i 's/METRICS_TOKEN=.*/METRICS_TOKEN=v597-ci-metrics-token-123456789/' .env.v597
+      - name: Validate LAN compose
+        run: docker compose --env-file .env.v597 -f docker-compose.lan.yml config >/tmp/v597-compose.txt
+      - name: Start PostgreSQL + ASGI + nginx
+        run: docker compose --env-file .env.v597 -f docker-compose.lan.yml up -d --build
+      - name: Wait for readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/health/ready >/tmp/v597-ready.json; then
+              cat /tmp/v597-ready.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose --env-file .env.v597 -f docker-compose.lan.yml logs
+          exit 1
+      - name: Register employee with department
+        run: |
+          curl -fsS -c /tmp/v597-user.cookies \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"pilot.employee","password":"StrongPass123!","display_name":"Pilot Employee","department":"R&D"}' \
+            http://127.0.0.1:8080/api/register >/tmp/v597-user.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/v597-user.json',encoding='utf-8'))
+          assert data['ok'] is True
+          assert data['user']['department']=='R&D'
+          assert data['user']['role']=='user'
+          PY
+          curl -fsS -b /tmp/v597-user.cookies http://127.0.0.1:8080/api/me >/tmp/v597-me.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/v597-me.json',encoding='utf-8'))
+          assert data['department']=='R&D'
+          assert data['username']=='pilot.employee'
+          PY
+      - name: Verify wrong department is rejected
+        run: |
+          code=$(curl -sS -o /tmp/v597-wrong-dept.json -w '%{http_code}' \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"pilot.employee","password":"StrongPass123!","department":"IT"}' \
+            http://127.0.0.1:8080/api/login)
+          test "$code" = "401"
+      - name: Verify synchronized admin account
+        run: |
+          curl -fsS -c /tmp/v597-admin.cookies \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"admin","password":"V597-CI-Admin!1234","department":"Администрация"}' \
+            http://127.0.0.1:8080/api/login >/tmp/v597-admin.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/v597-admin.json',encoding='utf-8'))
+          assert data['ok'] is True
+          assert data['user']['role']=='admin'
+          assert data['user']['department']=='Администрация'
+          PY
+      - name: Verify browser assets
+        run: |
+          curl -fsS http://127.0.0.1:8080/ | grep -q 'id="department"'
+          curl -fsS http://127.0.0.1:8080/auth_department.js | grep -q 'department: selectedDepartment'
+      - name: Diagnostics
+        if: failure()
+        run: docker compose --env-file .env.v597 -f docker-compose.lan.yml logs || true
+      - name: Stop LAN profile
+        if: always()
+        run: docker compose --env-file .env.v597 -f docker-compose.lan.yml down -v || true

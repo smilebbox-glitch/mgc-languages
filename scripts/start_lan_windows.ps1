@@ -1,5 +1,6 @@
 param(
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [string]$AdminPassword = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -75,6 +76,16 @@ function Get-EnvInt([string]$Path, [string]$Key, [int]$Default) {
     return $Default
 }
 
+function Validate-AdminPassword([string]$Value) {
+    if ([string]::IsNullOrWhiteSpace($Value)) { return }
+    if ($Value.Length -lt 12) {
+        throw "Пароль администратора должен быть не короче 12 символов."
+    }
+    if ($Value.ToLowerInvariant() -in @("password", "administrator", "change_me", "change_me_with_a_long_password")) {
+        throw "Выберите более безопасный пароль администратора."
+    }
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "Docker не найден. Установите/запустите Docker Desktop и повторите запуск."
 }
@@ -97,7 +108,15 @@ $NewConfig = -not (Test-Path $EnvFile)
 
 if ($NewConfig) {
     $dbPassword = New-Secret 32
-    $adminPassword = New-Secret 24
+    $adminPasswordValue = $AdminPassword.Trim()
+    if ([string]::IsNullOrWhiteSpace($adminPasswordValue)) {
+        $adminPasswordValue = (Read-Host "Введите пароль для admin (Enter = сгенерировать случайный)").Trim()
+    }
+    if ([string]::IsNullOrWhiteSpace($adminPasswordValue)) {
+        $adminPasswordValue = New-Secret 24
+    }
+    Validate-AdminPassword $adminPasswordValue
+
     $stateSecret = New-Secret 32
     $metricsToken = New-Secret 32
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
@@ -110,8 +129,10 @@ POSTGRES_DB=mgc_languages
 POSTGRES_USER=mgc_languages
 POSTGRES_PASSWORD=$dbPassword
 MGC_ADMIN_USERNAME=admin
-MGC_ADMIN_PASSWORD=$adminPassword
+MGC_ADMIN_PASSWORD=$adminPasswordValue
 MGC_ADMIN_DISPLAY_NAME=MGC Admin
+MGC_ADMIN_DEPARTMENT=Администрация
+MGC_ADMIN_SYNC_CREDENTIALS=true
 OIDC_STATE_SECRET=$stateSecret
 METRICS_TOKEN=$metricsToken
 REGISTRATION_ENABLED=true
@@ -136,6 +157,12 @@ CORS_ORIGINS=
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
     Set-EnvValue $EnvFile "MGC_BIND_ADDRESS" "0.0.0.0"
     Set-EnvValue $EnvFile "MGC_TRUSTED_HOSTS" $trusted
+    Ensure-EnvValue $EnvFile "MGC_ADMIN_DEPARTMENT" "Администрация"
+    Ensure-EnvValue $EnvFile "MGC_ADMIN_SYNC_CREDENTIALS" "true"
+    if (-not [string]::IsNullOrWhiteSpace($AdminPassword)) {
+        Validate-AdminPassword $AdminPassword
+        Set-EnvValue $EnvFile "MGC_ADMIN_PASSWORD" $AdminPassword
+    }
     Ensure-EnvValue $EnvFile "WEB_CONCURRENCY" "2"
     Ensure-EnvValue $EnvFile "UVICORN_LIMIT_CONCURRENCY" "200"
     Ensure-EnvValue $EnvFile "UVICORN_BACKLOG" "2048"
@@ -201,12 +228,15 @@ if ($LanIp -ne "127.0.0.1") {
 }
 Write-Host ""
 
+$adminLine = Get-Content -LiteralPath $EnvFile | Where-Object { $_ -match '^MGC_ADMIN_PASSWORD=' } | Select-Object -First 1
+$adminPasswordSaved = ($adminLine -split '=', 2)[1]
+Write-Host "Администратор: admin" -ForegroundColor Cyan
+Write-Host "Отдел администратора: Администрация" -ForegroundColor Cyan
 if ($NewConfig) {
-    $adminLine = Get-Content -LiteralPath $EnvFile | Where-Object { $_ -match '^MGC_ADMIN_PASSWORD=' } | Select-Object -First 1
-    $adminPasswordSaved = ($adminLine -split '=', 2)[1]
-    Write-Host "Первый администратор: admin" -ForegroundColor Cyan
     Write-Host "Пароль администратора: $adminPasswordSaved" -ForegroundColor Cyan
     Write-Host "Пароль сохранён локально в .env.lan (файл исключён из Git)."
+} else {
+    Write-Host "Пароль администратора хранится локально в .env.lan и синхронизируется при запуске."
 }
 
 Write-Host "Если коллеги не открывают ссылку, разрешите входящий TCP-порт $Port в Windows Firewall для Private/Domain сети." -ForegroundColor Yellow
