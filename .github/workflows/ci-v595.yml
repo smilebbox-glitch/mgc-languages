@@ -1,0 +1,107 @@
+name: mgc-languages-v595-authenticated-load
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v595-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  authenticated-load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Authenticated load contract
+        run: python tests/v595_authenticated_load_test.py
+
+      - name: Validate LAN compose
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml config >/tmp/mgc-lan-compose.txt
+
+      - name: Start PostgreSQL + modular ASGI + nginx
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml up -d --build
+
+      - name: Wait for edge readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/health/ready >/tmp/ready.json; then
+              cat /tmp/ready.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs
+          exit 1
+
+      - name: Seed isolated load-test sessions
+        run: |
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T \
+            -e LOAD_TEST_FIXTURES_ENABLED=true \
+            app python scripts/seed_authenticated_load.py --count 50 --prefix ci-loadtest --session-minutes 30 \
+            > /tmp/mgc-auth-sessions.json
+          python - <<'PY'
+          import json
+          p='/tmp/mgc-auth-sessions.json'
+          data=json.load(open(p,encoding='utf-8'))
+          assert data['fixture']=='mgc-authenticated-load'
+          assert data['count']==50
+          assert len(data['sessions'])==50
+          print('PASS: 50 isolated authenticated sessions seeded')
+          PY
+
+      - name: Run authenticated team workload
+        run: |
+          python scripts/authenticated_load.py \
+            --base-url http://127.0.0.1:8080 \
+            --sessions-file /tmp/mgc-auth-sessions.json \
+            --profile team \
+            --report-file /tmp/mgc-auth-load-report.json
+
+      - name: Verify sanitized report
+        run: |
+          python - <<'PY'
+          import json
+          report=json.load(open('/tmp/mgc-auth-load-report.json',encoding='utf-8'))
+          assert report['authenticated_users']==50
+          assert report['requests']==1000
+          assert report['success_rate_percent']>=99.5
+          text=json.dumps(report)
+          assert 'session_token' not in text
+          print(json.dumps(report,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Check PostgreSQL connection pressure
+        run: |
+          active=$(docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T db \
+            psql -U mgc_languages -d mgc_languages -Atc "select count(*) from pg_stat_activity where datname='mgc_languages';")
+          echo "PostgreSQL connections after authenticated load: $active"
+          test "$active" -lt 92
+
+      - name: Verify modular runtime
+        run: |
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T app \
+            python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v595-authenticated-load-report
+          path: /tmp/mgc-auth-load-report.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Diagnostics
+        if: failure()
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs || true
+
+      - name: Stop LAN profile
+        if: always()
+        run: |
+          rm -f /tmp/mgc-auth-sessions.json
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml down -v || true

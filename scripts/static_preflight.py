@@ -35,6 +35,8 @@ def main()->int:
     run([sys.executable,'tests/v594_capacity_hardening_test.py'],timeout=20)
     run([sys.executable,'tests/v594_capacity_runtime_test.py'],timeout=30)
     print('PASS: v5.9.4 capacity budget + load-probe contracts')
+    run([sys.executable,'tests/v595_authenticated_load_test.py'],timeout=30)
+    print('PASS: v5.9.5 authenticated load-tool contract')
     run(['node','--check','static/app.js'],timeout=20)
     print('PASS: JavaScript syntax')
     json.loads((ROOT/'deploy/observability/grafana-dashboard-v5.7.json').read_text(encoding='utf-8'))
@@ -52,7 +54,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.9.4 multi-user capacity hardening preflight')
+    print('PASS: v5.9.5 authenticated multi-user load preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
