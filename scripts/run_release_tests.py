@@ -54,6 +54,7 @@ SHARDS={
  'v613':['tests/v613_frontend_legacy_cleanup_test.py'],
  'v614':['tests/v614_frontend_core_learning_test.py'],
  'v615':['tests/v615_frontend_practice_extraction_test.py'],
+ 'v616':['tests/v616_frontend_physical_shell_cleanup_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
