@@ -22,6 +22,7 @@ SHARDS={
  'v581':['tests/v581_observability_core_test.py','tests/v581_observability_runtime_test.py'],
  'v582':['tests/v582_auth_router_core_test.py','tests/v582_auth_router_runtime_test.py'],
  'v583':['tests/v583_learning_router_core_test.py','tests/v583_learning_router_runtime_test.py'],
+ 'v584':['tests/v584_practice_games_router_core_test.py','tests/v584_practice_games_router_runtime_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
