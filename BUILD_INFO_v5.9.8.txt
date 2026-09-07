@@ -1,0 +1,22 @@
+MGC Languages v5.9.8 — Session & User Isolation Hardening
+
+Purpose:
+- safe simultaneous use by multiple employees;
+- isolate practice idempotency per user;
+- verify multiple browser sessions, logout and expiry semantics.
+
+Key changes:
+- new mgc.services.practice_isolation wrapper;
+- new practice storage key: u<user_id>:sha256(client_session_id);
+- historical raw session IDs still recognized for the same user;
+- WorkflowBindingReport.user_scoped_practice_sessions;
+- PracticeGamesRouterBindingReport.user_scoped_practice_sessions;
+- v598 runtime regression + focused workflow.
+
+Compatibility:
+- no schema migration;
+- Alembic head c57d0a31f570 unchanged;
+- runtime APP_VERSION unchanged;
+- API/OpenAPI unchanged;
+- XP/SRS/content unchanged;
+- Путунхуа (普通话) unchanged.
