@@ -28,6 +28,7 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check static/frontend/learning.js
+          node --check static/frontend/practice_games.js
           node --check static/frontend/legacy_bridge.js
           node --check static/frontend/legacy_retirement.js
           node --check static/frontend/navigation.js
@@ -48,4 +49,5 @@ jobs:
           ! grep -q "renderLearningHome:" static/frontend/legacy_bridge.js
           grep -q "'renderHome'" static/frontend/legacy_retirement.js
           grep -q "'renderCourse30'" static/frontend/legacy_retirement.js
-          grep -q "renderPracticeRoleplay:" static/frontend/legacy_bridge.js
+          ! grep -q "renderPracticeRoleplay:" static/frontend/legacy_bridge.js
+          grep -q "'renderRoleplay'" static/frontend/legacy_retirement.js
