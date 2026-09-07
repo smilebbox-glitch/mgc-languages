@@ -3,7 +3,7 @@ name: Bootstrap import v5.7.1
 on:
   push:
     paths:
-      - '.bootstrap/z.complete'
+      - '.bootstrap/w.complete'
 
 permissions:
   contents: write
@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Reconstruct release archive
+      - name: Reconstruct and verify release archive
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/z.part* | base64 --decode > /tmp/mgc-v571.tar.xz
+          cat .bootstrap/w.part* | base64 --decode > /tmp/mgc-v571.tar.xz
           echo "ba4f3c1b032a3263e2003bf7f94af630cba35dc29ab3908ed37492cbbaf1f822  /tmp/mgc-v571.tar.xz" | sha256sum -c -
           mkdir -p /tmp/mgc-v571
           tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
