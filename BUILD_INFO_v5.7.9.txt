@@ -1,0 +1,9 @@
+MGC Languages v5.7.9
+Technical increment: Practice & Game Workflow Service
+Base: main @ 93ac0732be7712e46d9353cee6d9f00f30269db7
+Alembic head: c57d0a31f570
+Runtime boundary: asgi:app
+Target workflows: practice result, question attempt, game start, game finish
+Compatibility: no API/UI/schema/content changes
+Chinese standard: Путунхуа (普通话) — standard Chinese
+CI shard: v579
