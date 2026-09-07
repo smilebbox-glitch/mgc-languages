@@ -1,0 +1,51 @@
+name: mgc-languages-v612-chinese-reference-frontend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v612-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-chinese-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v611 --timeout 45
+          python scripts/run_release_tests.py --shard v612 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/chinese_reference.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+      - name: Putonghua reference parity guard
+        run: |
+          grep -q "frontend.register('chinese-reference'" static/frontend/chinese_reference.js
+          grep -q "chinese_reference" static/frontend/chinese_reference.js
+          grep -q "/api/chinese/foundations" static/frontend/chinese_reference.js
+          grep -q "submitPractice('tone_lab'" static/frontend/chinese_reference.js
+          grep -q "Путунхуа (普通话)" static/frontend/chinese_reference.js
+          grep -q "Диалекты ниже — только справка" static/frontend/chinese_reference.js
+          grep -q "frontend.get('chinese-reference').navigate(view)" static/frontend/navigation.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('data/chinese_foundations.json').read_text(encoding='utf-8'))
+          assert d['learning_standard']['name']=='Путунхуа (普通话)'
+          assert len(d['putonghua']['groups'])==10
+          for item in d['putonghua'].get('comparison_examples',[]):
+              assert item.get('standard',{}).get('audio') is True
+              assert all(not v.get('audio') for v in item.get('variants',[]))
+          print('PASS: Putonghua-only learning/audio reference contract')
+          PY
