@@ -1,0 +1,12 @@
+MGC Languages v5.8.1
+Technical increment: Metrics & Observability Router
+Runtime entrypoint: asgi:app
+Compatibility facade: app.py
+Historical implementation: mgc/legacy_app.py
+Extracted renderer: mgc/observability.py
+Extracted APIRouter: mgc/routers/observability.py
+Extracted active route: GET /metrics
+Database schema: unchanged
+Alembic head: c57d0a31f570
+Runtime APP_VERSION: 5.7.1
+Chinese learning standard: Путунхуа (普通话)
