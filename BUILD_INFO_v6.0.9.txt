@@ -1,0 +1,47 @@
+MGC Languages v6.0.9
+Scope: Frontend Admin Content Governance
+
+Canonical module:
+- static/frontend/content_governance.js
+
+Active responsibilities:
+- taxonomy loading
+- governed terminology loading
+- adaptive question-quality signal rendering
+- manual term publishing
+- XLSX/CSV bulk import
+- submit for review
+- Admin-only approve/reject
+- revision/review history lookup
+
+Role policy:
+- editor: content-governance screen only inside the admin route
+- admin: full Admin / Analytics surface; content section/actions supplied by content-governance adapters
+- other roles: no admin access
+
+Endpoints preserved:
+- GET /api/admin/taxonomy
+- GET /api/admin/terms
+- GET /api/admin/learning/question-quality
+- POST /api/admin/terms
+- POST /api/admin/terms/import?default_language={language}
+- POST /api/admin/terms/{id}/submit-review
+- POST /api/admin/terms/{id}/approve
+- POST /api/admin/terms/{id}/reject
+- GET /api/admin/terms/{id}/revisions
+
+Compatibility:
+- historical content helper functions remain in static/app.js as staged fallbacks
+- pilot governance, IT dashboard, maintenance, analytics and telemetry remain on the existing admin renderer
+- no backend API/OpenAPI changes
+- no ORM/Alembic changes
+- Alembic head remains c57d0a31f570
+- no Putonghua/content-standard changes
+- no XP/SRS changes
+- runtime APP_VERSION unchanged
+
+Verification:
+- tests/v609_frontend_content_governance_test.py
+- scripts/run_release_tests.py --shard v609
+- scripts/static_preflight.py
+- .github/workflows/ci-v609.yml
