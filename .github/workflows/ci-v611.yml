@@ -1,0 +1,43 @@
+name: mgc-languages-v611-admin-analytics-frontend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v611-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-admin-analytics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v610 --timeout 45
+          python scripts/run_release_tests.py --shard v611 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/admin_analytics.js
+          node --check static/frontend/admin_ops.js
+          node --check static/frontend/content_governance.js
+          node --check static/frontend/manager_admin.js
+          node --check static/frontend/boot.js
+      - name: Admin analytics parity guard
+        run: |
+          grep -q "frontend.register('admin-analytics'" static/frontend/admin_analytics.js
+          grep -q "/api/admin/analytics" static/frontend/admin_analytics.js
+          grep -q "/api/admin/it-dashboard" static/frontend/admin_analytics.js
+          grep -q "/api/admin/learning-error-telemetry" static/frontend/admin_analytics.js
+          grep -q "/learning-stats" static/frontend/admin_analytics.js
+          grep -q "Slow-query fingerprints" static/frontend/admin_analytics.js
+          grep -q "frontend.get('admin-analytics').renderAdmin()" static/frontend/manager_admin.js
+          ! grep -q "return legacy().renderAdmin()" static/frontend/manager_admin.js

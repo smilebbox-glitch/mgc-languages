@@ -68,6 +68,8 @@ def main()->int:
     print('PASS: v6.0.9 content governance module ownership contract')
     run([sys.executable,'tests/v610_frontend_admin_ops_test.py'],timeout=30)
     print('PASS: v6.0.10 pilot governance and IT admin operations contract')
+    run([sys.executable,'tests/v611_frontend_admin_analytics_test.py'],timeout=30)
+    print('PASS: v6.0.11 admin analytics and IT dashboard contract')
     for rel in [
         'static/app.js','static/auth_department.js','static/frontend/runtime.js',
         'static/frontend/error_boundary.js','static/frontend/legacy_bridge.js',
@@ -76,8 +78,8 @@ def main()->int:
         'static/frontend/practice_games.js','static/frontend/support_notifications.js',
         'static/frontend/assistant_knowledge.js','static/frontend/final_assessment.js',
         'static/frontend/content_governance.js','static/frontend/admin_ops.js',
-        'static/frontend/manager_admin.js','static/frontend/navigation.js',
-        'static/frontend/session_lifecycle.js','static/frontend/boot.js'
+        'static/frontend/admin_analytics.js','static/frontend/manager_admin.js',
+        'static/frontend/navigation.js','static/frontend/session_lifecycle.js','static/frontend/boot.js'
     ]:
         run(['node','--check',rel],timeout=20)
     print('PASS: JavaScript syntax')
@@ -96,7 +98,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v6.0.10 frontend admin operations module preflight')
+    print('PASS: v6.0.11 frontend admin analytics module preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())

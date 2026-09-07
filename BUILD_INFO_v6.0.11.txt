@@ -1,0 +1,55 @@
+MGC Languages v6.0.11
+Scope: Frontend Admin Analytics & IT Dashboard
+
+Frontend ownership
+- manager/admin navigation boundary: static/frontend/manager_admin.js
+- Admin analytics orchestration: static/frontend/admin_analytics.js
+- Pilot Governance + IT mutations: static/frontend/admin_ops.js
+- Content Governance: static/frontend/content_governance.js
+
+Admin analytics endpoints preserved
+- GET /api/admin/analytics
+- GET /api/admin/users
+- GET /api/admin/taxonomy
+- GET /api/admin/terms
+- GET /api/admin/pilot-telemetry
+- GET /api/admin/it-dashboard
+- GET /api/admin/learning-error-telemetry
+- GET /api/admin/pilot/governance-summary
+- GET /api/admin/pilot/groups
+- GET /api/admin/pilot/features
+- GET /api/admin/learning/question-quality
+- GET /api/admin/users/{id}/learning-stats
+
+Presentation moved to modular code
+- Admin KPI dashboard
+- pilot telemetry strip
+- IT readiness / recovery / SLO / DB telemetry
+- backup and restore evidence
+- operational alerts presentation
+- slow-query fingerprints without SQL/parameters
+- maintenance controls presentation
+- recent operational events
+- aggregated learning-error telemetry
+- Admin users table and learning detail
+
+Role model
+- admin: full Admin / Analytics
+- editor: Content Governance only
+- manager: department-scoped team view only
+
+Compatibility
+- legacy renderAdmin remains as a fallback declaration but is no longer used by the active Admin route
+- historical itDashboardHTML, learningErrorTelemetryHTML and openAdminUser remain fallback declarations
+- backend API/OpenAPI unchanged
+- ORM/schema unchanged
+- Alembic head unchanged: c57d0a31f570
+- Putonghua curriculum/content unchanged
+- XP/SRS and notifications unchanged
+- runtime APP_VERSION unchanged
+
+Verification
+- tests/v611_frontend_admin_analytics_test.py
+- scripts/run_release_tests.py --shard v611
+- scripts/static_preflight.py
+- .github/workflows/ci-v611.yml
