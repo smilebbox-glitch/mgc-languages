@@ -33,16 +33,7 @@ jobs:
           for part in "${parts[@]}"; do
             echo "--- $part ---"
             wc -c "$part"
-            python3 - "$part" <<'PY'
-import pathlib, re, sys
-p = pathlib.Path(sys.argv[1])
-data = p.read_bytes()
-allowed = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\r\n\t '
-bad = [(i, b) for i, b in enumerate(data) if b not in allowed]
-print('INVALID_COUNT=' + str(len(bad)))
-print('INVALID_SAMPLE=' + repr(bad[:20]))
-print('TAIL=' + repr(data[-80:]))
-PY
+            python3 -c "import pathlib,sys; p=pathlib.Path(sys.argv[1]); d=p.read_bytes(); allowed=set(b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\\r\\n\\t '); bad=[(i,b) for i,b in enumerate(d) if b not in allowed]; print('INVALID_COUNT='+str(len(bad))); print('INVALID_SAMPLE='+repr(bad[:20])); print('TAIL='+repr(d[-80:]))" "$part"
           done
 
           cat "${parts[@]}" | tr -cd 'A-Za-z0-9+/=\n\r\t ' > "$clean"
