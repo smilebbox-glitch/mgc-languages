@@ -1,0 +1,33 @@
+MGC Languages v5.9.4 — Capacity & Load Hardening
+
+Scope:
+- fail-closed worker/pool/PostgreSQL connection budget
+- bounded Uvicorn concurrency/backlog/keep-alive
+- PostgreSQL max_connections wiring
+- nginx upstream keep-alive
+- repeatable smoke/office/burst load profiles
+- Windows LAN capacity safeguards
+
+Default LAN topology:
+- WEB_CONCURRENCY=2
+- DB_POOL_SIZE=5
+- DB_MAX_OVERFLOW=5
+- application theoretical DB peak=20
+- POSTGRES_MAX_CONNECTIONS=120
+- DB_CONNECTION_RESERVE=20
+- CAPACITY_EXPECTED_AUX_CONNECTIONS=8
+- usable app DB budget=92
+
+Verification:
+- tests/v594_capacity_hardening_test.py
+- tests/v594_capacity_runtime_test.py
+- release shard v594
+- focused ci-v594 PostgreSQL/app/nginx office-profile gate
+
+Compatibility:
+- Alembic head c57d0a31f570 unchanged
+- runtime APP_VERSION unchanged
+- no API/UI/content change
+- Putonghua (普通话) unchanged
+
+Stacked on v5.9.3; do not merge until previous stack and full CI/Docker are green.
