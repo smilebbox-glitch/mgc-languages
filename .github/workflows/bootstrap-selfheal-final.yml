@@ -1,0 +1,190 @@
+name: Verified self-heal v5.7.1 import
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/selfheal-final.trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Self-heal known damaged chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, re, subprocess
+
+          targets = {
+            '000': ('f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879', b'/Td6WFoAAATm1rRGBMDQnxOAoLoBIQEWAAAAAOM3etLkwTXv'),
+            '002': ('70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41', b'vILv/KHnquCPBJpCiwHu5pI7y1gUNtBaTi1XLINLw0QgX+0a'),
+            '003': ('98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a', b'zsFNRutdsq5V1q0Xi0W75SxVLDvBHiIdnIgfy1AXr/xqYE9N'),
+            '004': ('a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b', b'ljP0pDzEl/tr+ZNS0n1FcCPk2aN2U6UtX+NMFxNN09TltZr1'),
+            '005': ('3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a', b'7/O8CckQGjPdromMQJFyj6f6nezHHNzDPmqUNM19wUM/tQIi'),
+            '008': ('870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7', b'JGw/joZaKNUA9lphtW1Y60RePaMI7Lg6cSYsDOL3z2p5zrrg'),
+            '009': ('40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8', b'diGdBBAdJ79CHXTwTLVJNZ6bKI9bkpn4F9Wbz8tcnZfxP1N2'),
+            '010': ('fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3', b'+tQg5WTzKvMf5Qn52A18oQAGMODpBjUNHw/Nx39MVo0FUUaG'),
+            '012': ('0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88', b'5lmyLMhsvQSG3c5Dt5Mpu6CIs7Rye7ejsOdFvDoQL8FASqW3'),
+            '017': ('a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d', b'76DijmVrJRclrxrQcQ2TEiW0QphwjU1FLS1uS8bPsrXL+J/a'),
+            '018': ('de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f', b'bAxw/s58BJOqfM6IhZTqk7w8PKLXKuhpyg45nLxXIbzAZ+aE'),
+            '019': ('6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16', b'7sdCPd5N1VvkvRuCwhB6uSwZWXIlF7D3glTxHIadFBuUtQWw'),
+            '020': ('5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8', b'Qg6jQCkVD8u9i89Mzukd7W7tJ00MKBVkGwi8a2Y6SpX52SQX'),
+            '021': ('5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8', b'qgqlHnazf1hk3nSqTDn+5DlyA+QQMXgjkPvWscsG+7MILGup'),
+          }
+
+          def norm(data):
+              return re.sub(rb'\s+', b'', data)
+
+          refs = subprocess.check_output(
+              ['git','for-each-ref','--format=%(refname)','refs/remotes/origin/'], text=True
+          ).splitlines()
+          cache, sources, seen = {}, [], set()
+          for ref in refs:
+              try:
+                  rows = subprocess.check_output(
+                      ['git','ls-tree','-r',ref,'.bootstrap'], text=True, stderr=subprocess.DEVNULL
+                  ).splitlines()
+              except subprocess.CalledProcessError:
+                  continue
+              groups = {}
+              for row in rows:
+                  try:
+                      meta, path = row.split('\t',1)
+                      _mode, typ, sha = meta.split()
+                  except ValueError:
+                      continue
+                  if typ != 'blob' or '.part' not in path:
+                      continue
+                  if sha not in cache:
+                      try:
+                          cache[sha] = norm(subprocess.check_output(['git','cat-file','blob',sha]))
+                      except subprocess.CalledProcessError:
+                          continue
+                  data = cache[sha]
+                  h = hashlib.sha256(data).digest()
+                  if h not in seen:
+                      seen.add(h); sources.append((f'{ref}:{path}', data))
+                  m = re.match(r'^\.bootstrap/(.+?)\.part(\d+)$', path)
+                  if m:
+                      groups.setdefault(m.group(1), []).append((int(m.group(2)), data))
+              for prefix, parts in groups.items():
+                  stream = b''.join(data for _, data in sorted(parts))
+                  h = hashlib.sha256(stream).digest()
+                  if stream and h not in seen:
+                      seen.add(h); sources.append((f'{ref}:{prefix}-stream', stream))
+
+          print(f'History corpus: {len(cache)} blobs, {len(sources)} sources')
+          missing = []
+          for idx, (expected, prefix) in targets.items():
+              path = Path(f'.bootstrap/p.part{idx}')
+              if path.exists():
+                  current = norm(path.read_bytes())
+                  if len(current) == 18000 and hashlib.sha256(current).hexdigest() == expected:
+                      path.write_bytes(current)
+                      print(f'OK p.part{idx}')
+                      continue
+              recovered = None
+              label_found = None
+              for label, data in sources:
+                  pos = 0
+                  while True:
+                      pos = data.find(prefix, pos)
+                      if pos < 0:
+                          break
+                      candidate = data[pos:pos+18000]
+                      if len(candidate) == 18000 and hashlib.sha256(candidate).hexdigest() == expected:
+                          recovered, label_found = candidate, label
+                          break
+                      pos += 1
+                  if recovered is not None:
+                      break
+              if recovered is None:
+                  missing.append(idx)
+                  print(f'MISSING p.part{idx}')
+              else:
+                  path.write_bytes(recovered)
+                  print(f'RECOVERED p.part{idx} from {label_found}')
+          if missing:
+              raise SystemExit('Unrecoverable: ' + ','.join(missing))
+          PY
+
+      - name: Verify all 24 chunks and archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/p.sha256 <<'EOF'
+          f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879  .bootstrap/p.part000
+          7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b  .bootstrap/p.part001
+          70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41  .bootstrap/p.part002
+          98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a  .bootstrap/p.part003
+          a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b  .bootstrap/p.part004
+          3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a  .bootstrap/p.part005
+          3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160  .bootstrap/p.part006
+          8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec  .bootstrap/p.part007
+          870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7  .bootstrap/p.part008
+          40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8  .bootstrap/p.part009
+          fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3  .bootstrap/p.part010
+          ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124  .bootstrap/p.part011
+          0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88  .bootstrap/p.part012
+          1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47  .bootstrap/p.part013
+          2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7  .bootstrap/p.part014
+          0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78  .bootstrap/p.part015
+          34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb  .bootstrap/p.part016
+          a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d  .bootstrap/p.part017
+          de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f  .bootstrap/p.part018
+          6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16  .bootstrap/p.part019
+          5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8  .bootstrap/p.part020
+          5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8  .bootstrap/p.part021
+          2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff  .bootstrap/p.part022
+          5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4  .bootstrap/p.part023
+          EOF
+          sha256sum -c /tmp/p.sha256
+          : > /tmp/payload.b64
+          for i in $(seq 0 23); do
+            printf -v idx '%03d' "$i"
+            cat ".bootstrap/p.part${idx}" >> /tmp/payload.b64
+          done
+          base64 --decode /tmp/payload.b64 > /tmp/mgc-v571.tar.xz
+          echo '8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz' | sha256sum -c -
+          xz -t /tmp/mgc-v571.tar.xz
+          rm -rf /tmp/mgc-v571 && mkdir -p /tmp/mgc-v571
+          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
+
+      - name: Verify critical release files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/mgc-v571
+          echo '693adc9a53314e798e05a44b33be1470c7f6d2cf55d1f6fd98307309e4f27dc4  app.py' | sha256sum -c -
+          echo '3487bb75b547f473c29d35a329aae7a033df8e5062343b0031822702d411de7f  static/app.js' | sha256sum -c -
+          echo 'a79fc452a435d6427015e9a06129e999244acf9dca90f2975988ab119d656444  static/index.html' | sha256sum -c -
+          echo '1b1e23fa79676bb1017d746d45d0638498bc96a5e1bcba26167590de36c4d221  data/chinese.json' | sha256sum -c -
+          echo '74b3380fe50afc6d21d3fea8ade4ab442c6fa19050e5b9949c86e185645ec2b9  requirements.txt' | sha256sum -c -
+          grep -q 'MGC Languages v5.7.1' RELEASE_VERIFICATION_v5.7.1.txt
+          grep -q 'c57d0a31f570' RELEASE_VERIFICATION_v5.7.1.txt
+
+      - name: Import project baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.bootstrap/' \
+            --exclude='.github/workflows/' \
+            /tmp/mgc-v571/ ./
+          rm -rf .bootstrap
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore: import MGC Languages v5.7.1 baseline'
+          git push origin HEAD:main
