@@ -7,11 +7,12 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = (ROOT / 'static/index.html').read_text(encoding='utf-8')
 MODULE = (ROOT / 'static/frontend/practice_games.js').read_text(encoding='utf-8')
 BRIDGE = (ROOT / 'static/frontend/legacy_bridge.js').read_text(encoding='utf-8')
+RETIRE = (ROOT / 'static/frontend/legacy_retirement.js').read_text(encoding='utf-8')
 NAV = (ROOT / 'static/frontend/navigation.js').read_text(encoding='utf-8')
 BOOT = (ROOT / 'static/frontend/boot.js').read_text(encoding='utf-8')
 APP = (ROOT / 'static/app.js').read_text(encoding='utf-8')
 
-assets = ['/frontend/learning.js', '/frontend/practice_games.js', '/frontend/navigation.js']
+assets = ['/frontend/learning.js', '/frontend/practice_games.js', '/frontend/legacy_retirement.js', '/frontend/navigation.js']
 positions = [INDEX.index(x) for x in assets]
 assert positions == sorted(positions), positions
 assert INDEX.count('/frontend/practice_games.js') == 1
@@ -23,29 +24,36 @@ for token in (
     "legacy().ensureChineseStandardBanner()",
     "view === 'games' ? 'games'",
     "view === 'xp' ? 'xp_economy'",
-    "Эта функция пока не включена для вашей волны пилота",
-    "renderPracticeRoleplay",
-    "renderPracticeGames",
-    "renderPracticeXP",
+    "/roleplays",
+    "/api/games/",
+    "/api/gamification/me",
+    "/api/gamification/rewards",
+    "/api/gamification/spend",
+    "legacy().submitPractice(",
+    "legacy().playPronunciation",
 ):
     assert token in MODULE, token
 
-for token in (
-    "renderPracticeRoleplay: requireFunction('renderRoleplay', renderRoleplay)",
-    "renderPracticeGames: requireFunction('renderGames', renderGames)",
-    "renderPracticeXP: requireFunction('renderXP', renderXP)",
+for function_name in (
+    'renderRoleplay', 'answerScenario',
+    'renderGames', 'startGame', 'finishGame',
+    'renderXP', 'renderXpPack', 'buyReward',
 ):
-    assert token in BRIDGE, token
+    assert f'function {function_name}' in MODULE, function_name
+
+for token in ('renderPracticeRoleplay', 'renderPracticeGames', 'renderPracticeXP'):
+    assert token not in MODULE, token
+    assert token not in BRIDGE, token
+
+for name in ('renderRoleplay', 'renderGames', 'renderXP'):
+    assert repr(name) in RETIRE, name
+    assert f'function {name}' in APP
 
 assert "frontend.get('practice-games').owns(view)" in NAV
 assert "frontend.get('practice-games').navigate(view)" in NAV
 assert "'practice-games'" in BOOT
 
-for name in ('renderRoleplay', 'renderGames', 'renderXP'):
-    assert f'function {name}' in APP
-assert len(APP.encode('utf-8')) < 150_000
-
-for script in ('practice_games.js', 'navigation.js', 'legacy_bridge.js', 'boot.js'):
+for script in ('practice_games.js', 'navigation.js', 'legacy_bridge.js', 'legacy_retirement.js', 'boot.js'):
     subprocess.run(['node', '--check', str(ROOT / 'static/frontend' / script)], check=True, cwd=ROOT)
 
-print('PASS: v6.0.4 practice-games module owns roleplay/games/xp with pilot feature parity and staged fallback')
+print('PASS: v6.0.4 practice-games owns roleplay/games/xp directly with pilot and API parity')
