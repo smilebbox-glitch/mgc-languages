@@ -3,7 +3,7 @@ name: Bootstrap import v5.7.1
 on:
   push:
     paths:
-      - '.bootstrap/release.complete'
+      - '.bootstrap/xz.complete'
 
 permissions:
   contents: write
@@ -19,10 +19,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/release.b64.part* | base64 --decode > /tmp/mgc-v571.zip
-          echo "fffbb88fa50ec555e94331fd605fc529447178d6d19efb53971ba442d83f7297  /tmp/mgc-v571.zip" | sha256sum -c -
+          cat .bootstrap/xz.part* | base64 --decode > /tmp/mgc-v571.tar.xz
+          echo "ba4f3c1b032a3263e2003bf7f94af630cba35dc29ab3908ed37492cbbaf1f822  /tmp/mgc-v571.tar.xz" | sha256sum -c -
           mkdir -p /tmp/mgc-v571
-          unzip -q /tmp/mgc-v571.zip -d /tmp/mgc-v571
+          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
       - name: Import repository contents
         shell: bash
         run: |
