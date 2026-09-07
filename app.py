@@ -43,25 +43,8 @@ logger = logging.getLogger("mgc.languages")
 if not logging.getLogger().handlers:
     logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO").upper(), format="%(message)s")
 
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
-elif DATABASE_URL.startswith("postgresql://") and "+psycopg" not in DATABASE_URL:
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
-
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {
-    "connect_timeout": DB_CONNECT_TIMEOUT_SECONDS,
-    "options": f"-c statement_timeout={DB_STATEMENT_TIMEOUT_MS}",
-}
-engine_kwargs: dict[str, Any] = {"pool_pre_ping": True, "connect_args": connect_args}
-if not DATABASE_URL.startswith("sqlite"):
-    engine_kwargs.update({
-        "pool_size": DB_POOL_SIZE,
-        "max_overflow": DB_MAX_OVERFLOW,
-        "pool_timeout": max(1, int(os.getenv("DB_POOL_TIMEOUT", "30"))),
-        "pool_recycle": max(60, int(os.getenv("DB_POOL_RECYCLE", "1800"))),
-    })
-engine = create_engine(DATABASE_URL, **engine_kwargs)
-SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+# v5.7.3: database engine/session bootstrap extracted from the API module.
+from mgc.database import DATABASE_URL, SessionLocal, engine  # noqa: E402
 
 # Query telemetry is deliberately metadata-only: no SQL text, parameters or learning content are retained.
 _DB_QUERY_LOCK = threading.Lock()
