@@ -1,0 +1,23 @@
+MGC Languages v6.0.1
+Technical increment: Frontend Session Lifecycle
+
+Ownership:
+- session bootstrap: static/frontend/session_lifecycle.js
+- logout: static/frontend/session_lifecycle.js
+- API/CSRF: static/frontend/api_client.js
+- state: static/frontend/app_state.js
+- navigation: static/frontend/navigation.js
+
+Verification:
+- v600 frontend core regression
+- v601 session lifecycle regression
+- Node syntax checks
+- exact legacy DOMContentLoaded listener removal
+- capture-phase logout ownership
+
+Compatibility:
+- static/app.js unchanged
+- API/OpenAPI unchanged
+- ORM/Alembic unchanged (head c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话) content unchanged

@@ -48,11 +48,14 @@ def main()->int:
     print('PASS: v5.9.9 frontend shell/module-registry contract')
     run([sys.executable,'tests/v600_frontend_api_state_core_test.py'],timeout=30)
     print('PASS: v6.0.0 frontend API/state/navigation core contract')
+    run([sys.executable,'tests/v601_session_lifecycle_frontend_test.py'],timeout=30)
+    print('PASS: v6.0.1 modular session bootstrap/logout contract')
     for rel in [
         'static/app.js','static/auth_department.js','static/frontend/runtime.js',
         'static/frontend/legacy_bridge.js','static/frontend/service_status.js',
         'static/frontend/api_client.js','static/frontend/app_state.js',
-        'static/frontend/navigation.js','static/frontend/boot.js'
+        'static/frontend/navigation.js','static/frontend/session_lifecycle.js',
+        'static/frontend/boot.js'
     ]:
         run(['node','--check',rel],timeout=20)
     print('PASS: JavaScript syntax')
@@ -71,7 +74,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v6.0.0 frontend API/state core preflight')
+    print('PASS: v6.0.1 frontend session lifecycle preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
