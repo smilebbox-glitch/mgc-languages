@@ -1,4 +1,4 @@
-/* v6.0.12: canonical navigation/session-view facade. */
+/* v6.0.17: canonical navigation/session-view facade with pilot home ownership. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -8,6 +8,9 @@
   function legacy() { return frontend.get('legacy-app'); }
 
   function setView(view) {
+    if (frontend.has('pilot-home') && frontend.get('pilot-home').owns(view)) {
+      return frontend.get('pilot-home').navigate(view);
+    }
     if (frontend.has('learning') && frontend.get('learning').owns(view)) {
       return frontend.get('learning').navigate(view);
     }
