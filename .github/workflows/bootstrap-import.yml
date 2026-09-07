@@ -1,4 +1,4 @@
-name: Audit W backup for MGC Languages v5.7.1
+name: Verify complete MGC Languages v5.7.1 baseline
 
 on:
   push:
@@ -10,24 +10,25 @@ permissions:
   contents: read
 
 jobs:
-  audit:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Reconstruct and inspect W backup
+      - name: Reconstruct and verify complete P archive
         shell: bash
         run: |
           set -euo pipefail
-          archive='/tmp/mgc-v571-w.tar.xz'
-          encoded='/tmp/mgc-v571-w.b64'
+          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
+          encoded='/tmp/mgc-v571-p.b64'
+          archive='/tmp/mgc-v571-p.tar.xz'
 
           shopt -s nullglob
-          parts=(.bootstrap/w.part*)
+          parts=(.bootstrap/p.part*)
           echo "PART_COUNT=${#parts[@]}"
-          test "${#parts[@]}" -gt 0
+          test "${#parts[@]}" -eq 6
           printf 'PART=%s\n' "${parts[@]}"
 
           cat "${parts[@]}" > "$encoded"
@@ -36,27 +37,27 @@ jobs:
           test $((encoded_bytes % 4)) -eq 0
 
           base64 --decode "$encoded" > "$archive"
-          echo "ARCHIVE_BYTES=$(wc -c < "$archive")"
-          echo "ARCHIVE_SHA256=$(sha256sum "$archive" | awk '{print $1}')"
+          actual="$(sha256sum "$archive" | awk '{print $1}')"
+          echo "EXPECTED_SHA256=$expected"
+          echo "ACTUAL_SHA256=$actual"
+          test "$actual" = "$expected"
 
           xz -t "$archive"
           echo 'XZ_OK=1'
 
-          rm -rf /tmp/mgc-v571-w-audit
-          mkdir -p /tmp/mgc-v571-w-audit
-          tar -xJf "$archive" -C /tmp/mgc-v571-w-audit
+          rm -rf /tmp/mgc-v571-p-audit
+          mkdir -p /tmp/mgc-v571-p-audit
+          tar -xJf "$archive" -C /tmp/mgc-v571-p-audit
           echo 'TAR_OK=1'
 
-          echo '--- FILE COUNT ---'
-          find /tmp/mgc-v571-w-audit -type f | wc -l
-
+          echo "FILE_COUNT=$(find /tmp/mgc-v571-p-audit -type f | wc -l)"
           echo '--- ARCHIVE STRUCTURE ---'
-          find /tmp/mgc-v571-w-audit -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,400p'
+          find /tmp/mgc-v571-p-audit -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,400p'
 
           echo '--- VERSION / PRODUCT HINTS ---'
-          grep -RInE 'v?5\.7\.1|MGC Languages|mgc-languages|Putonghua|путунхуа|docker|version' /tmp/mgc-v571-w-audit \
+          grep -RInE 'v?5\.7\.1|MGC Languages|mgc-languages|Putonghua|путунхуа|docker|version' /tmp/mgc-v571-p-audit \
             --include='README*' --include='package.json' --include='pyproject.toml' \
             --include='docker-compose*.yml' --include='docker-compose*.yaml' \
             --include='*.md' 2>/dev/null | sed -n '1,300p' || true
 
-          echo 'W_BACKUP_VALID=1'
+          echo 'P_BASELINE_VERIFIED=1'
