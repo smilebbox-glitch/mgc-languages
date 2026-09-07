@@ -1,4 +1,4 @@
-/* v6.0.7: canonical navigation/session-view facade. */
+/* v6.0.8: canonical navigation/session-view facade. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -22,6 +22,9 @@
     }
     if (frontend.has('final-assessment') && frontend.get('final-assessment').owns(view)) {
       return frontend.get('final-assessment').navigate(view);
+    }
+    if (frontend.has('manager-admin') && frontend.get('manager-admin').owns(view)) {
+      return frontend.get('manager-admin').navigate(view);
     }
     return legacy().setView(view);
   }
