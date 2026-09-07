@@ -1,2 +1,0 @@
-v5.8.6 is intentionally stacked on refactor/v5.8.5-terminology-admin-router while GitHub-hosted Actions are unavailable.
-Retarget to main after PR #19 (v5.8.5) merges.
