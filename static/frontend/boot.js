@@ -1,4 +1,4 @@
-/* v6.0.2: validate modular frontend core and publish readiness. */
+/* v6.0.3: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -12,6 +12,7 @@
       'service-status',
       'api-client',
       'app-state',
+      'learning',
       'navigation',
       'session-lifecycle',
       'auth-department'
@@ -39,7 +40,7 @@
     if (main) {
       main.innerHTML = '<div class="card"><h2>Не удалось загрузить интерфейс</h2><p>' +
         String(message).replace(/[&<>"']/g, function (char) {
-          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
         }) + '</p></div>';
     }
     throw error;
