@@ -1,4 +1,4 @@
-/* v6.0.1: isolate the historical app.js globals behind one compatibility adapter. */
+/* v6.0.3: isolate historical app.js globals behind one compatibility adapter. */
 (function () {
   'use strict';
 
@@ -24,6 +24,12 @@
       loadLanguage: requireFunction('loadLanguage', loadLanguage),
       showApp: requireFunction('showApp', showApp),
       showAuth: requireFunction('showAuth', showAuth),
+      closeMenu: requireFunction('closeMenu', closeMenu),
+      ensureChineseStandardBanner: requireFunction('ensureChineseStandardBanner', ensureChineseStandardBanner),
+      renderLearningHome: requireFunction('renderHome', renderHome),
+      renderLearningTopics: requireFunction('renderTopics', renderTopics),
+      renderLearningQuiz: requireFunction('renderQuiz', renderQuiz),
+      renderLearningCourse30: requireFunction('renderCourse30', renderCourse30),
       setServiceStatus: requireFunction('setServiceStatus', setServiceStatus),
       toast: requireFunction('toast', toast),
       escapeHtml: requireFunction('esc', esc),
