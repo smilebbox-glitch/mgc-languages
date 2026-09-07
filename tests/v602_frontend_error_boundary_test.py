@@ -15,6 +15,7 @@ legacy_pos = INDEX.index('/app.js')
 assert runtime_pos < error_pos < legacy_pos
 assert INDEX.count('/frontend/error_boundary.js') == 1
 assert "'error-boundary'" in BOOT
+assert "frontend.get('error-boundary').reconcile()" in BOOT
 
 for token in (
     "const MAX_EVENTS = 20",
@@ -24,6 +25,8 @@ for token in (
     "dataset.mgcFrontend = 'degraded'",
     "window.addEventListener('error'",
     "window.addEventListener('unhandledrejection'",
+    "function reconcile()",
+    "reconcile: reconcile",
     "frontend.register('error-boundary'",
 ):
     assert token in BOUNDARY, token
@@ -63,10 +66,18 @@ for (const secret of ['supersecret','sessionvalue','bearervalue','tokvalue','que
 }
 if (item.source !== '/static/app.js') throw new Error('source was not query-scrubbed: ' + item.source);
 if (document.documentElement.dataset.mgcFrontend !== 'degraded') throw new Error('frontend not degraded');
+MGCFrontend.markReady();
+if (document.documentElement.dataset.mgcFrontend !== 'ready') throw new Error('runtime markReady setup failed');
+if (boundary.reconcile() !== 'degraded') throw new Error('reconcile did not preserve degraded state');
+if (document.documentElement.dataset.mgcFrontend !== 'degraded') throw new Error('degraded state was overwritten');
 for (let i = 0; i < 25; i++) boundary.record('error', 'message-' + i, '', i, 0);
 if (boundary.snapshot().length !== 20) throw new Error('ring buffer is not bounded');
 if (!listeners.error || !listeners.unhandledrejection) throw new Error('global error listeners missing');
-console.log(JSON.stringify({ok:true,count:boundary.snapshot().length,max:boundary.maxEvents}));
+const count = boundary.snapshot().length;
+if (boundary.clear() !== 'ready') throw new Error('clear did not restore ready state');
+if (boundary.snapshot().length !== 0) throw new Error('clear did not drop diagnostics');
+if (document.documentElement.dataset.mgcFrontend !== 'ready') throw new Error('ready state not restored after clear');
+console.log(JSON.stringify({ok:true,count:count,max:boundary.maxEvents,cleared:true}));
 '''
 result = subprocess.run(
     ["node", "-e", harness],
@@ -76,6 +87,6 @@ result = subprocess.run(
     text=True,
 )
 payload = json.loads(result.stdout.strip())
-assert payload == {"ok": True, "count": 20, "max": 20}
+assert payload == {"ok": True, "count": 20, "max": 20, "cleared": True}
 
-print("PASS: v6.0.2 frontend error boundary is bounded, privacy-safe and loaded before app.js")
+print("PASS: v6.0.2 frontend error boundary is bounded, privacy-safe and preserves early degraded state")
