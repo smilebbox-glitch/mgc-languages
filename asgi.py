@@ -6,7 +6,8 @@ auth, learning and practice/game route ownership. v5.8.5 moves public
 terminology and corporate terminology administration behind a dedicated
 APIRouter. v5.8.6 moves pronunciation/TTS HTTP ownership behind a dedicated
 router. v5.8.7 moves synthesis/cache/health/circuit-breaker state into a
-standalone TTS core while preserving observability and pronunciation contracts.
+standalone TTS core. v5.8.8 moves user administration and manager-team HTTP
+ownership behind a dedicated router over extracted auth/user/governance cores.
 """
 
 from mgc_core.runtime import (
@@ -24,6 +25,7 @@ from mgc_core.runtime import (
     SERVICE_BINDING_REPORT,
     TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT,
     TTS_BINDING_REPORT,
+    USER_MANAGER_ROUTER_BINDING_REPORT,
     WORKFLOW_BINDING_REPORT,
     app,
 )
@@ -45,4 +47,5 @@ __all__ = [
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
+    "USER_MANAGER_ROUTER_BINDING_REPORT",
 ]
