@@ -15,6 +15,7 @@ AUTH_ROUTER_PATH = ROOT / "mgc" / "routers" / "auth.py"
 LEARNING_ROUTER_PATH = ROOT / "mgc" / "routers" / "learning.py"
 PRACTICE_GAMES_ROUTER_PATH = ROOT / "mgc" / "routers" / "practice_games.py"
 TERMINOLOGY_ADMIN_ROUTER_PATH = ROOT / "mgc" / "routers" / "terminology_admin.py"
+PRONUNCIATION_ROUTER_PATH = ROOT / "mgc" / "routers" / "pronunciation.py"
 FRONTEND_PATH = ROOT / "static" / "app.js"
 STYLES_PATH = ROOT / "static" / "styles.css"
 
@@ -71,6 +72,11 @@ EXTRACTED_TERMINOLOGY_ADMIN_ROUTES = {
     ("POST", "/api/admin/terms/import"),
     ("GET", "/api/admin/taxonomy"),
 }
+EXTRACTED_PRONUNCIATION_ROUTES = {
+    ("GET", "/api/pronunciation/status"),
+    ("POST", "/api/pronunciation/audio"),
+    ("GET", "/api/pronunciation/audio"),
+}
 EXTRACTED_ROUTES = (
     EXTRACTED_SYSTEM_ROUTES
     | EXTRACTED_OBSERVABILITY_ROUTES
@@ -78,6 +84,7 @@ EXTRACTED_ROUTES = (
     | EXTRACTED_LEARNING_ROUTES
     | EXTRACTED_PRACTICE_GAME_ROUTES
     | EXTRACTED_TERMINOLOGY_ADMIN_ROUTES
+    | EXTRACTED_PRONUNCIATION_ROUTES
 )
 CRITICAL_ROUTES = (
     EXTRACTED_SYSTEM_ROUTES
@@ -85,6 +92,7 @@ CRITICAL_ROUTES = (
     | EXTRACTED_LEARNING_ROUTES
     | EXTRACTED_PRACTICE_GAME_ROUTES
     | EXTRACTED_TERMINOLOGY_ADMIN_ROUTES
+    | EXTRACTED_PRONUNCIATION_ROUTES
     | {
         ("POST", "/api/login"),
         ("POST", "/api/logout"),
@@ -216,6 +224,10 @@ def audit() -> dict[str, Any]:
         source="mgc/routers/terminology_admin.py", path=TERMINOLOGY_ADMIN_ROUTER_PATH,
         expected=EXTRACTED_TERMINOLOGY_ADMIN_ROUTES, errors=errors,
     )
+    pronunciation_router_routes = _router_contract(
+        source="mgc/routers/pronunciation.py", path=PRONUNCIATION_ROUTER_PATH,
+        expected=EXTRACTED_PRONUNCIATION_ROUTES, errors=errors,
+    )
     router_routes = (
         system_router_routes
         + observability_router_routes
@@ -223,6 +235,7 @@ def audit() -> dict[str, Any]:
         + learning_router_routes
         + practice_game_router_routes
         + terminology_admin_router_routes
+        + pronunciation_router_routes
     )
 
     routes = [
@@ -297,6 +310,7 @@ def audit() -> dict[str, Any]:
             "learning_router_route_count": len(learning_router_routes),
             "practice_game_router_route_count": len(practice_game_router_routes),
             "terminology_admin_router_route_count": len(terminology_admin_router_routes),
+            "pronunciation_router_route_count": len(pronunciation_router_routes),
             "sizes": sizes,
             "root_static_mount_line": mount_line,
         },
