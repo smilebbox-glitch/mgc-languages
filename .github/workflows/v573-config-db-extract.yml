@@ -1,0 +1,59 @@
+name: v5.7.3 config database extraction
+
+on:
+  push:
+    branches: [refactor/v5.7.3-config-database]
+    paths:
+      - '.github/workflows/v573-config-db-extract.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v5.7.3-config-database
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Extract config and database bootstrap
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('app.py')
+          s = p.read_text(encoding='utf-8')
+
+          config_start = s.index('ROOT = Path(__file__).resolve().parent\n')
+          config_end = s.index('logger = logging.getLogger("mgc.languages")\n')
+          config_import = (
+              '# v5.7.3: configuration extracted into a dependency-light module.\n'
+              '# Re-exported to preserve the historical app.<SETTING> compatibility contract.\n'
+              'from mgc.config import *  # noqa: F401,F403,E402\n\n'
+          )
+          s = s[:config_start] + config_import + s[config_end:]
+
+          db_start = s.index('if DATABASE_URL.startswith("postgres://"):\n')
+          db_end_marker = 'SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)\n'
+          db_end = s.index(db_end_marker, db_start) + len(db_end_marker)
+          db_import = (
+              '# v5.7.3: database engine/session bootstrap extracted from the API module.\n'
+              'from mgc.database import DATABASE_URL, SessionLocal, engine  # noqa: E402\n'
+          )
+          s = s[:db_start] + db_import + s[db_end:]
+          p.write_text(s, encoding='utf-8')
+
+          for path in ('app.py', 'asgi.py', 'mgc/config.py', 'mgc/database.py'):
+              compile(Path(path).read_text(encoding='utf-8'), path, 'exec')
+          PY
+      - name: Commit extraction
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.py mgc/
+          git diff --cached --check
+          git commit -m 'refactor: extract config and database bootstrap behind ASGI boundary'
+          git push origin HEAD:refactor/v5.7.3-config-database
