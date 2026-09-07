@@ -1,31 +1,57 @@
-name: Bootstrap import v5.7.1
+name: Restore MGC Languages v5.7.1 clean baseline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - restore-v5.7.1-clean
     paths:
-      - '.bootstrap/p.complete'
+      - '.github/workflows/bootstrap-import.yml'
 
 permissions:
   contents: write
 
 jobs:
-  import:
+  restore:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Reconstruct and verify release archive
+
+      - name: Verify archived baseline
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz
-          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz" | sha256sum -c -
-          xz -t /tmp/mgc-v571.tar.xz
+          archive='.bootstrap/v571.tar.xz'
+          checksum_file='.bootstrap/v571.complete'
+
+          test -s "$archive"
+          test -s "$checksum_file"
+
+          expected="$(tr -d '\r\n ' < "$checksum_file")"
+          test "${#expected}" -eq 64
+          printf '%s  %s\n' "$expected" "$archive" | sha256sum -c -
+          xz -t "$archive"
+
+      - name: Extract archived baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/mgc-v571
           mkdir -p /tmp/mgc-v571
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
-      - name: Import repository contents
+          tar -xJf .bootstrap/v571.tar.xz -C /tmp/mgc-v571
+
+          source_dir='/tmp/mgc-v571'
+          shopt -s dotglob nullglob
+          entries=("$source_dir"/*)
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            source_dir="${entries[0]}"
+          fi
+
+          test -d "$source_dir"
+          echo "SOURCE_DIR=$source_dir" >> "$GITHUB_ENV"
+
+      - name: Replace bootstrap repository with verified source tree
         shell: bash
         run: |
           set -euo pipefail
@@ -33,19 +59,23 @@ jobs:
             --exclude='.git/' \
             --exclude='.bootstrap/' \
             --exclude='.github/workflows/bootstrap-import.yml' \
-            /tmp/mgc-v571/ ./
+            "$SOURCE_DIR"/ ./
+
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap-import.yml
-      - name: Commit imported baseline
+
+      - name: Commit restored v5.7.1 baseline
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
+
           if git diff --cached --quiet; then
             echo 'No changes to commit'
             exit 0
           fi
-          git commit -m 'chore: import MGC Languages v5.7.1 baseline'
-          git push origin HEAD:main
+
+          git commit -m 'chore: restore verified MGC Languages v5.7.1 baseline'
+          git push origin HEAD:restore-v5.7.1-clean
