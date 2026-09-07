@@ -42,6 +42,8 @@ def main()->int:
     print('PASS: v5.9.6 concurrent write locking + CSRF/idempotency/isolation contracts')
     run([sys.executable,'tests/v597_user_login_department_test.py'],timeout=40)
     print('PASS: v5.9.7 department-aware user/admin login contract')
+    run([sys.executable,'tests/v598_session_user_isolation_test.py'],timeout=45)
+    print('PASS: v5.9.8 per-user session/practice isolation contract')
     run(['node','--check','static/app.js'],timeout=20)
     run(['node','--check','static/auth_department.js'],timeout=20)
     print('PASS: JavaScript syntax')
@@ -60,7 +62,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.9.7 test-ready user login + department + admin preflight')
+    print('PASS: v5.9.8 multi-user session + practice isolation preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
