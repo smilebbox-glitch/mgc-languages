@@ -1,4 +1,4 @@
-/* v6.0.8: canonical ownership for manager and admin views. */
+/* v6.0.9: canonical ownership for manager and admin views. */
 (function (root) {
   'use strict';
 
@@ -105,6 +105,11 @@
 
   async function renderAdmin() {
     assertAccess('admin');
+    const user = currentUser() || {};
+    if (user.role === 'editor') {
+      if (!frontend.has('content-governance')) throw new Error('Content governance module is missing');
+      return frontend.get('content-governance').renderEditor();
+    }
     return legacy().renderAdmin();
   }
 
