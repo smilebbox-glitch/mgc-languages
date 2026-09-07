@@ -15,7 +15,8 @@ def run(cmd:list[str], *, timeout:int=90, env:dict[str,str]|None=None) -> None:
 def main()->int:
     py_compile.compile(str(ROOT/'app.py'),doraise=True)
     py_compile.compile(str(ROOT/'asgi.py'),doraise=True)
-    for p in (ROOT/'mgc_core').rglob('*.py'): py_compile.compile(str(p),doraise=True)
+    for package in ('mgc_core','mgc'):
+        for p in (ROOT/package).rglob('*.py'): py_compile.compile(str(p),doraise=True)
     for p in (ROOT/'scripts').glob('*.py'): py_compile.compile(str(p),doraise=True)
     for p in (ROOT/'tests').glob('*.py'): py_compile.compile(str(p),doraise=True)
     data=json.loads((ROOT/'data/chinese_foundations.json').read_text(encoding='utf-8'))
@@ -24,7 +25,7 @@ def main()->int:
     assert data.get('context',{}).get('clues')
     assert len(data.get('putonghua',{}).get('groups',[]))==10
     assert (data.get('learning_standard') or {}).get('name')=='Путунхуа (普通话)'
-    print('PASS: Python compile + modular runtime + Chinese foundations/Putonghua scope')
+    print('PASS: Python compile + modular runtime/config/database + Chinese foundations/Putonghua scope')
     run([sys.executable,'scripts/api_contract_guard.py'],timeout=30)
     run([sys.executable,'scripts/content_integrity_guard.py'],timeout=60)
     print('PASS: API architecture + language content integrity guards')
