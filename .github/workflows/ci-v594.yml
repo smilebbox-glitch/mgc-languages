@@ -1,0 +1,71 @@
+name: mgc-languages-v594-capacity
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v594-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capacity-hardening:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Capacity contracts
+        run: python scripts/run_release_tests.py --shard v594 --timeout 45
+      - name: Safe connection budget
+        env:
+          WEB_CONCURRENCY: '2'
+          DB_POOL_SIZE: '5'
+          DB_MAX_OVERFLOW: '5'
+          POSTGRES_MAX_CONNECTIONS: '120'
+          DB_CONNECTION_RESERVE: '20'
+          CAPACITY_EXPECTED_AUX_CONNECTIONS: '8'
+        run: python scripts/capacity_preflight.py
+      - name: Unsafe connection budget must fail closed
+        run: |
+          set +e
+          WEB_CONCURRENCY=8 DB_POOL_SIZE=10 DB_MAX_OVERFLOW=10 POSTGRES_MAX_CONNECTIONS=120 DB_CONNECTION_RESERVE=20 CAPACITY_EXPECTED_AUX_CONNECTIONS=8 python scripts/capacity_preflight.py
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+      - name: Validate LAN compose model
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml config >/tmp/mgc-lan-compose.txt
+      - name: Start capacity topology
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml up -d --build
+      - name: Wait for edge readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/health/ready >/tmp/ready.json; then
+              cat /tmp/ready.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs
+          exit 1
+      - name: Verify PostgreSQL connection ceiling
+        run: |
+          value=$(docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T db psql -U mgc_languages -d mgc_languages -Atc 'show max_connections')
+          echo "PostgreSQL max_connections=$value"
+          test "$value" = "120"
+      - name: Verify app capacity report
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T app python scripts/capacity_preflight.py
+      - name: Office load profile
+        run: python scripts/multi_user_smoke.py --base-url http://127.0.0.1:8080 --profile office --max-p95-ms 5000
+      - name: Verify modular ASGI after load
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T app python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+      - name: Diagnostics
+        if: failure()
+        run: |
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml ps || true
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs || true
+      - name: Stop capacity topology
+        if: always()
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml down -v || true
