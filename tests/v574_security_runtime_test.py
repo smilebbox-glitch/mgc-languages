@@ -70,8 +70,8 @@ assert "frame-ancestors 'none'" in allowed.headers["content-security-policy"]
 
 logout = client.post("/api/logout", headers={"X-CSRF-Token": csrf})
 assert logout.status_code == 200, logout.text
-wrong = client.post("/api/login", json={"username": "v574user", "password": "wrong"})
-assert wrong.status_code == 401
+wrong = client.post("/api/login", json={"username": "v574user", "password": "DefinitelyWrong123!"})
+assert wrong.status_code == 401, wrong.text
 correct = client.post("/api/login", json={"username": "v574user", "password": "SecurityPass123!"})
 assert correct.status_code == 200, correct.text
 
