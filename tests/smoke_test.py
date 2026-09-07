@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+LEGACY_APP_PATH = ROOT / "mgc" / "legacy_app.py"
 
 
 def load_json(name: str):
@@ -15,11 +16,13 @@ def load_json(name: str):
 
 
 def load_function(name: str):
-    source = (ROOT / "app.py").read_text(encoding="utf-8")
+    # v5.8.0 keeps app.py as a thin compatibility facade; dependency-light smoke
+    # helpers are still extracted from the byte-for-byte historical implementation.
+    source = LEGACY_APP_PATH.read_text(encoding="utf-8")
     tree = ast.parse(source)
     node = next(item for item in tree.body if isinstance(item, ast.FunctionDef) and item.name == name)
     namespace = {"random": random, "HTTPException": RuntimeError}
-    exec(compile(ast.Module(body=[node], type_ignores=[]), "app.py", "exec"), namespace)
+    exec(compile(ast.Module(body=[node], type_ignores=[]), str(LEGACY_APP_PATH), "exec"), namespace)
     return namespace[name]
 
 
