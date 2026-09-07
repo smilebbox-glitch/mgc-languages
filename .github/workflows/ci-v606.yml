@@ -1,0 +1,38 @@
+name: mgc-languages-v606-assistant-knowledge-frontend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v606-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-assistant-knowledge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v605 --timeout 45
+          python scripts/run_release_tests.py --shard v606 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/assistant_knowledge.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+      - name: Assistant knowledge parity guard
+        run: |
+          grep -q "frontend.register('assistant-knowledge'" static/frontend/assistant_knowledge.js
+          grep -q "ai_assistant" static/frontend/assistant_knowledge.js
+          grep -q "/api/assistant" static/frontend/assistant_knowledge.js
+          grep -q "/api/knowledge?language=" static/frontend/assistant_knowledge.js
+          grep -q "frontend.get('assistant-knowledge').navigate(view)" static/frontend/navigation.js
