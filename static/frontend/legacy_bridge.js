@@ -1,4 +1,4 @@
-/* v6.0.14: isolate only the remaining shared/practice app.js compatibility surface. */
+/* v6.0.15: isolate only the remaining shared shell app.js compatibility surface. */
 (function () {
   'use strict';
 
@@ -26,9 +26,6 @@
       showAuth: requireFunction('showAuth', showAuth),
       closeMenu: requireFunction('closeMenu', closeMenu),
       ensureChineseStandardBanner: requireFunction('ensureChineseStandardBanner', ensureChineseStandardBanner),
-      renderPracticeRoleplay: requireFunction('renderRoleplay', renderRoleplay),
-      renderPracticeGames: requireFunction('renderGames', renderGames),
-      renderPracticeXP: requireFunction('renderXP', renderXP),
       newSessionId: requireFunction('newSessionId', newSessionId),
       submitPractice: requireFunction('submitPractice', submitPractice),
       playPronunciation: requireFunction('playPronunciation', playPronunciation),
