@@ -12,6 +12,7 @@ LEGACY_APP_PATH = ROOT / "mgc" / "legacy_app.py"
 SYSTEM_ROUTER_PATH = ROOT / "mgc" / "routers" / "system.py"
 OBSERVABILITY_ROUTER_PATH = ROOT / "mgc" / "routers" / "observability.py"
 AUTH_ROUTER_PATH = ROOT / "mgc" / "routers" / "auth.py"
+LEARNING_ROUTER_PATH = ROOT / "mgc" / "routers" / "learning.py"
 FRONTEND_PATH = ROOT / "static" / "app.js"
 STYLES_PATH = ROOT / "static" / "styles.css"
 
@@ -33,8 +34,27 @@ EXTRACTED_AUTH_ROUTES = {
     ("GET", "/api/auth/oidc/callback"),
     ("GET", "/api/me"),
 }
-EXTRACTED_ROUTES = EXTRACTED_SYSTEM_ROUTES | EXTRACTED_OBSERVABILITY_ROUTES | EXTRACTED_AUTH_ROUTES
-CRITICAL_ROUTES = EXTRACTED_SYSTEM_ROUTES | EXTRACTED_OBSERVABILITY_ROUTES | {
+EXTRACTED_LEARNING_ROUTES = {
+    ("GET", "/api/language/{language}/progress"),
+    ("POST", "/api/language/{language}/progress"),
+    ("GET", "/api/language/{language}/course30"),
+    ("POST", "/api/course-day/result"),
+    ("GET", "/api/review/queue"),
+    ("POST", "/api/review/result"),
+    ("GET", "/api/gamification/me"),
+    ("GET", "/api/gamification/levels"),
+    ("GET", "/api/gamification/rewards"),
+    ("POST", "/api/gamification/spend"),
+    ("GET", "/api/learning/preferences"),
+    ("PUT", "/api/learning/preferences"),
+}
+EXTRACTED_ROUTES = (
+    EXTRACTED_SYSTEM_ROUTES
+    | EXTRACTED_OBSERVABILITY_ROUTES
+    | EXTRACTED_AUTH_ROUTES
+    | EXTRACTED_LEARNING_ROUTES
+)
+CRITICAL_ROUTES = EXTRACTED_SYSTEM_ROUTES | EXTRACTED_OBSERVABILITY_ROUTES | EXTRACTED_LEARNING_ROUTES | {
     ("POST", "/api/login"),
     ("POST", "/api/logout"),
     ("GET", "/api/me"),
@@ -152,7 +172,16 @@ def audit() -> dict[str, Any]:
         source="mgc/routers/auth.py", path=AUTH_ROUTER_PATH,
         expected=EXTRACTED_AUTH_ROUTES, errors=errors,
     )
-    router_routes = system_router_routes + observability_router_routes + auth_router_routes
+    learning_router_routes = _router_contract(
+        source="mgc/routers/learning.py", path=LEARNING_ROUTER_PATH,
+        expected=EXTRACTED_LEARNING_ROUTES, errors=errors,
+    )
+    router_routes = (
+        system_router_routes
+        + observability_router_routes
+        + auth_router_routes
+        + learning_router_routes
+    )
 
     routes = [
         row for row in legacy_routes
@@ -223,6 +252,7 @@ def audit() -> dict[str, Any]:
             "system_router_route_count": len(system_router_routes),
             "observability_router_route_count": len(observability_router_routes),
             "auth_router_route_count": len(auth_router_routes),
+            "learning_router_route_count": len(learning_router_routes),
             "sizes": sizes,
             "root_static_mount_line": mount_line,
         },

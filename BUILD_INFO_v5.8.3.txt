@@ -1,0 +1,31 @@
+MGC Languages — v5.8.3 technical slice
+=====================================
+
+Slice: Learning Router Extraction
+Runtime entrypoint: asgi:app
+Runtime APP_VERSION fallback: 5.7.1 (unchanged)
+Database schema: unchanged
+Alembic head: c57d0a31f570
+
+Active learning router ownership:
+- progress: 2 routes
+- 30-day course: 2 routes
+- SRS review: 2 routes
+- gamification/XP: 4 routes
+- learning preferences: 2 routes
+- total: 12 routes
+
+Runtime prerequisites:
+- extracted auth core/current_user
+- extracted XP/SRS learning service
+- extracted terminology service
+
+Compatibility:
+- API/UI unchanged
+- XP economy unchanged
+- SRS algorithm unchanged
+- course completion/progress semantics unchanged
+- Putonghua (普通话) remains the Chinese learning standard
+- dialect material remains reference-only
+
+Required release gate: v583 + all prior regression shards + Docker binding/runtime smoke
