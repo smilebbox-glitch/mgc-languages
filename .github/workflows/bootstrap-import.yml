@@ -1,4 +1,4 @@
-name: Audit MGC Languages v5.7.1 archive
+name: Audit reconstructed MGC Languages v5.7.1 baseline
 
 on:
   push:
@@ -17,42 +17,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Audit archived baseline
+      - name: Reconstruct and audit baseline from bootstrap parts
         shell: bash
         run: |
           set -euo pipefail
-          archive='.bootstrap/v571.tar.xz'
-          checksum_file='.bootstrap/v571.complete'
+          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
+          archive='/tmp/mgc-v571-reconstructed.tar.xz'
 
-          test -s "$archive"
-          test -s "$checksum_file"
+          parts=(.bootstrap/p.part*)
+          test "${#parts[@]}" -eq 3
+          printf 'PART=%s\n' "${parts[@]}"
 
-          expected="$(tr -d '\r\n ' < "$checksum_file")"
+          cat "${parts[@]}" | base64 --decode > "$archive"
           actual="$(sha256sum "$archive" | awk '{print $1}')"
           echo "EXPECTED_SHA256=$expected"
           echo "ACTUAL_SHA256=$actual"
+          test "$actual" = "$expected"
 
-          echo '--- XZ TEST ---'
           xz -t "$archive"
           echo 'XZ_OK=1'
 
-          echo '--- ARCHIVE LIST ---'
-          tar -tJf "$archive" | sed -n '1,250p'
-
-          echo '--- EXTRACTED STRUCTURE ---'
           rm -rf /tmp/mgc-v571-audit
           mkdir -p /tmp/mgc-v571-audit
           tar -xJf "$archive" -C /tmp/mgc-v571-audit
-          find /tmp/mgc-v571-audit -maxdepth 4 -type f -printf '%P\n' | sort | sed -n '1,300p'
+
+          echo '--- ARCHIVE STRUCTURE ---'
+          find /tmp/mgc-v571-audit -maxdepth 4 -type f -printf '%P\n' | sort | sed -n '1,350p'
 
           echo '--- VERSION HINTS ---'
-          grep -RInE 'v?5\.7\.1|version|MGC Languages|mgc-languages' /tmp/mgc-v571-audit \
+          grep -RInE 'v?5\.7\.1|version|MGC Languages|mgc-languages|Putonghua|путунхуа' /tmp/mgc-v571-audit \
             --include='README*' --include='package.json' --include='pyproject.toml' \
             --include='docker-compose*.yml' --include='docker-compose*.yaml' \
-            --include='*.md' 2>/dev/null | sed -n '1,200p' || true
+            --include='*.md' 2>/dev/null | sed -n '1,250p' || true
 
-          if [ "$actual" = "$expected" ]; then
-            echo 'CHECKSUM_MATCH=1'
-          else
-            echo 'CHECKSUM_MATCH=0'
-          fi
+          echo 'RECONSTRUCTED_BASELINE_OK=1'
