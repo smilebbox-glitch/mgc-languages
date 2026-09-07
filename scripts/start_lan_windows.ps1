@@ -58,6 +58,23 @@ function Set-EnvValue([string]$Path, [string]$Key, [string]$Value) {
     Write-Utf8NoBom $Path $text
 }
 
+function Ensure-EnvValue([string]$Path, [string]$Key, [string]$Value) {
+    $text = Get-Content -LiteralPath $Path -Raw
+    $pattern = "(?m)^" + [Regex]::Escape($Key) + "=.*$"
+    if (-not [Regex]::IsMatch($text, $pattern)) {
+        Set-EnvValue $Path $Key $Value
+    }
+}
+
+function Get-EnvInt([string]$Path, [string]$Key, [int]$Default) {
+    $line = Get-Content -LiteralPath $Path | Where-Object { $_ -match ("^" + [Regex]::Escape($Key) + "=") } | Select-Object -First 1
+    if (-not $line) { return $Default }
+    $raw = ($line -split '=', 2)[1].Trim()
+    $parsed = 0
+    if ([int]::TryParse($raw, [ref]$parsed)) { return $parsed }
+    return $Default
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "Docker не найден. Установите/запустите Docker Desktop и повторите запуск."
 }
@@ -100,8 +117,16 @@ METRICS_TOKEN=$metricsToken
 REGISTRATION_ENABLED=true
 SESSION_TTL_HOURS=168
 WEB_CONCURRENCY=2
+UVICORN_LIMIT_CONCURRENCY=200
+UVICORN_BACKLOG=2048
+UVICORN_KEEP_ALIVE_SECONDS=5
 DB_POOL_SIZE=5
 DB_MAX_OVERFLOW=5
+DB_POOL_TIMEOUT=10
+DB_POOL_RECYCLE=1800
+POSTGRES_MAX_CONNECTIONS=120
+DB_CONNECTION_RESERVE=20
+CAPACITY_EXPECTED_AUX_CONNECTIONS=8
 TTS_ENABLED=true
 TTS_CONCURRENCY=2
 CORS_ORIGINS=
@@ -111,16 +136,39 @@ CORS_ORIGINS=
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
     Set-EnvValue $EnvFile "MGC_BIND_ADDRESS" "0.0.0.0"
     Set-EnvValue $EnvFile "MGC_TRUSTED_HOSTS" $trusted
+    Ensure-EnvValue $EnvFile "WEB_CONCURRENCY" "2"
+    Ensure-EnvValue $EnvFile "UVICORN_LIMIT_CONCURRENCY" "200"
+    Ensure-EnvValue $EnvFile "UVICORN_BACKLOG" "2048"
+    Ensure-EnvValue $EnvFile "UVICORN_KEEP_ALIVE_SECONDS" "5"
+    Ensure-EnvValue $EnvFile "DB_POOL_SIZE" "5"
+    Ensure-EnvValue $EnvFile "DB_MAX_OVERFLOW" "5"
+    Ensure-EnvValue $EnvFile "DB_POOL_TIMEOUT" "10"
+    Ensure-EnvValue $EnvFile "DB_POOL_RECYCLE" "1800"
+    Ensure-EnvValue $EnvFile "POSTGRES_MAX_CONNECTIONS" "120"
+    Ensure-EnvValue $EnvFile "DB_CONNECTION_RESERVE" "20"
+    Ensure-EnvValue $EnvFile "CAPACITY_EXPECTED_AUX_CONNECTIONS" "8"
 }
 
 $portLine = Get-Content -LiteralPath $EnvFile | Where-Object { $_ -match '^MGC_PORT=' } | Select-Object -First 1
 $Port = if ($portLine) { ($portLine -split '=', 2)[1].Trim() } else { "8080" }
+$Workers = Get-EnvInt $EnvFile "WEB_CONCURRENCY" 2
+$PoolSize = Get-EnvInt $EnvFile "DB_POOL_SIZE" 5
+$Overflow = Get-EnvInt $EnvFile "DB_MAX_OVERFLOW" 5
+$PgMax = Get-EnvInt $EnvFile "POSTGRES_MAX_CONNECTIONS" 120
+$Reserve = Get-EnvInt $EnvFile "DB_CONNECTION_RESERVE" 20
+$Aux = Get-EnvInt $EnvFile "CAPACITY_EXPECTED_AUX_CONNECTIONS" 8
+$AppPeak = $Workers * ($PoolSize + $Overflow)
+$Usable = $PgMax - $Reserve - $Aux
 
 Write-Host ""
 Write-Host "MGC Languages LAN" -ForegroundColor Cyan
 Write-Host "Server IP: $LanIp"
 Write-Host "Trusted hosts: $trusted"
-Write-Host "Workers: $(if ((Get-Content $EnvFile | Select-String '^WEB_CONCURRENCY=')) { ((Get-Content $EnvFile | Select-String '^WEB_CONCURRENCY=').Line -split '=',2)[1] } else { '2' })"
+Write-Host "Workers: $Workers"
+Write-Host "DB capacity: app peak $AppPeak / usable $Usable / PostgreSQL max $PgMax"
+if ($AppPeak -gt $Usable) {
+    throw "Небезопасная конфигурация DB capacity. Уменьшите workers/pool/overflow или согласуйте увеличение PostgreSQL max_connections."
+}
 Write-Host ""
 
 $composeArgs = @("compose", "--env-file", ".env.lan", "-f", "docker-compose.lan.yml", "up", "-d")
@@ -162,4 +210,5 @@ if ($NewConfig) {
 }
 
 Write-Host "Если коллеги не открывают ссылку, разрешите входящий TCP-порт $Port в Windows Firewall для Private/Domain сети." -ForegroundColor Yellow
+Write-Host "После запуска используйте scripts/multi_user_smoke.py для проверки capacity именно на целевом сервере." -ForegroundColor Yellow
 Write-Host "Для корпоративного rollout вместо открытого LAN-профиля используйте TLS + OIDC + явный TRUSTED_HOSTS." -ForegroundColor Yellow
