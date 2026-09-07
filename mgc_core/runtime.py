@@ -13,6 +13,7 @@ from .contracts import RouteContractReport, validate_route_contract
 from .governance_bridge import GovernanceBindingReport, bind_legacy_governance
 from .learning_bridge import LearningBindingReport, bind_legacy_learning
 from .learning_router_bridge import LearningRouterBindingReport, bind_learning_router
+from .notifications_router_bridge import NotificationsRouterBindingReport, bind_notifications_router
 from .observability_bridge import ObservabilityRouterBindingReport, bind_observability_router
 from .pilot_admin_router_bridge import PilotAdminRouterBindingReport, bind_pilot_admin_router
 from .practice_games_router_bridge import (
@@ -48,7 +49,7 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # learning binds before user services; services bind before workflows. TTS binds
     # before observability so Prometheus, pronunciation and admin ops share one state.
     # Active routers are replaced only after the FastAPI object exists. Auth core
-    # binds before all role-protected routers, including pilot/admin operations.
+    # binds before all authenticated/role-protected routers, including notifications.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -74,6 +75,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_user_manager_router(module, application)
     bind_pilot_admin_router(module, application)
     bind_admin_ops_router(module, application)
+    bind_notifications_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -131,6 +133,9 @@ PILOT_ADMIN_ROUTER_BINDING_REPORT: PilotAdminRouterBindingReport = getattr(
 ADMIN_OPS_ROUTER_BINDING_REPORT: AdminOpsRouterBindingReport = getattr(
     _legacy_module, "MGC_ADMIN_OPS_ROUTER_BINDING_REPORT"
 )
+NOTIFICATIONS_ROUTER_BINDING_REPORT: NotificationsRouterBindingReport = getattr(
+    _legacy_module, "MGC_NOTIFICATIONS_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -152,6 +157,7 @@ __all__ = [
     "USER_MANAGER_ROUTER_BINDING_REPORT",
     "PILOT_ADMIN_ROUTER_BINDING_REPORT",
     "ADMIN_OPS_ROUTER_BINDING_REPORT",
+    "NOTIFICATIONS_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",

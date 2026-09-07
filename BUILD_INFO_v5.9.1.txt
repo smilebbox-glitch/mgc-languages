@@ -1,0 +1,30 @@
+MGC Languages v5.9.1 — Notifications Router
+
+Scope: extract four notification/settings/nudge routes behind mgc.routers.notifications.
+
+Routes:
+GET /api/notifications/settings
+PUT /api/notifications/settings
+GET /api/notifications/pending
+POST /api/notifications/{nudge_id}/read
+
+Dependencies:
+- Auth Core current_user
+- Learning Service get_profile
+- existing notification preference/nudge handlers
+
+Verification:
+- tests/v591_notifications_router_core_test.py
+- tests/v591_notifications_router_runtime_test.py
+- release shard v591
+- static preflight compile/contracts
+- Docker notifications binding assertions
+
+Compatibility:
+- no DB/Alembic change; head c57d0a31f570
+- no API URL/OpenAPI intent change
+- no runtime APP_VERSION bump
+- no frontend/content change
+- Putonghua (普通话) scope unchanged
+
+Stacked on v5.9.0. Do not merge to main until preceding stacked PRs and full CI/Docker are green.
