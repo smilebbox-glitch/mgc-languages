@@ -1,0 +1,25 @@
+MGC Languages v6.0.0
+Technical increment: Frontend API & State Core
+
+Frontend modules:
+- runtime registry
+- legacy bridge
+- service status
+- API client
+- app state
+- navigation
+- department auth
+- boot validation
+
+Verification:
+- v599 shell regression
+- v600 frontend core regression
+- Node syntax checks
+- deterministic asset order
+
+Compatibility:
+- static/app.js unchanged
+- API/OpenAPI unchanged
+- ORM/Alembic unchanged (head c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话) learning standard unchanged
