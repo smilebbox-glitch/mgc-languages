@@ -13,6 +13,7 @@ SYSTEM_ROUTER_PATH = ROOT / "mgc" / "routers" / "system.py"
 OBSERVABILITY_ROUTER_PATH = ROOT / "mgc" / "routers" / "observability.py"
 AUTH_ROUTER_PATH = ROOT / "mgc" / "routers" / "auth.py"
 LEARNING_ROUTER_PATH = ROOT / "mgc" / "routers" / "learning.py"
+PRACTICE_GAMES_ROUTER_PATH = ROOT / "mgc" / "routers" / "practice_games.py"
 FRONTEND_PATH = ROOT / "static" / "app.js"
 STYLES_PATH = ROOT / "static" / "styles.css"
 
@@ -48,17 +49,30 @@ EXTRACTED_LEARNING_ROUTES = {
     ("GET", "/api/learning/preferences"),
     ("PUT", "/api/learning/preferences"),
 }
+EXTRACTED_PRACTICE_GAME_ROUTES = {
+    ("POST", "/api/practice/result"),
+    ("POST", "/api/games/{game_type}/start"),
+    ("POST", "/api/games/{session_id}/finish"),
+    ("POST", "/api/learning/question-attempt"),
+}
 EXTRACTED_ROUTES = (
     EXTRACTED_SYSTEM_ROUTES
     | EXTRACTED_OBSERVABILITY_ROUTES
     | EXTRACTED_AUTH_ROUTES
     | EXTRACTED_LEARNING_ROUTES
+    | EXTRACTED_PRACTICE_GAME_ROUTES
 )
-CRITICAL_ROUTES = EXTRACTED_SYSTEM_ROUTES | EXTRACTED_OBSERVABILITY_ROUTES | EXTRACTED_LEARNING_ROUTES | {
-    ("POST", "/api/login"),
-    ("POST", "/api/logout"),
-    ("GET", "/api/me"),
-}
+CRITICAL_ROUTES = (
+    EXTRACTED_SYSTEM_ROUTES
+    | EXTRACTED_OBSERVABILITY_ROUTES
+    | EXTRACTED_LEARNING_ROUTES
+    | EXTRACTED_PRACTICE_GAME_ROUTES
+    | {
+        ("POST", "/api/login"),
+        ("POST", "/api/logout"),
+        ("GET", "/api/me"),
+    }
+)
 EXPECTED_CSRF_EXEMPT = {"/api/login", "/api/register", "/api/auth/oidc/callback"}
 HARD_SIZE_BUDGETS = {
     "app.py": 8_000,
@@ -176,11 +190,16 @@ def audit() -> dict[str, Any]:
         source="mgc/routers/learning.py", path=LEARNING_ROUTER_PATH,
         expected=EXTRACTED_LEARNING_ROUTES, errors=errors,
     )
+    practice_game_router_routes = _router_contract(
+        source="mgc/routers/practice_games.py", path=PRACTICE_GAMES_ROUTER_PATH,
+        expected=EXTRACTED_PRACTICE_GAME_ROUTES, errors=errors,
+    )
     router_routes = (
         system_router_routes
         + observability_router_routes
         + auth_router_routes
         + learning_router_routes
+        + practice_game_router_routes
     )
 
     routes = [
@@ -253,6 +272,7 @@ def audit() -> dict[str, Any]:
             "observability_router_route_count": len(observability_router_routes),
             "auth_router_route_count": len(auth_router_routes),
             "learning_router_route_count": len(learning_router_routes),
+            "practice_game_router_route_count": len(practice_game_router_routes),
             "sizes": sizes,
             "root_static_mount_line": mount_line,
         },
