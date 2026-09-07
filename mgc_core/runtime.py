@@ -29,6 +29,10 @@ from .terminology_admin_router_bridge import (
     bind_terminology_admin_router,
 )
 from .tts_bridge import TTSBindingReport, bind_legacy_tts
+from .user_manager_router_bridge import (
+    UserManagerRouterBindingReport,
+    bind_user_manager_router,
+)
 from .workflow_bridge import WorkflowBindingReport, bind_legacy_workflows
 
 
@@ -42,7 +46,7 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # learning binds before user services; services bind before workflows. TTS binds
     # before observability so Prometheus and pronunciation share one runtime state.
     # Active routers are replaced only after the FastAPI object exists. Auth core
-    # binds before auth/learning/practice-game/terminology/pronunciation routers.
+    # binds before auth/learning/practice-game/terminology/pronunciation/user-manager routers.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -65,6 +69,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_practice_games_router(module, application)
     bind_terminology_admin_router(module, application)
     bind_pronunciation_router(module, application)
+    bind_user_manager_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -113,6 +118,9 @@ TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT: TerminologyAdminRouterBindingReport = g
 PRONUNCIATION_ROUTER_BINDING_REPORT: PronunciationRouterBindingReport = getattr(
     _legacy_module, "MGC_PRONUNCIATION_ROUTER_BINDING_REPORT"
 )
+USER_MANAGER_ROUTER_BINDING_REPORT: UserManagerRouterBindingReport = getattr(
+    _legacy_module, "MGC_USER_MANAGER_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -131,6 +139,7 @@ __all__ = [
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
+    "USER_MANAGER_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
