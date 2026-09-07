@@ -6,6 +6,7 @@ from types import ModuleType
 
 from fastapi import FastAPI
 
+from .admin_ops_router_bridge import AdminOpsRouterBindingReport, bind_admin_ops_router
 from .auth_bridge import AuthBindingReport, bind_legacy_auth
 from .auth_router_bridge import AuthRouterBindingReport, bind_auth_router
 from .contracts import RouteContractReport, validate_route_contract
@@ -45,9 +46,9 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     module = importlib.import_module(module_name)
     # Ordering is intentional: governance consumes the extracted client fingerprint;
     # learning binds before user services; services bind before workflows. TTS binds
-    # before observability so Prometheus and pronunciation share one runtime state.
+    # before observability so Prometheus, pronunciation and admin ops share one state.
     # Active routers are replaced only after the FastAPI object exists. Auth core
-    # binds before all role-protected routers, including pilot administration.
+    # binds before all role-protected routers, including pilot/admin operations.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -72,6 +73,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_pronunciation_router(module, application)
     bind_user_manager_router(module, application)
     bind_pilot_admin_router(module, application)
+    bind_admin_ops_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -126,6 +128,9 @@ USER_MANAGER_ROUTER_BINDING_REPORT: UserManagerRouterBindingReport = getattr(
 PILOT_ADMIN_ROUTER_BINDING_REPORT: PilotAdminRouterBindingReport = getattr(
     _legacy_module, "MGC_PILOT_ADMIN_ROUTER_BINDING_REPORT"
 )
+ADMIN_OPS_ROUTER_BINDING_REPORT: AdminOpsRouterBindingReport = getattr(
+    _legacy_module, "MGC_ADMIN_OPS_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -146,6 +151,7 @@ __all__ = [
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
     "USER_MANAGER_ROUTER_BINDING_REPORT",
     "PILOT_ADMIN_ROUTER_BINDING_REPORT",
+    "ADMIN_OPS_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
