@@ -4,7 +4,8 @@ v5.7.3-v5.7.9 established modular runtime, security, governance, learning,
 service and workflow boundaries. v5.8.0-v5.8.4 extracted system, observability,
 auth, learning and practice/game route ownership. v5.8.5 moves public
 terminology and corporate terminology administration behind a dedicated
-APIRouter over the extracted terminology/governance services.
+APIRouter. v5.8.6 moves pronunciation/TTS HTTP ownership behind a dedicated
+router while preserving the existing offline synthesis engine.
 """
 
 from mgc_core.runtime import (
@@ -16,6 +17,7 @@ from mgc_core.runtime import (
     LEARNING_ROUTER_BINDING_REPORT,
     OBSERVABILITY_ROUTER_BINDING_REPORT,
     PRACTICE_GAMES_ROUTER_BINDING_REPORT,
+    PRONUNCIATION_ROUTER_BINDING_REPORT,
     ROUTER_BINDING_REPORT,
     SECURITY_BINDING_REPORT,
     SERVICE_BINDING_REPORT,
@@ -39,4 +41,5 @@ __all__ = [
     "LEARNING_ROUTER_BINDING_REPORT",
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
+    "PRONUNCIATION_ROUTER_BINDING_REPORT",
 ]
