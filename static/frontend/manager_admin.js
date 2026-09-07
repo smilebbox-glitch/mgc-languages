@@ -1,4 +1,4 @@
-/* v6.0.9: canonical ownership for manager and admin views. */
+/* v6.0.11: canonical ownership for manager and admin views. */
 (function (root) {
   'use strict';
 
@@ -110,7 +110,8 @@
       if (!frontend.has('content-governance')) throw new Error('Content governance module is missing');
       return frontend.get('content-governance').renderEditor();
     }
-    return legacy().renderAdmin();
+    if (!frontend.has('admin-analytics')) throw new Error('Admin analytics module is missing');
+    return frontend.get('admin-analytics').renderAdmin();
   }
 
   async function render(view) {
