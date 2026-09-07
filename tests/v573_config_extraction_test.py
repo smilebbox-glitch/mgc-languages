@@ -8,19 +8,25 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "mgc" / "config.py"
+DATABASE_PATH = ROOT / "mgc" / "database.py"
 APP_PATH = ROOT / "app.py"
 
 assert CONFIG_PATH.is_file(), "v5.7.3 config module is missing"
+assert DATABASE_PATH.is_file(), "v5.7.3 database bootstrap module is missing"
 assert (ROOT / "mgc" / "__init__.py").is_file(), "mgc package marker is missing"
 
 config_source = CONFIG_PATH.read_text(encoding="utf-8")
+database_source = DATABASE_PATH.read_text(encoding="utf-8")
 app_source = APP_PATH.read_text(encoding="utf-8")
 
 # Configuration must remain dependency-light: importing settings must not create the API or DB engine.
 for forbidden in ("fastapi", "sqlalchemy", "uvicorn", "alembic"):
     assert forbidden not in config_source.lower(), f"mgc.config unexpectedly depends on {forbidden}"
+assert "fastapi" not in database_source.lower(), "database bootstrap must not depend on FastAPI"
 assert "from mgc.config import *" in app_source, "app.py no longer re-exports extracted settings"
+assert "from mgc.database import DATABASE_URL, SessionLocal, engine" in app_source, "app.py no longer consumes extracted DB bootstrap"
 assert "ROOT = Path(__file__).resolve().parent" not in app_source, "legacy inline config block returned to app.py"
+assert "create_engine(DATABASE_URL" not in app_source, "legacy inline engine construction returned to app.py"
 
 
 def run_probe(env_overrides: dict[str, str], code: str) -> dict:
@@ -83,6 +89,28 @@ assert pilot["tts_concurrency"] == 8
 assert pilot["db_pool_size"] == 100
 assert pilot["tts_cache_persistence"] == "ephemeral"
 
+database = run_probe(
+    {"DATABASE_URL": "sqlite:///:memory:"},
+    """
+import json
+import mgc.database as d
+print(json.dumps({
+    'sqlite_url': d.DATABASE_URL,
+    'dialect': d.engine.dialect.name,
+    'postgres_short': d.normalize_database_url('postgres://db.example/mgc'),
+    'postgres_standard': d.normalize_database_url('postgresql://db.example/mgc'),
+    'postgres_psycopg': d.normalize_database_url('postgresql+psycopg://db.example/mgc'),
+    'session_bound': d.SessionLocal.kw.get('bind') is d.engine,
+}, ensure_ascii=False))
+""",
+)
+assert database["sqlite_url"] == "sqlite:///:memory:"
+assert database["dialect"] == "sqlite"
+assert database["postgres_short"] == "postgresql+psycopg://db.example/mgc"
+assert database["postgres_standard"] == "postgresql+psycopg://db.example/mgc"
+assert database["postgres_psycopg"] == "postgresql+psycopg://db.example/mgc"
+assert database["session_bound"] is True
+
 compat = run_probe(
     {
         "APP_ENV": "development",
@@ -95,6 +123,7 @@ compat = run_probe(
 import json
 import app
 import mgc.config as c
+import mgc.database as d
 print(json.dumps({
     'same_root': app.ROOT == c.ROOT,
     'same_data': app.DATA_DIR == c.DATA_DIR,
@@ -102,6 +131,9 @@ print(json.dumps({
     'same_env': app.APP_ENV == c.APP_ENV,
     'same_version': app.APP_VERSION == c.APP_VERSION,
     'same_flags': app.BUILTIN_FEATURE_FLAGS == c.BUILTIN_FEATURE_FLAGS,
+    'same_database_url': app.DATABASE_URL == d.DATABASE_URL,
+    'same_engine': app.engine is d.engine,
+    'same_session_factory': app.SessionLocal is d.SessionLocal,
     'app_has_ready': hasattr(app, 'READY_REQUIRE_SCHEMA_HEAD'),
     'app_has_tts': hasattr(app, 'TTS_CONCURRENCY'),
 }, ensure_ascii=False))
@@ -109,4 +141,4 @@ print(json.dumps({
 )
 
 assert all(compat.values()), compat
-print("OK: v5.7.3 config extraction preserves environment defaults, bounds and app compatibility")
+print("OK: v5.7.3 config/database extraction preserves environment, DB bootstrap and app compatibility")
