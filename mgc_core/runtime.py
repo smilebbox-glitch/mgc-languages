@@ -20,6 +20,10 @@ from .practice_games_router_bridge import (
 from .router_bridge import RouterBindingReport, bind_system_router
 from .security_bridge import SecurityBindingReport, bind_legacy_security
 from .service_bridge import ServiceBindingReport, bind_legacy_services
+from .terminology_admin_router_bridge import (
+    TerminologyAdminRouterBindingReport,
+    bind_terminology_admin_router,
+)
 from .workflow_bridge import WorkflowBindingReport, bind_legacy_workflows
 
 
@@ -32,8 +36,8 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # Ordering is intentional: governance consumes the extracted client fingerprint;
     # learning binds before user services; services bind before workflows. Active
     # routers are replaced only after the FastAPI object exists. Auth core binds
-    # before auth/learning/practice-game routers, while practice-game router also
-    # requires the already-bound v5.7.9 workflow service.
+    # before auth/learning/practice-game/terminology routers. Terminology admin
+    # also requires extracted terminology and governance services.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -53,6 +57,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_auth_router(module, application)
     bind_learning_router(module, application)
     bind_practice_games_router(module, application)
+    bind_terminology_admin_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -92,6 +97,9 @@ LEARNING_ROUTER_BINDING_REPORT: LearningRouterBindingReport = getattr(
 PRACTICE_GAMES_ROUTER_BINDING_REPORT: PracticeGamesRouterBindingReport = getattr(
     _legacy_module, "MGC_PRACTICE_GAMES_ROUTER_BINDING_REPORT"
 )
+TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT: TerminologyAdminRouterBindingReport = getattr(
+    _legacy_module, "MGC_TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -107,6 +115,7 @@ __all__ = [
     "AUTH_ROUTER_BINDING_REPORT",
     "LEARNING_ROUTER_BINDING_REPORT",
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
+    "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
