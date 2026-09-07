@@ -1,0 +1,41 @@
+MGC Languages v6.0.15 — Practice / Games / XP Extraction
+
+Branch:
+  refactor/v6.0.15-practice-games-xp-extraction
+
+Stack base:
+  refactor/v6.0.14-core-learning-extraction
+
+Frontend ownership after this release:
+  learning          -> home, topics, quiz, course30
+  practice-games    -> roleplay, games, xp
+  notifications     -> notifications
+  assistant         -> assistant, knowledge
+  final-assessment  -> exam
+  chinese-reference -> chinese-basics / Tone Lab
+  manager-admin     -> manager/admin routing
+  content-governance/admin-ops/admin-analytics -> admin domains
+
+Practice API contracts retained:
+  GET  /api/language/{language}/roleplays
+  POST /api/practice/result
+  POST /api/games/{type}/start
+  POST /api/games/{session_id}/finish
+  GET  /api/gamification/me
+  GET  /api/gamification/rewards
+  POST /api/gamification/spend
+
+Legacy bridge:
+  No feature renderer adapters remain.
+  Remaining entries are shared shell/session/audio/practice primitives only.
+
+Database/Alembic:
+  No schema changes.
+  Expected Alembic head remains c57d0a31f570.
+
+Runtime application version:
+  Unchanged by this frontend refactor release.
+
+Pilot implication:
+  Feature-screen extraction is complete after this release.
+  Remaining work is shell physical cleanup plus pilot-readiness/deployment validation.
