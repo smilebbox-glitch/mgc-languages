@@ -1,0 +1,34 @@
+MGC Languages v5.9.9 — Frontend Modularization: Shell Boundary
+
+Goal:
+- create a safe migration boundary around the large historical frontend bundle;
+- allow future games/learning/admin UI extraction without rewriting app.js at once.
+
+Browser asset order:
+1. /frontend/runtime.js
+2. /app.js
+3. /auth_department.js
+4. /frontend/boot.js
+
+Frontend registry:
+- MGCFrontend.register/has/get/list
+- diagnostics + ready/failure state
+- duplicate module registration fails closed
+
+Registered modules:
+- legacy-app compatibility adapter
+- auth-department
+
+Verification:
+- tests/v599_frontend_shell_test.py
+- release shard v599
+- .github/workflows/ci-v599.yml
+- node --check for all active JS assets
+- registry runtime smoke
+
+Compatibility:
+- static/app.js unchanged;
+- UI and API unchanged;
+- no ORM/Alembic changes;
+- runtime APP_VERSION unchanged;
+- Putonghua content unchanged.
