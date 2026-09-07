@@ -1,4 +1,4 @@
-name: Recover and verify MGC Languages v5.7.1 baseline
+name: Audit W backup for MGC Languages v5.7.1
 
 on:
   push:
@@ -17,48 +17,46 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sanitize bootstrap transport and verify reconstructed baseline
+      - name: Reconstruct and inspect W backup
         shell: bash
         run: |
           set -euo pipefail
-          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
-          archive='/tmp/mgc-v571-reconstructed.tar.xz'
-          clean='/tmp/mgc-v571.b64'
+          archive='/tmp/mgc-v571-w.tar.xz'
+          encoded='/tmp/mgc-v571-w.b64'
 
           shopt -s nullglob
-          parts=(.bootstrap/p.part*)
+          parts=(.bootstrap/w.part*)
           echo "PART_COUNT=${#parts[@]}"
           test "${#parts[@]}" -gt 0
+          printf 'PART=%s\n' "${parts[@]}"
 
-          for part in "${parts[@]}"; do
-            echo "--- $part ---"
-            wc -c "$part"
-            python3 -c "import pathlib,sys; p=pathlib.Path(sys.argv[1]); d=p.read_bytes(); allowed=set(b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\\r\\n\\t '); bad=[(i,b) for i,b in enumerate(d) if b not in allowed]; print('INVALID_COUNT='+str(len(bad))); print('INVALID_SAMPLE='+repr(bad[:20])); print('TAIL='+repr(d[-80:]))" "$part"
-          done
+          cat "${parts[@]}" > "$encoded"
+          encoded_bytes="$(wc -c < "$encoded")"
+          echo "ENCODED_BYTES=$encoded_bytes"
+          test $((encoded_bytes % 4)) -eq 0
 
-          cat "${parts[@]}" | tr -cd 'A-Za-z0-9+/=\n\r\t ' > "$clean"
-          echo "CLEAN_B64_BYTES=$(wc -c < "$clean")"
-          base64 --decode "$clean" > "$archive"
-
-          actual="$(sha256sum "$archive" | awk '{print $1}')"
-          echo "EXPECTED_SHA256=$expected"
-          echo "ACTUAL_SHA256=$actual"
-          test "$actual" = "$expected"
+          base64 --decode "$encoded" > "$archive"
+          echo "ARCHIVE_BYTES=$(wc -c < "$archive")"
+          echo "ARCHIVE_SHA256=$(sha256sum "$archive" | awk '{print $1}')"
 
           xz -t "$archive"
           echo 'XZ_OK=1'
 
-          rm -rf /tmp/mgc-v571-audit
-          mkdir -p /tmp/mgc-v571-audit
-          tar -xJf "$archive" -C /tmp/mgc-v571-audit
+          rm -rf /tmp/mgc-v571-w-audit
+          mkdir -p /tmp/mgc-v571-w-audit
+          tar -xJf "$archive" -C /tmp/mgc-v571-w-audit
+          echo 'TAR_OK=1'
+
+          echo '--- FILE COUNT ---'
+          find /tmp/mgc-v571-w-audit -type f | wc -l
 
           echo '--- ARCHIVE STRUCTURE ---'
-          find /tmp/mgc-v571-audit -maxdepth 4 -type f -printf '%P\n' | sort | sed -n '1,350p'
+          find /tmp/mgc-v571-w-audit -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,400p'
 
-          echo '--- VERSION HINTS ---'
-          grep -RInE 'v?5\.7\.1|version|MGC Languages|mgc-languages|Putonghua|путунхуа' /tmp/mgc-v571-audit \
+          echo '--- VERSION / PRODUCT HINTS ---'
+          grep -RInE 'v?5\.7\.1|MGC Languages|mgc-languages|Putonghua|путунхуа|docker|version' /tmp/mgc-v571-w-audit \
             --include='README*' --include='package.json' --include='pyproject.toml' \
             --include='docker-compose*.yml' --include='docker-compose*.yaml' \
-            --include='*.md' 2>/dev/null | sed -n '1,250p' || true
+            --include='*.md' 2>/dev/null | sed -n '1,300p' || true
 
-          echo 'RECONSTRUCTED_BASELINE_OK=1'
+          echo 'W_BACKUP_VALID=1'
