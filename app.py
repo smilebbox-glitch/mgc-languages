@@ -1363,8 +1363,8 @@ def operational_event(event_type: str, *, severity: str = "warning", component: 
         throttle_key = event_type + "|" + component + "|" + json.dumps(metadata or {}, ensure_ascii=False, sort_keys=True, default=str)
         now_mono = time.monotonic()
         with _OP_EVENT_LOCK:
-            last = _OP_EVENT_LAST.get(throttle_key, 0.0)
-            if now_mono - last < throttle_seconds:
+            last = _OP_EVENT_LAST.get(throttle_key)
+            if last is not None and now_mono - last < throttle_seconds:
                 return
             _OP_EVENT_LAST[throttle_key] = now_mono
     try:
