@@ -1,0 +1,23 @@
+MGC Languages v6.0.2
+Technical increment: Frontend Error Boundary & Diagnostics
+
+Diagnostics:
+- global error listener
+- unhandledrejection listener
+- in-memory ring buffer: 20 events
+- secret/cookie/query redaction
+- degraded frontend state
+- no automatic upload/persistence
+
+Verification:
+- v601 session lifecycle regression
+- v602 error-boundary runtime/privacy regression
+- Node syntax checks
+- focused CI privacy guard
+
+Compatibility:
+- static/app.js unchanged
+- API/OpenAPI unchanged
+- ORM/Alembic unchanged (head c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话) content unchanged

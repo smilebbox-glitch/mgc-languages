@@ -1,0 +1,37 @@
+name: mgc-languages-v602-error-boundary
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v602-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-error-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Session lifecycle regression
+        run: python scripts/run_release_tests.py --shard v601 --timeout 45
+      - name: Error boundary contract
+        run: python scripts/run_release_tests.py --shard v602 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/error_boundary.js
+          node --check static/frontend/boot.js
+      - name: Privacy guard
+        run: |
+          ! grep -q 'localStorage' static/frontend/error_boundary.js
+          ! grep -q 'sendBeacon' static/frontend/error_boundary.js
+          ! grep -q 'document.cookie' static/frontend/error_boundary.js
+          grep -q 'MAX_EVENTS = 20' static/frontend/error_boundary.js
+          grep -q "mgcFrontend = 'degraded'" static/frontend/error_boundary.js
