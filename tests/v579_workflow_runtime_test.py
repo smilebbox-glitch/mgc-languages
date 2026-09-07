@@ -41,6 +41,7 @@ assert report.route_contract_preserved
 assert report.model_contract_preserved
 assert report.learning_service_captured
 assert report.terminology_service_captured
+assert report.user_scoped_practice_sessions
 
 bindings = app.MGC_PRACTICE_GAME_WORKFLOW_BINDINGS
 service_calls = {
@@ -50,7 +51,12 @@ service_calls = {
     "/api/learning/question-attempt": bindings.question_attempt,
 }
 for path, call in service_calls.items():
-    assert call.__module__ == "mgc.services.practice_games"
+    expected_module = (
+        "mgc.services.practice_isolation"
+        if path == "/api/practice/result"
+        else "mgc.services.practice_games"
+    )
+    assert call.__module__ == expected_module
     routes = [
         route for route in asgi.app.routes
         if isinstance(route, APIRoute)
@@ -92,4 +98,4 @@ assert duplicate.status_code == 200, duplicate.text
 assert duplicate.json()["duplicate"] is True
 assert duplicate.json()["profile"]["lifetime_xp"] == 40
 
-print("OK: v5.7.9 workflow service retains scoring/idempotency semantics behind current router ownership")
+print("OK: v5.7.9 workflow scoring/idempotency remain intact behind v5.9.8 user-scoped practice storage")
