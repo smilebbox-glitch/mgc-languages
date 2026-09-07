@@ -1,11 +1,17 @@
 name: mgc-languages-ci
+
 on:
   push:
   pull_request:
 
+concurrency:
+  group: mgc-languages-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   static:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -15,10 +21,14 @@ jobs:
         with:
           node-version: '22'
       - run: pip install -r requirements.txt
-      - run: bash scripts/static_preflight.sh
+      - name: Existing static preflight
+        run: bash scripts/static_preflight.sh
+      - name: Extended language content contracts
+        run: python tests/content_contract.py
 
   regression:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -34,9 +44,46 @@ jobs:
 
   image:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [static, regression]
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t mgc-languages:ci .
+      - name: Build Docker image
+        run: docker build -t mgc-languages:ci .
       - name: Verify offline TTS exists in image
         run: docker run --rm --entrypoint python mgc-languages:ci -c "import shutil; assert shutil.which('espeak-ng')"
+      - name: Start application container
+        run: |
+          docker run -d --name mgc-languages-ci \
+            -p 8000:8000 \
+            -e APP_ENV=development \
+            -e AUTH_MODE=local \
+            -e AUTO_CREATE_SCHEMA=true \
+            -e DATABASE_URL=sqlite:////tmp/mgc-languages-ci.db \
+            -e OIDC_STATE_SECRET=ci-runtime-state-secret-32-bytes \
+            -e TTS_CACHE_PERSISTENCE=ephemeral \
+            mgc-languages:ci
+      - name: Run automated runtime smoke
+        env:
+          BASE_URL: http://127.0.0.1:8000
+          SMOKE_STARTUP_TIMEOUT_SECONDS: '60'
+        run: python tests/runtime_smoke.py
+      - name: Capture runtime diagnostics
+        if: failure()
+        run: |
+          docker inspect mgc-languages-ci > docker-inspect.json 2>&1 || true
+          docker logs mgc-languages-ci > docker-runtime.log 2>&1 || true
+          cat docker-runtime.log || true
+      - name: Upload runtime diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mgc-languages-runtime-diagnostics
+          path: |
+            docker-inspect.json
+            docker-runtime.log
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop runtime container
+        if: always()
+        run: docker rm -f mgc-languages-ci || true
