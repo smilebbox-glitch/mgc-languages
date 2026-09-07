@@ -1,0 +1,52 @@
+MGC Languages
+Release: v6.0.10
+Scope: Frontend Pilot Governance & IT Admin
+
+Primary module:
+- static/frontend/admin_ops.js
+
+Pilot Governance ownership:
+- groups / waves
+- member add/remove
+- rollout status and dates
+- feature flags
+- learning-track assignments
+- quotas / governance overview
+- CSV export links
+
+IT Admin ownership:
+- maintenance cleanup dry-run
+- maintenance cleanup execution
+- alert acknowledgement
+
+Staged compatibility:
+- existing IT dashboard presentation renderer remains the current markup source
+- admin_ops.js installs modular handlers/adapters before manager_admin.js opens Admin / Analytics
+- historical pilotGovernanceHTML, bindPilotGovernance, itDashboardHTML and bindITDashboard declarations remain in static/app.js as fallbacks
+
+Role policy:
+- admin only
+- editor remains limited to content governance
+- manager remains limited to department team scope
+
+API contracts preserved:
+- POST /api/admin/pilot/groups
+- PATCH /api/admin/pilot/groups/{id}
+- POST/DELETE /api/admin/pilot/groups/{id}/members/{user_id}
+- PUT /api/admin/pilot/groups/{id}/features/{flag}
+- POST/DELETE /api/admin/pilot/groups/{id}/assignments[/assignment_id]
+- GET /api/admin/pilot/export.csv
+- POST /api/admin/maintenance/cleanup?dry_run=true|false
+- PATCH /api/admin/alerts/{id}/ack
+
+Database / migrations:
+- no ORM changes
+- no schema changes
+- Alembic head remains c57d0a31f570
+
+Compatibility:
+- backend API/OpenAPI unchanged
+- Putonghua content unchanged
+- XP/SRS unchanged
+- notifications unchanged
+- runtime APP_VERSION unchanged
