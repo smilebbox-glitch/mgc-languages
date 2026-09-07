@@ -1,0 +1,15 @@
+MGC Engineering AI Local v5.2.0 — Static Verification
+
+Backend regression: 159/159 PASS
+Engineering Knowledge Memory dedicated scenarios: 5/5 PASS
+v5.2 migration/idempotency: 1/1 PASS
+Human-facing API authorization: 141/141 guarded; 2 explicit exceptions
+Dockerfile static security: 32/32 PASS
+Compose/access/runtime security: 82/82 PASS
+Docker Compose YAML parse: 12/12 PASS
+TypeScript/TSX transpile syntax: PASS
+Shell syntax: PASS
+Docker build preflight: PASS
+Plain docker compose build: structurally supported
+
+Not executed here: real Docker image build, runtime container acceptance, Dockle image-layer scan.

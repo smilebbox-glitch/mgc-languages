@@ -1,0 +1,16 @@
+MGC Engineering AI Local v4.8.0 — static security verification
+
+Docker/Dockle-compatible Dockerfile preflight: 32/32 PASS
+Compose/access/runtime security preflight: 82/82 PASS
+Human-facing API authorization: 127/127 guarded
+Explicit exceptions: /health and signed HMAC integration webhook only
+Vehicle configuration evidence filtering: fail-closed
+Project / Manufacturing Area / Document ACL chain retained
+UNKNOWN applicability is never promoted to INCLUDED
+
+Important:
+This is static preflight evidence. A real Dockle image-layer scan requires built Docker images and must be executed on the corporate Docker build host:
+
+  docker compose build
+  make dockle
+  make acceptance

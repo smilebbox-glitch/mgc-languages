@@ -1,0 +1,22 @@
+release: 6.3.29
+pilot:
+  users: 30
+  duration_weeks: 6
+  required_roles: [R&D, Manufacturing Engineering, Quality Engineering]
+  inference_mode: cpu
+workload:
+  parts: 50000
+  documents: 10000
+  vehicle_count: 100000
+  quality_observations: 1000000
+  cad_storage_gb: 500
+certification:
+  target_host_assurance_required: true
+  target_host_performance_required: true
+  docker_runtime_acceptance_required: true
+  cve_scan_required: true
+  backup_restore_drill_required: true
+governance:
+  deployment_authorized: false
+  human_change_approval_required: true
+  source_systems_remain_authoritative: true

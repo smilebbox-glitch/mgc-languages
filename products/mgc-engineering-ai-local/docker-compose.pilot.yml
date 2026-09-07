@@ -1,0 +1,11 @@
+# Explicit development/pilot override. Do not use for engineer-only production.
+services:
+  api:
+    environment:
+      APP_ENV: dev
+      AUTH_MODE: api_key
+      ENGINEER_ONLY_ACCESS: "true"
+      ALLOW_API_KEY_AUTH_IN_PROD: "true"
+  gateway:
+    ports:
+      - "${PILOT_BIND_IP:-127.0.0.1}:${PILOT_PORT:-3000}:8080"

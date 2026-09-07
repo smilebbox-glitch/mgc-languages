@@ -1,0 +1,2 @@
+WARN: frontend/package-lock.json is absent
+WARN: backend requirements contain 25 declared ranges; use an approved resolved wheelhouse for enterprise image build

@@ -1,0 +1,79 @@
+# MGC Engineering AI Local v6.2.2 — Dependency/Architecture Verification
+
+PASS core_has_no_qdrant
+PASS core_has_no_sentence_transformers
+PASS core_has_no_neo4j
+PASS core_has_no_minio
+PASS ai_extends_core
+PASS ai_semantic_deps
+PASS advanced_extends_ai
+PASS advanced_projection_deps
+PASS shared_no_eager_services — []
+PASS registry_lazy_context_import — []
+PASS vector_store_optional_imports_lazy — []
+PASS docker_profile_arg
+PASS docker_profile_requirements
+PASS docker_bakes_build_profile
+PASS compose_build_profile_arg
+PASS core_image_core_runtime
+PASS core_image_rejects_ai_runtime
+PASS core_sensitive_import_without_optional_packages — []
+SUMMARY 18/18 PASS
+
+PASS release_version — 6.2.2
+PASS schema_compatibility — 6.2.0
+PASS six_bounded_contexts — ['configuration_change', 'engineering_core', 'intelligence_search', 'manufacturing_quality', 'platform_operations', 'supplier_field']
+PASS profile_monotonicity
+PASS core_postgres_required
+PASS core_qdrant_optional
+PASS core_neo4j_optional
+PASS ai_qdrant_required
+PASS advanced_graph_supported
+PASS postgres_core_invariant
+PASS core_object360_surface
+PASS core_context_surface
+PASS invalid_profile_fail_closed
+PASS qdrant_profiled
+PASS model_server_profiled
+PASS neo4j_advanced_only
+PASS api_no_optional_hard_dependency — ['postgres', 'redis']
+PASS core_profile_default
+PASS object360_api
+PASS runtime_api
+PASS connector_contract_api
+PASS object360_primary_nav
+PASS legacy_tabs_not_primary_nav
+PASS capability_gate
+PASS supplier_surface_gated
+PASS native_cad_surface_gated
+PASS generic_pre_auth_404
+SUMMARY 27/27 PASS
+
+PASS engineering_core.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/engineering_core.py
+PASS engineering_core.route_count — 53/53
+PASS configuration_change.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/configuration_change.py
+PASS configuration_change.route_count — 39/39
+PASS manufacturing_quality.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/manufacturing_quality.py
+PASS manufacturing_quality.route_count — 39/39
+PASS supplier_field.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/supplier_field.py
+PASS supplier_field.route_count — 22/22
+PASS intelligence_search.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/intelligence_search.py
+PASS intelligence_search.route_count — 20/20
+PASS platform_operations.exists — /mnt/data/v621_work/mgc-engineering-ai-local-v6.2.1/backend/app/api/contexts/platform_operations.py
+PASS platform_operations.route_count — 8/8
+PASS legacy_route_total — 181
+PASS no_duplicate_method_path — 0
+PASS facade_small — 19
+PASS facade_has_no_handlers
+PASS shared_route_free
+PASS shared_security_helpers
+PASS main_uses_context_registry
+PASS profile_aware_context_mount
+PASS ownership_manifest
+SUMMARY 21/21 PASS
+
+PASS baseline_count — 181
+PASS current_count — 181
+PASS method_path_exact — missing=0 added=0
+PASS handler_identity_and_ast_exact — handler signature/body/decorator AST unchanged
+SUMMARY 4/4 PASS

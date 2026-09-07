@@ -1,0 +1,32 @@
+{
+  "schema": "mgc.integration-adapter-contract.v1",
+  "version": "1",
+  "domain": "plm",
+  "system": {
+    "code": "plm-simulator",
+    "name": "MGC PLM Integration Simulator",
+    "source_domain": "plm",
+    "connector_type": "plm_rest",
+    "contract_version": "mgc-integration-v1",
+    "expected_freshness_minutes": 525600,
+    "required_fields": ["external_id", "name", "kind", "revision", "modified_at"],
+    "secret_refs": {},
+    "config": {
+      "base_url": "http://127.0.0.1:18090",
+      "health_path": "/health",
+      "list_path": "/api/assets",
+      "items_key": "items",
+      "next_cursor_key": "next_cursor",
+      "checkpoint_key": "checkpoint",
+      "certification": {
+        "declared_capabilities": ["stable_external_id", "revision_or_timestamp", "deterministic_pull", "idempotent_replay", "cached_read_only"],
+        "checkpoint_mode": "fingerprint",
+        "degraded_mode": "cached_read_only",
+        "writeback_enabled": false,
+        "allow_local_http": true,
+        "enforce_for_sync": true
+      }
+    }
+  },
+  "governance": {"simulator_only": true, "source_writeback": "forbidden"}
+}

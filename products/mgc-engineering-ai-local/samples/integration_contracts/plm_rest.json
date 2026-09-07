@@ -1,0 +1,15 @@
+{
+  "connector_type": "plm_rest",
+  "source_domain": "plm",
+  "expected_freshness_minutes": 60,
+  "required_fields": ["external_id", "name", "kind", "modified_at"],
+  "config": {
+    "base_url": "http://plm-gateway.internal",
+    "list_path": "/api/assets",
+    "download_path_template": "/api/assets/{external_id}/content",
+    "integration_contract": {
+      "allowed_kinds": ["drawing", "cad", "document", "specification"]
+    }
+  },
+  "secrets": {"token_env": "MGC_PLM_TOKEN"}
+}

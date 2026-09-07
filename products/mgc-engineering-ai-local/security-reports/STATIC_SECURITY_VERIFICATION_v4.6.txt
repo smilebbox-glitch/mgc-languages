@@ -1,0 +1,23 @@
+MGC Engineering AI Local v4.6.0 — STATIC SECURITY VERIFICATION
+
+Engineer-only API preflight: 113/113 human-facing routes protected
+Explicit exceptions: 2 (/health; HMAC-signed machine webhook)
+Dockerfile/Dockle-style static preflight: 32/32 PASS
+Compose/access/runtime security preflight: 82/82 PASS
+Plain docker compose build preflight: PASS
+Manufacturing-area / document / visible-part ACL applied to Cost & Engineering Economics: PASS (regression-tested)
+
+Cost governance:
+- economics is advisory only
+- ERP/Finance remains financial system of record
+- cost alerts do not modify technical release readiness
+- no automatic sourcing/investment approval
+
+Not executed in this environment:
+- real Docker image build/layer inspection (Docker CLI/daemon unavailable)
+- real Dockle image scan (Dockle unavailable)
+
+Required on corporate build host:
+  docker compose build
+  make dockle
+  make acceptance

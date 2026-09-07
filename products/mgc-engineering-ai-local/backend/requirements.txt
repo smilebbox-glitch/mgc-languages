@@ -1,0 +1,2 @@
+# Compatibility/full dependency envelope. Docker v6.2.2 selects a profile-specific manifest.
+-r requirements-advanced.txt

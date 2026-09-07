@@ -1,0 +1,10 @@
+MGC Engineering AI Local v5.3.0 — Static Verification
+Backend regression: 166/166 PASS
+Human-facing API routes: 152/152 guarded; 2 explicit non-human/public exceptions
+Dockerfile/Dockle-style static preflight: 32/32 PASS
+Compose/access/runtime security preflight: 82/82 PASS
+Compose YAML parse: 12/12 PASS
+CPU capacity preflight: PASS
+Build preflight: PASS; plain docker compose build structurally supported
+TSX transpile syntax: PASS
+Real Docker image build / Dockle layer scan: NOT EXECUTED (Docker/Dockle unavailable in packaging environment)

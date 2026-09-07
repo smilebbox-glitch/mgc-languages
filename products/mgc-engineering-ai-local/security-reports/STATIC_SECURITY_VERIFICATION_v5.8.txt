@@ -1,0 +1,123 @@
+MGC Engineering AI Local v5.8.0 — Static Security Verification
+
+Docker/Dockle static preflight
+PASS CIS-DI-0009              backend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              backend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              backend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              backend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              backend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              backend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0009              frontend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              frontend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              frontend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              frontend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              frontend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              frontend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/gateway/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/mock-integrations/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/mock-integrations/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/mock-integrations/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/mock-integrations/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/mock-integrations/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/mock-integrations/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/webhook-gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/webhook-gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/webhook-gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/webhook-gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/webhook-gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/webhook-gateway/Dockerfile — no embedded secrets in ENV
+PASS: 32 checks, 0 failures
+
+Compose/access/runtime security static preflight
+PASS api.no-new-privileges                    — disable privilege escalation
+PASS api.cap-drop                             — drop Linux capabilities
+PASS api.read-only                            — read-only root filesystem
+PASS api.tmpfs                                — writable runtime paths use tmpfs
+PASS worker.no-new-privileges                 — disable privilege escalation
+PASS worker.cap-drop                          — drop Linux capabilities
+PASS worker.read-only                         — read-only root filesystem
+PASS worker.tmpfs                             — writable runtime paths use tmpfs
+PASS frontend.no-new-privileges               — disable privilege escalation
+PASS frontend.cap-drop                        — drop Linux capabilities
+PASS frontend.read-only                       — read-only root filesystem
+PASS frontend.tmpfs                           — writable runtime paths use tmpfs
+PASS gateway.no-new-privileges                — disable privilege escalation
+PASS gateway.cap-drop                         — drop Linux capabilities
+PASS gateway.read-only                        — read-only root filesystem
+PASS gateway.tmpfs                            — writable runtime paths use tmpfs
+PASS cpu-model-server.no-new-privileges       — disable privilege escalation
+PASS cpu-model-server.cap-drop                — drop Linux capabilities
+PASS cpu-model-server.read-only               — read-only root filesystem
+PASS cpu-model-server.tmpfs                   — writable runtime paths use tmpfs
+PASS cpu-vision-server.no-new-privileges      — disable privilege escalation
+PASS cpu-vision-server.cap-drop               — drop Linux capabilities
+PASS cpu-vision-server.read-only              — read-only root filesystem
+PASS cpu-vision-server.tmpfs                  — writable runtime paths use tmpfs
+PASS auth-proxy.no-new-privileges             — disable privilege escalation
+PASS auth-proxy.cap-drop                      — drop Linux capabilities
+PASS auth-proxy.read-only                     — read-only root filesystem
+PASS auth-proxy.tmpfs                         — writable runtime paths use tmpfs
+PASS webhook-edge.no-new-privileges           — disable privilege escalation
+PASS webhook-edge.cap-drop                    — drop Linux capabilities
+PASS webhook-edge.read-only                   — read-only root filesystem
+PASS webhook-edge.tmpfs                       — writable runtime paths use tmpfs
+PASS base.postgres.not-host-published         — production service must not publish host ports
+PASS base.qdrant.not-host-published           — production service must not publish host ports
+PASS base.redis.not-host-published            — production service must not publish host ports
+PASS base.neo4j.not-host-published            — production service must not publish host ports
+PASS base.minio.not-host-published            — production service must not publish host ports
+PASS base.api.not-host-published              — production service must not publish host ports
+PASS base.worker.not-host-published           — production service must not publish host ports
+PASS base.frontend.not-host-published         — production service must not publish host ports
+PASS base.gateway.not-host-published          — production service must not publish host ports
+PASS gpu.model-server.not-host-published      — production service must not publish host ports
+PASS gpu.api.not-host-published               — production service must not publish host ports
+PASS gpu.worker.not-host-published            — production service must not publish host ports
+PASS cpu.model-server.not-host-published      — production service must not publish host ports
+PASS cpu.api.not-host-published               — production service must not publish host ports
+PASS cpu.worker.not-host-published            — production service must not publish host ports
+PASS cpu-vision.vision-server.not-host-published — production service must not publish host ports
+PASS cpu-vision.api.not-host-published        — production service must not publish host ports
+PASS cpu-vision.worker.not-host-published     — production service must not publish host ports
+PASS base.postgres.pull-policy                — air-gap service uses pull_policy: never
+PASS base.qdrant.pull-policy                  — air-gap service uses pull_policy: never
+PASS base.redis.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.neo4j.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.minio.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.api.pull-policy                     — air-gap service uses pull_policy: never
+PASS base.worker.pull-policy                  — air-gap service uses pull_policy: never
+PASS base.frontend.pull-policy                — air-gap service uses pull_policy: never
+PASS base.gateway.pull-policy                 — air-gap service uses pull_policy: never
+PASS gpu.model-server.pull-policy             — air-gap service uses pull_policy: never
+PASS cpu.model-server.pull-policy             — air-gap service uses pull_policy: never
+PASS cpu-vision.vision-server.pull-policy     — air-gap service uses pull_policy: never
+PASS docker-compose.airgap.yml.no-latest      — no floating latest image tags
+PASS docker-compose.gpu.yml.no-latest         — no floating latest image tags
+PASS docker-compose.cpu.yml.no-latest         — no floating latest image tags
+PASS docker-compose.cpu-vision.yml.no-latest  — no floating latest image tags
+PASS base.runtime-separated                   — base Compose must not hard-code GPU or CPU model server
+PASS gpu.requires-device                      — GPU overlay reserves NVIDIA device
+PASS cpu.no-gpu-layers                        — CPU profile explicitly disables GPU offload
+PASS cpu.no-model-webui                       — llama.cpp WebUI is disabled
+PASS cpu.model-api-key                        — CPU model server requires API key
+PASS sso.only-public-entry                    — SSO proxy is intended production host entry
+PASS sso.no-gateway-bypass                    — SSO overlay must not expose gateway
+PASS sso.backend-validates-oidc               — backend validates OIDC
+PASS sso.engineer-only                        — engineer-only authorization enabled
+PASS sso.group-gate                           — edge proxy requires engineering group
+PASS sso.pass-token                           — access token reaches backend validation layer
+PASS pilot.explicit-port                      — direct gateway exists only in explicit pilot override
+PASS backend.no-shared-key-prod               — production rejects shared API-key human access
+PASS launch.runtime-selector                  — canonical launch selects CPU/GPU overlay
+PASS launch.explicit-cpu                      — Makefile exposes explicit CPU launch
+PASS launch.explicit-gpu                      — Makefile exposes explicit GPU launch
+PASS: 82 checks, 0 failures
+
+PASS: 186 human-facing API routes enforce get_identity; 2 explicit exceptions

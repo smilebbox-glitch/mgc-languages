@@ -1,0 +1,25 @@
+# v6.3.20 external load-balancer reference only.
+# Replace addresses/certificates via corporate configuration management.
+# Safety invariant: no request redispatch/retry is enabled. Host loss affects the in-flight
+# request, while subsequent requests are sent only to nodes passing /api/v1/health/lb.
+global
+    log stdout format raw local0
+
+defaults
+    mode http
+    timeout connect 3s
+    timeout client  300s
+    timeout server  300s
+    retries 0
+
+frontend mgc_engineering
+    bind 10.0.0.10:8443 ssl crt /etc/haproxy/certs/mgc.pem
+    default_backend mgc_app_nodes
+
+backend mgc_app_nodes
+    balance roundrobin
+    option httpchk GET /api/v1/health/lb
+    http-check expect status 200
+    default-server inter 3s fall 2 rise 3
+    server mgc-app-a 10.0.10.11:18080 check
+    server mgc-app-b 10.0.20.11:18080 check

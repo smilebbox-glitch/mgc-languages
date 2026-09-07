@@ -1,0 +1,25 @@
+Enterprise security preflight
+PASS oidc.no-error-disclosure               — OIDC parser/JWKS errors are not returned to callers
+PASS oidc.asymmetric-allowlist              — symmetric/none algorithms rejected
+PASS trusted-header.fail-closed             — production trusted headers require explicit opt-in + proxy secret
+PASS oidc.bounded-skew                      — clock skew is configurable and bounded
+PASS cors.explicit-methods-headers          — CORS methods/headers are explicit, not wildcard
+PASS audit.admin-api                        — security posture/export/retention endpoints exist
+PASS schema-migrate.nnp                     — no privilege escalation
+PASS schema-migrate.caps                    — all Linux capabilities dropped
+PASS schema-migrate.readonly                — read-only root filesystem
+PASS enterprise-edge.nnp                    — no privilege escalation
+PASS enterprise-edge.caps                   — all Linux capabilities dropped
+PASS enterprise-edge.readonly               — read-only root filesystem
+PASS least-privilege.api-no-migrate         — runtime API does not perform schema DDL
+PASS least-privilege.beat-no-migrate        — scheduler does not perform schema DDL
+PASS least-privilege.migration-role         — one-shot migration connection is separate
+PASS tls.protocols                          — TLS 1.2/1.3 only
+PASS mtls.integration-edge                  — machine webhook edge requires client certificate
+PASS tls.hsts                               — HSTS enabled at enterprise edge
+PASS supply-chain.sbom                      — offline SBOM generator included
+PASS supply-chain.secrets                   — deterministic source secret scanner included
+PASS supply-chain.cve-hook                  — approved build-host CVE scanner hook included
+PASS supply-chain.npm-ci                    — frontend build uses npm ci when an approved lockfile is present
+PASS supply-chain.enterprise-no-latest      — enterprise deployment template forbids floating latest tags
+PASS: 23 checks, 0 failures

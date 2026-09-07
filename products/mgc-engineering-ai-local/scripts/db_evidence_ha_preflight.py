@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Static fail-closed verification for v6.3.34 Database & Evidence Storage HA."""
+from __future__ import annotations
+from pathlib import Path
+import sys
+
+ROOT=Path(__file__).resolve().parents[1]
+checks=[]
+def ck(name, ok, detail=""):
+    checks.append((name,bool(ok),detail))
+    if not ok: print(f"FAIL {name}: {detail}")
+
+rt=(ROOT/'backend/app/core/runtime_contract.py').read_text()
+cfg=(ROOT/'backend/app/core/config.py').read_text()
+auth=(ROOT/'backend/app/core/authoritative_ha.py').read_text()
+gate=(ROOT/'backend/app/core/authoritative_write_gate.py').read_text()
+main=(ROOT/'backend/app/main.py').read_text()
+session=(ROOT/'backend/app/db/session.py').read_text()
+ops=(ROOT/'backend/app/api/operations_routes.py').read_text()
+health=(ROOT/'backend/app/core/operational_health.py').read_text()
+support=(ROOT/'backend/app/services/production_support.py').read_text()
+dr=(ROOT/'backend/app/services/dr_consistency.py').read_text()
+backup=(ROOT/'scripts/backup_core.sh').read_text()
+marker=(ROOT/'scripts/evidence_ha_marker.py').read_text()
+rp=(ROOT/'scripts/authoritative_recovery_point.py').read_text()
+compose=(ROOT/'docker-compose.authoritative-ha.yml').read_text()
+base=(ROOT/'docker-compose.yml').read_text()
+
+ck('app_version_6319','APP_VERSION = "6.3.34"' in rt)
+ck('schema_unchanged_6313','SCHEMA_VERSION = "6.3.13"' in rt)
+ck('config_db_ha','database_ha_enabled: bool = False' in cfg)
+ck('config_expected_db_id','database_ha_expected_system_identifier' in cfg)
+ck('config_evidence_ha','evidence_ha_enabled: bool = False' in cfg)
+ck('config_evidence_cluster','evidence_ha_cluster_id' in cfg)
+ck('config_write_fence','authoritative_write_fence_enabled: bool = True' in cfg)
+ck('db_recovery_probe','pg_is_in_recovery()' in auth)
+ck('db_readonly_probe','SHOW transaction_read_only' in auth)
+ck('db_system_id_probe','pg_control_system()' in auth)
+ck('db_primary_required','connected_database_is_not_writable_primary' in auth)
+ck('unexpected_cluster_fails','unexpected_database_cluster' in auth)
+ck('marker_schema','mgc-evidence-ha-marker-v1' in auth and 'mgc-evidence-ha-marker-v1' in marker)
+ck('marker_active_required','evidence_generation_not_active' in auth)
+ck('marker_generation_required','invalid_evidence_generation' in auth)
+ck('marker_db_binding','evidence_database_identity_mismatch' in auth)
+ck('combined_write_safe','"write_safe": write_safe' in auth)
+ck('no_auto_db_promotion','"application_does_not_promote_postgresql": True' in auth)
+ck('external_stonith_explicit','"external_stonith_or_equivalent_fencing_required": True' in auth)
+ck('no_full_stack_claim','"full_stack_ha_claimed": False' in auth)
+ck('http_mutation_fence','AuthoritativeWriteGateMiddleware' in main and 'should_fence_http_method' in gate)
+ck('session_preflush_fence','"before_flush"' in session and 'assert_authoritative_write_safe' in session)
+ck('session_bulk_fence','"do_orm_execute"' in session and 'is_update' in session and 'is_delete' in session)
+ck('session_commit_fence','"before_commit"' in session and 'assert_authoritative_write_safe' in session)
+ck('readiness_gate','"authoritative_data_ha"' in health and 'unsafe_database_or_evidence_authority_blocks_core' in health)
+ck('operations_endpoint','/authoritative-ha' in ops)
+ck('support_bundle','"authoritative-ha.json"' in support)
+ck('ops_summary','"authoritative_data_ha": authoritative_ha' in support)
+ck('ops_red_on_unsafe','authoritative_ha.get("status") == "UNSAFE"' in support)
+ck('marker_excluded_fingerprint','".mgc-ha"' in dr)
+ck('marker_excluded_backup',"--exclude='./.mgc-ha'" in backup)
+ck('marker_atomic_replace','os.replace(tmp, path)' in marker)
+ck('marker_fsync','os.fsync' in marker)
+ck('marker_manual_promote','PROMOTE_EVIDENCE' in marker)
+ck('marker_stale_generation_fence','Generation changed; refuse stale promotion' in marker)
+ck('promotion_requires_recovery_point','--recovery-point' in marker and 'RECOVERY_SCHEMA' in marker)
+ck('recovery_point_full_hash','hash_files=True' in rp and 'hash_database=True' in rp)
+ck('recovery_point_requires_primary','writable approved PostgreSQL primary is not proven' in rp)
+ck('external_db_url_required','DATABASE_URL: ${DATABASE_URL:?' in compose)
+ck('external_storage_required','MGC_STORAGE_PATH:?' in compose)
+ck('expected_system_id_required','DATABASE_HA_EXPECTED_SYSTEM_IDENTIFIER:?' in compose)
+ck('evidence_cluster_required','EVIDENCE_HA_CLUSTER_ID:?' in compose)
+ck('base_db_url_override','DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://' in base)
+ck('base_storage_path_override','${MGC_STORAGE_PATH:-./storage}:/data/storage' in base)
+ck('production_never_auto_authorized','production_authorized' in marker and 'False' in marker)
+
+failed=[n for n,ok,_ in checks if not ok]
+if failed:
+    raise SystemExit('v6.3.34 DB/Evidence HA preflight failed: '+', '.join(failed))
+print(f'PASS: v6.3.34 Database & Evidence Storage HA preflight ({len(checks)}/{len(checks)})')

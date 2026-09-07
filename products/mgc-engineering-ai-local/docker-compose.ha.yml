@@ -1,0 +1,74 @@
+# v6.3.29 instance-level High Availability overlay.
+# This gives service/container redundancy on one Compose target. Physical host/zone HA still
+# requires an external orchestrator/load balancer and independently redundant PostgreSQL/storage.
+services:
+  api:
+    environment:
+      HA_ENABLED: "true"
+      DEPLOYMENT_SLOT: stable
+
+  api-ha:
+    extends:
+      file: docker-compose.yml
+      service: api
+    environment:
+      HA_ENABLED: "true"
+      DEPLOYMENT_SLOT: stable
+    expose: ["8080"]
+
+  worker-ha:
+    extends:
+      file: docker-compose.yml
+      service: worker
+
+  worker-cpu-ha:
+    extends:
+      file: docker-compose.yml
+      service: worker-cpu
+
+  worker-io-ha:
+    extends:
+      file: docker-compose.yml
+      service: worker-io
+
+  worker-cad-ha:
+    extends:
+      file: docker-compose.yml
+      service: worker-cad
+
+  worker-ai-ha:
+    profiles: ["ai", "advanced"]
+    extends:
+      file: docker-compose.yml
+      service: worker-ai
+
+  beat-ha:
+    extends:
+      file: docker-compose.yml
+      service: beat
+
+  frontend-ha:
+    extends:
+      file: docker-compose.yml
+      service: frontend
+    expose: ["8080"]
+
+  gateway:
+    environment:
+      API_UPSTREAM_PRIMARY: api:8080
+      API_UPSTREAM_SECONDARY: api-ha:8080
+      FRONTEND_UPSTREAM_PRIMARY: frontend:8080
+      FRONTEND_UPSTREAM_SECONDARY: frontend-ha:8080
+      HA_GATEWAY_MAX_FAILS: ${HA_GATEWAY_MAX_FAILS:-2}
+      HA_GATEWAY_FAIL_TIMEOUT: ${HA_GATEWAY_FAIL_TIMEOUT:-10s}
+    volumes:
+      - ./ops/gateway/templates/ha.conf.template:/etc/nginx/templates/default.conf.template:ro
+    depends_on:
+      api:
+        condition: service_healthy
+      api-ha:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+      frontend-ha:
+        condition: service_started

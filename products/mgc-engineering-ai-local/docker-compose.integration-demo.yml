@@ -1,0 +1,7 @@
+services:
+  integration-simulator:
+    build:
+      context: .
+      dockerfile: ops/mock-integrations/Dockerfile
+    expose: ["8090"]
+    restart: unless-stopped

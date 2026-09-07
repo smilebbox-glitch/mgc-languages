@@ -1,0 +1,34 @@
+MGC Engineering AI Local v3.8.0 — STATIC SECURITY VERIFICATION
+
+Packaging-time checks performed:
+- backend regression tests: 62/62 PASS
+- Python compile: PASS
+- frontend TypeScript syntax parse: PASS (dependency-backed build requires Docker build stage)
+- shell syntax: PASS
+- Docker build-context preflight: PASS
+- Dockerfile Dockle/CIS-aligned source preflight: 32/32 PASS
+- Compose/access/runtime security preflight: 82/82 PASS
+- human-facing API identity enforcement: 59/59 guarded; 2 explicit machine/health exceptions
+- Engineering Change separation of duties: PASS
+- ChangeEvent tamper-evident hash chain: PASS
+- stale source SHA-256 protection before ECO release: PASS
+- changed BOM impact-scope detection before ECO release: PASS
+- additive/idempotent v3.4-v3.7 -> v3.8 schema migration: PASS
+
+NOT performed in this packaging environment:
+- real Docker image build (Docker CLI/daemon unavailable)
+- real Dockle image-layer scan (Docker/Dockle unavailable)
+- corporate OIDC acceptance with real engineering groups
+- KOMPAS/T-FLEX licensed-gateway production conversion
+- target-hardware CPU/GPU throughput benchmark
+
+Required on connected Docker build host:
+  docker compose build
+  make dockle
+  make acceptance
+
+Required governance acceptance:
+- author != technical reviewer
+- technical reviewer != final approver
+- high/critical ECO requires approved Design Review
+- changed impact evidence forces ECR back to impact review

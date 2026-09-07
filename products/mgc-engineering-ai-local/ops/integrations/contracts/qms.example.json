@@ -1,0 +1,56 @@
+{
+  "domain": "qms",
+  "governance": {
+    "credentials": "environment_reference_only",
+    "live_probe": "read_only",
+    "source_writeback": "forbidden"
+  },
+  "schema": "mgc.integration-adapter-contract.v1",
+  "system": {
+    "code": "qms-gateway",
+    "config": {
+      "base_url": "https://qms-gateway.internal.example",
+      "certification": {
+        "checkpoint_mode": "fingerprint",
+        "declared_capabilities": [
+          "stable_external_id",
+          "source_timestamp",
+          "deterministic_pull",
+          "idempotent_replay",
+          "cached_read_only"
+        ],
+        "degraded_mode": "cached_read_only",
+        "enforce_for_sync": true,
+        "max_cache_staleness_minutes": 480,
+        "max_quarantine_ratio": 0.02,
+        "min_sync_success_rate": 0.95,
+        "recovery_sync_enabled": true,
+        "writeback_enabled": false
+      },
+      "checkpoint_key": "checkpoint",
+      "health_path": "/health",
+      "items_key": "items",
+      "list_path": "/api/assets",
+      "next_cursor_key": "next_cursor",
+      "reconciliation": {
+        "role": "defects"
+      },
+      "record_mode": true
+    },
+    "connector_type": "qms_rest",
+    "contract_version": "mgc-integration-v1",
+    "expected_freshness_minutes": 240,
+    "name": "QMS Corporate Gateway",
+    "required_fields": [
+      "external_id",
+      "name",
+      "kind",
+      "modified_at"
+    ],
+    "secret_refs": {
+      "token_env": "MGC_QMS_TOKEN"
+    },
+    "source_domain": "qms"
+  },
+  "version": "1"
+}

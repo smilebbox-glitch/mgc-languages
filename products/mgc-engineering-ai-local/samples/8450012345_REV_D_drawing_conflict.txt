@@ -1,0 +1,6 @@
+Drawing
+Part Number: 8450012345
+Revision: D
+Material: DP780
+Thickness: 1.5 mm
+Note: This intentionally conflicts with the demo Rev D specification so the Validation module has something to detect.

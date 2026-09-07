@@ -1,0 +1,58 @@
+services:
+  vision-server:
+    image: ${LLAMA_CPP_IMAGE:?Set LLAMA_CPP_IMAGE to an approved pinned llama.cpp server tag or digest}
+    pull_policy: never
+    command:
+      - --model
+      - /models/cpu-vision/${CPU_VLM_MODEL_FILE:?Set CPU_VLM_MODEL_FILE to a staged multimodal GGUF}
+      - --mmproj
+      - /models/cpu-vision/${CPU_VLM_MMPROJ_FILE:?Set CPU_VLM_MMPROJ_FILE to a staged multimodal projector GGUF}
+      - --alias
+      - ${CPU_VLM_SERVED_MODEL_NAME:-mgc-local-cpu-vision}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+      - --ctx-size
+      - ${CPU_VLM_CONTEXT_SIZE:-8192}
+      - --threads
+      - ${CPU_THREADS:-8}
+      - --threads-batch
+      - ${CPU_THREADS_BATCH:-8}
+      - --parallel
+      - "1"
+      - --gpu-layers
+      - "0"
+      - --no-mmproj-offload
+      - --jinja
+      - --no-webui
+      - --api-key
+      - ${LOCAL_MODEL_API_KEY:-local-only}
+    volumes:
+      - ./models/cpu-vision:/models/cpu-vision:ro
+    expose: ["8001"]
+    networks: [mgc_internal]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    user: "65532:65532"
+    restart: unless-stopped
+
+  api:
+    environment:
+      VLM_BASE_URL: http://vision-server:8001/v1
+      VLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      VLM_MODEL: ${CPU_VLM_SERVED_MODEL_NAME:-mgc-local-cpu-vision}
+      VLM_TIMEOUT_SECONDS: ${CPU_VLM_TIMEOUT_SECONDS:-900}
+    depends_on:
+      vision-server: {condition: service_started}
+
+  worker:
+    environment:
+      VLM_BASE_URL: http://vision-server:8001/v1
+      VLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      VLM_MODEL: ${CPU_VLM_SERVED_MODEL_NAME:-mgc-local-cpu-vision}
+      VLM_TIMEOUT_SECONDS: ${CPU_VLM_TIMEOUT_SECONDS:-900}
+    depends_on:
+      vision-server: {condition: service_started}

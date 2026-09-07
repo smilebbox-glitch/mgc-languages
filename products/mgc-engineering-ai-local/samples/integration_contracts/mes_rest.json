@@ -1,0 +1,13 @@
+{
+  "connector_type": "mes_rest",
+  "source_domain": "mes",
+  "expected_freshness_minutes": 15,
+  "required_fields": ["external_id", "kind", "modified_at", "metadata.vin"],
+  "config": {
+    "base_url": "http://mes-gateway.internal",
+    "list_path": "/api/build-genealogy-events",
+    "record_mode": true,
+    "integration_contract": {"allowed_kinds": ["build", "genealogy", "process_result"]}
+  },
+  "secrets": {"token_env": "MGC_MES_TOKEN"}
+}

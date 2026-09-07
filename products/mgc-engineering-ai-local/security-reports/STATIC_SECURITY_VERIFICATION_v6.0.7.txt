@@ -1,0 +1,18 @@
+MGC Engineering AI Local v6.0.7 — static/release verification
+
+Backend regression: 290/290 PASS
+Dedicated v6.0.7: 8/8 PASS
+UX acceptance: 9/9 PASS
+Docker static: 38/38 PASS
+Compose/runtime security: 98/98 PASS
+Human API authorization: 212/212 guarded, 4 explicit exceptions
+Enterprise security: 22/22 PASS
+Secret scan: 0 findings
+SBOM: 37 declared components
+Compose YAML: 13/13 PASS
+TSX transpile: PASS
+Python compileall: PASS
+Shell syntax: PASS
+CPU/build/DR/performance/pilot preflights: PASS
+
+Not executed in packaging environment: real Docker image build, Dockle, Trivy/Grype CVE scan, production npm ci, resolved backend wheelhouse scan, corporate AD/OIDC/mTLS negative tests, live DR drill and target-host Pilot/Enterprise load certification.

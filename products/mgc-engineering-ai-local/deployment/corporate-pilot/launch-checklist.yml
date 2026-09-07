@@ -1,0 +1,28 @@
+release: 6.3.29
+mandatory:
+  - target_host_assurance_pass
+  - target_host_capacity_profile_accepted
+  - target_host_performance_profile_pass
+  - docker_runtime_acceptance_pass
+  - cve_scan_pass
+  - dependency_lock_pass
+  - oidc_negative_tests_pass
+  - tls_mtls_negative_tests_pass
+  - runtime_db_least_privilege_pass
+  - backup_restore_drill_pass
+  - network_firewall_approved
+  - dns_ntp_storage_ready
+  - integration_reconciliation_ready
+  - enterprise_security_approval
+  - data_owner_approval
+  - pilot_owner_named
+  - support_rota_ready
+  - operations_rehearsal_pass
+  - monitoring_alerting_ready
+recommended:
+  - pilot_training_material_ready
+  - support_escalation_contacts_verified
+  - change_window_booked
+  - rollback_window_booked
+final_authority: corporate_go_live_board
+deployment_authorized_by_mgc: false

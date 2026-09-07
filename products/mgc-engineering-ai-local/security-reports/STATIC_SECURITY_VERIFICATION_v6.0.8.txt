@@ -1,0 +1,12 @@
+MGC Engineering AI Local v6.0.8 — static/release verification
+Backend regression: 298/298 PASS
+Dedicated v6.0.8: 8/8 PASS
+Human API authorization: 219/219 guarded; 4 explicit exceptions
+Docker static security: 38/38 PASS
+Compose/runtime security: 100/100 PASS
+Enterprise security: 23/23 PASS
+Observability/reliability privacy: 16/16 PASS
+UX acceptance: 9/9 PASS
+Secret scan: 0 findings
+Declared SBOM: 37 components
+Real Docker/Dockle/CVE/AD/mTLS/restore/live-load gates: NOT EXECUTED in packaging environment

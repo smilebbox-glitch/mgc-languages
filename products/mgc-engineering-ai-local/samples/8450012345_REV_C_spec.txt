@@ -1,0 +1,8 @@
+Part Number: 8450012345
+Revision: C
+Document Type: Technical Specification
+Name: Front mounting plate
+Material: DP600
+Thickness: 1.5 mm
+Mass: 1.32 kg
+Requirement: Production part shall comply with released drawing Rev C.

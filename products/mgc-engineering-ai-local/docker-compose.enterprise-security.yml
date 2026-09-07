@@ -1,0 +1,68 @@
+# Enterprise security overlay. Use together with airgap/runtime + sso + webhooks overlays.
+services:
+  api:
+    environment:
+      APP_ENV: prod
+      AUTH_MODE: oidc
+      ENGINEER_ONLY_ACCESS: "true"
+      ALLOW_API_KEY_AUTH_IN_PROD: "false"
+      ALLOW_TRUSTED_HEADERS_IN_PROD: "false"
+      AUTO_MIGRATE_SCHEMA: "false"
+      DATABASE_URL: ${MGC_RUNTIME_DATABASE_URL:?Set least-privilege MGC_RUNTIME_DATABASE_URL}
+      OIDC_ALLOWED_ALGORITHMS: ${OIDC_ALLOWED_ALGORITHMS:-RS256,RS384,RS512,ES256}
+      OIDC_CLOCK_SKEW_SECONDS: ${OIDC_CLOCK_SKEW_SECONDS:-60}
+      OIDC_ALLOWED_JWKS_HOSTS: ${OIDC_ALLOWED_JWKS_HOSTS:-}
+      ALLOW_INSECURE_OIDC_IN_PROD: "false"
+      SECURITY_REQUIRE_TLS_EDGE: "true"
+    depends_on:
+      schema-migrate: {condition: service_completed_successfully}
+
+  worker:
+    environment:
+      APP_ENV: prod
+      AUTO_MIGRATE_SCHEMA: "false"
+      DATABASE_URL: ${MGC_RUNTIME_DATABASE_URL:?Set least-privilege MGC_RUNTIME_DATABASE_URL}
+    depends_on:
+      schema-migrate: {condition: service_completed_successfully}
+
+  schema-migrate:
+    image: ${MGC_API_IMAGE:-mgc-engineering-ai-api:${MGC_VERSION:-6.3.34}-local}
+    pull_policy: never
+    command: ["python", "-m", "app.db.migrate_cli"]
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: ${MGC_MIGRATION_DATABASE_URL:?Set privileged one-shot MGC_MIGRATION_DATABASE_URL}
+      AUTO_MIGRATE_SCHEMA: "true"
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [mgc_internal]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    restart: "no"
+
+  enterprise-edge:
+    image: ${MGC_ENTERPRISE_EDGE_IMAGE:-mgc-engineering-ai-enterprise-edge:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: .
+      dockerfile: ops/enterprise-edge/Dockerfile
+    pull_policy: never
+    ports:
+      - "${ENTERPRISE_BIND_IP:-0.0.0.0}:${ENTERPRISE_HTTPS_PORT:-443}:8443"
+      - "${ENTERPRISE_MTLS_BIND_IP:-0.0.0.0}:${ENTERPRISE_MTLS_PORT:-9443}:9443"
+    volumes:
+      - ${MGC_TLS_CERT_DIR:?Set MGC_TLS_CERT_DIR with server.crt/server.key/client-ca.crt}:/run/mgc-tls:ro
+    depends_on: [auth-proxy, webhook-edge]
+    networks: [mgc_edge, mgc_internal]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    restart: unless-stopped
+
+  beat:
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_RUNTIME_USER:-mgc_runtime}:${POSTGRES_RUNTIME_PASSWORD:?set POSTGRES_RUNTIME_PASSWORD}@postgres:5432/${POSTGRES_DB:-mgc}
+      AUTO_MIGRATE_SCHEMA: "false"
+

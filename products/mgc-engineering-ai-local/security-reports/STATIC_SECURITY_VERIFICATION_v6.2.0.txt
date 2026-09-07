@@ -1,0 +1,448 @@
+# MGC Engineering AI Local v6.2.0 — Static Security / Architecture Verification
+
+## Docker static security
+Docker/Dockle static preflight
+PASS CIS-DI-0009              backend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              backend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              backend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              backend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              backend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              backend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0009              frontend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              frontend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              frontend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              frontend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              frontend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              frontend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/gateway/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/mock-integrations/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/mock-integrations/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/mock-integrations/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/mock-integrations/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/mock-integrations/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/mock-integrations/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/webhook-gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/webhook-gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/webhook-gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/webhook-gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/webhook-gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/webhook-gateway/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/enterprise-edge/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/enterprise-edge/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/enterprise-edge/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/enterprise-edge/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/enterprise-edge/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/enterprise-edge/Dockerfile — no embedded secrets in ENV
+PASS: 38 checks, 0 failures
+
+## Compose/runtime security
+Compose/access/runtime security static preflight
+PASS api.no-new-privileges                    — disable privilege escalation
+PASS api.cap-drop                             — drop Linux capabilities
+PASS api.read-only                            — read-only root filesystem
+PASS api.tmpfs                                — writable runtime paths use tmpfs
+PASS worker.no-new-privileges                 — disable privilege escalation
+PASS worker.cap-drop                          — drop Linux capabilities
+PASS worker.read-only                         — read-only root filesystem
+PASS worker.tmpfs                             — writable runtime paths use tmpfs
+PASS frontend.no-new-privileges               — disable privilege escalation
+PASS frontend.cap-drop                        — drop Linux capabilities
+PASS frontend.read-only                       — read-only root filesystem
+PASS frontend.tmpfs                           — writable runtime paths use tmpfs
+PASS gateway.no-new-privileges                — disable privilege escalation
+PASS gateway.cap-drop                         — drop Linux capabilities
+PASS gateway.read-only                        — read-only root filesystem
+PASS gateway.tmpfs                            — writable runtime paths use tmpfs
+PASS cpu-model-server.no-new-privileges       — disable privilege escalation
+PASS cpu-model-server.cap-drop                — drop Linux capabilities
+PASS cpu-model-server.read-only               — read-only root filesystem
+PASS cpu-model-server.tmpfs                   — writable runtime paths use tmpfs
+PASS cpu-vision-server.no-new-privileges      — disable privilege escalation
+PASS cpu-vision-server.cap-drop               — drop Linux capabilities
+PASS cpu-vision-server.read-only              — read-only root filesystem
+PASS cpu-vision-server.tmpfs                  — writable runtime paths use tmpfs
+PASS auth-proxy.no-new-privileges             — disable privilege escalation
+PASS auth-proxy.cap-drop                      — drop Linux capabilities
+PASS auth-proxy.read-only                     — read-only root filesystem
+PASS auth-proxy.tmpfs                         — writable runtime paths use tmpfs
+PASS webhook-edge.no-new-privileges           — disable privilege escalation
+PASS webhook-edge.cap-drop                    — drop Linux capabilities
+PASS webhook-edge.read-only                   — read-only root filesystem
+PASS webhook-edge.tmpfs                       — writable runtime paths use tmpfs
+PASS base.postgres.not-host-published         — production service must not publish host ports
+PASS base.qdrant.not-host-published           — production service must not publish host ports
+PASS base.redis.not-host-published            — production service must not publish host ports
+PASS base.neo4j.not-host-published            — production service must not publish host ports
+PASS base.minio.not-host-published            — production service must not publish host ports
+PASS base.api.not-host-published              — production service must not publish host ports
+PASS base.worker.not-host-published           — production service must not publish host ports
+PASS base.beat.not-host-published             — production service must not publish host ports
+PASS base.frontend.not-host-published         — production service must not publish host ports
+PASS base.gateway.not-host-published          — production service must not publish host ports
+PASS gpu.model-server.not-host-published      — production service must not publish host ports
+PASS gpu.api.not-host-published               — production service must not publish host ports
+PASS gpu.worker.not-host-published            — production service must not publish host ports
+PASS cpu.model-server.not-host-published      — production service must not publish host ports
+PASS cpu.api.not-host-published               — production service must not publish host ports
+PASS cpu.worker.not-host-published            — production service must not publish host ports
+PASS cpu-vision.vision-server.not-host-published — production service must not publish host ports
+PASS cpu-vision.api.not-host-published        — production service must not publish host ports
+PASS cpu-vision.worker.not-host-published     — production service must not publish host ports
+PASS base.postgres.pull-policy                — air-gap service uses pull_policy: never
+PASS base.qdrant.pull-policy                  — air-gap service uses pull_policy: never
+PASS base.redis.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.neo4j.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.minio.pull-policy                   — air-gap service uses pull_policy: never
+PASS base.api.pull-policy                     — air-gap service uses pull_policy: never
+PASS base.worker.pull-policy                  — air-gap service uses pull_policy: never
+PASS base.beat.pull-policy                    — air-gap service uses pull_policy: never
+PASS base.frontend.pull-policy                — air-gap service uses pull_policy: never
+PASS base.gateway.pull-policy                 — air-gap service uses pull_policy: never
+PASS gpu.model-server.pull-policy             — air-gap service uses pull_policy: never
+PASS cpu.model-server.pull-policy             — air-gap service uses pull_policy: never
+PASS cpu-vision.vision-server.pull-policy     — air-gap service uses pull_policy: never
+PASS docker-compose.airgap.yml.no-latest      — no floating latest image tags
+PASS docker-compose.gpu.yml.no-latest         — no floating latest image tags
+PASS docker-compose.cpu.yml.no-latest         — no floating latest image tags
+PASS docker-compose.cpu-vision.yml.no-latest  — no floating latest image tags
+PASS base.runtime-separated                   — base Compose must not hard-code GPU or CPU model server
+PASS gpu.requires-device                      — GPU overlay reserves NVIDIA device
+PASS cpu.no-gpu-layers                        — CPU profile explicitly disables GPU offload
+PASS cpu.no-model-webui                       — llama.cpp WebUI is disabled
+PASS cpu.model-api-key                        — CPU model server requires API key
+PASS sso.only-public-entry                    — SSO proxy is intended production host entry
+PASS sso.no-gateway-bypass                    — SSO overlay must not expose gateway
+PASS sso.backend-validates-oidc               — backend validates OIDC
+PASS sso.engineer-only                        — engineer-only authorization enabled
+PASS sso.group-gate                           — edge proxy requires engineering group
+PASS sso.pass-token                           — access token reaches backend validation layer
+PASS pilot.explicit-port                      — direct gateway exists only in explicit pilot override
+PASS backend.no-shared-key-prod               — production rejects shared API-key human access
+PASS launch.runtime-selector                  — canonical launch selects CPU/GPU overlay
+PASS launch.explicit-cpu                      — Makefile exposes explicit CPU launch
+PASS launch.explicit-gpu                      — Makefile exposes explicit GPU launch
+PASS worker.healthcheck                       — Celery worker uses worker-specific healthcheck
+PASS schema-migrate.no-new-privileges         — disable privilege escalation
+PASS schema-migrate.cap-drop                  — drop Linux capabilities
+PASS schema-migrate.read-only                 — read-only root filesystem
+PASS schema-migrate.tmpfs                     — writable runtime paths use tmpfs
+PASS enterprise-edge.no-new-privileges        — disable privilege escalation
+PASS enterprise-edge.cap-drop                 — drop Linux capabilities
+PASS enterprise-edge.read-only                — read-only root filesystem
+PASS enterprise-edge.tmpfs                    — writable runtime paths use tmpfs
+PASS enterprise.api-no-ddl                    — runtime API does not perform schema DDL
+PASS enterprise.worker-no-ddl                 — runtime worker does not perform schema DDL
+PASS enterprise.db-role-split                 — runtime and migration database identities are separate
+PASS enterprise.tls12-13                      — enterprise edge allows only TLS 1.2/1.3
+PASS enterprise.mtls                          — integration edge requires client certificates
+PASS enterprise.hsts                          — enterprise browser edge emits HSTS
+PASS api.readiness-healthcheck                — API image healthcheck uses readiness, not liveness
+PASS: 100 checks, 0 failures
+
+## API authorization
+PASS guarded deployment_routes.py:/profiles
+PASS guarded deployment_routes.py:/network-ports
+PASS guarded deployment_routes.py:/launch-checklist
+PASS guarded deployment_routes.py:/plan
+PASS guarded deployment_routes.py:/readiness
+PASS exempt  health_routes.py:/health
+PASS exempt  health_routes.py:/health/live
+PASS exempt  health_routes.py:/health/ready
+PASS guarded integration_routes.py:/auth/config
+PASS exempt  integration_routes.py:/integrations/webhooks/{system_code}
+PASS guarded integration_routes.py:/cad/gateways
+PASS guarded integration_routes.py:/cad/native-formats
+PASS guarded integration_routes.py:/integrations/types
+PASS guarded integration_routes.py:/integrations
+PASS guarded integration_routes.py:/integrations
+PASS guarded integration_routes.py:/integrations/{system_id}
+PASS guarded integration_routes.py:/integrations/{system_id}/health
+PASS guarded integration_routes.py:/integrations/{system_id}/sync
+PASS guarded integration_routes.py:/integrations/{system_id}/runs
+PASS guarded integration_routes.py:/integrations/{system_id}/objects
+PASS guarded integration_routes.py:/integrations/{system_id}/objects/{external_id}/history
+PASS guarded integration_routes.py:/integrations/{system_id}/quality
+PASS guarded integration_routes.py:/integrations/{system_id}/quarantine
+PASS guarded integration_routes.py:/integrations/{system_id}/quarantine/{event_id}/replay
+PASS guarded integration_routes.py:/cad/convert
+PASS guarded integration_routes.py:/integrations/mappings
+PASS guarded integration_routes.py:/integrations/mappings
+PASS guarded integration_routes.py:/integrations/mappings/{mapping_id}
+PASS guarded integration_routes.py:/integrations/reconciliation
+PASS guarded operations_routes.py:/summary
+PASS guarded operations_routes.py:/slo
+PASS guarded operations_routes.py:/health-samples
+PASS guarded operations_routes.py:/incidents
+PASS guarded operations_routes.py:/incidents
+PASS guarded operations_routes.py:/incidents/{incident_id}
+PASS guarded operations_routes.py:/support-bundle
+PASS guarded operations_routes.py:/game-days
+PASS guarded operations_routes.py:/game-days
+PASS guarded operations_routes.py:/game-days/{run_id}/start
+PASS guarded operations_routes.py:/game-days/{run_id}
+PASS guarded operations_routes.py:/game-days/{run_id}/exercises/{exercise_code}
+PASS guarded operations_routes.py:/game-days/{run_id}/external-gates
+PASS guarded operations_routes.py:/game-days/{run_id}/evaluation
+PASS guarded operations_routes.py:/game-days/{run_id}/finalize
+PASS guarded pilot_routes.py:/pilot/studies
+PASS guarded pilot_routes.py:/pilot/studies
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/start
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/scenarios
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/telemetry
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/external-gates
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/usability-issues
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/usability-issues
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/usability-issues/{issue_id}
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/evaluation
+PASS guarded pilot_routes.py:/pilot/studies/{pilot_id}/finalize
+PASS guarded simplified_routes.py:/runtime
+PASS guarded simplified_routes.py:/connector-contract
+PASS guarded simplified_routes.py:/objects
+PASS guarded simplified_routes.py:/objects/{object_type}/{object_id:path}
+PASS guarded routes.py:/me
+PASS guarded routes.py:/local-ai/health
+PASS guarded routes.py:/stats
+PASS guarded routes.py:/documents
+PASS guarded routes.py:/documents/{document_id}
+PASS guarded routes.py:/documents/upload
+PASS guarded routes.py:/documents/{document_id}/reindex
+PASS guarded routes.py:/documents/{document_id}/preview
+PASS guarded routes.py:/search
+PASS guarded routes.py:/ask
+PASS guarded routes.py:/parts
+PASS guarded routes.py:/parts/{part_number}
+PASS guarded routes.py:/parts/{part_number}/graph
+PASS guarded routes.py:/parts/{part_number}/compare
+PASS guarded routes.py:/parts/{part_number}/validate
+PASS guarded routes.py:/issues
+PASS guarded routes.py:/issues/{issue_id}
+PASS guarded routes.py:/scanner/run
+PASS guarded routes.py:/audit
+PASS guarded routes.py:/security/posture
+PASS guarded routes.py:/security/audit/export
+PASS guarded routes.py:/security/audit/retention
+PASS guarded routes.py:/security/audit/retention
+PASS guarded routes.py:/agent/run
+PASS guarded routes.py:/design-reviews
+PASS guarded routes.py:/design-reviews/async
+PASS guarded routes.py:/compute/tasks/{job_id}
+PASS guarded routes.py:/design-reviews
+PASS guarded routes.py:/design-reviews/{review_id}/approve
+PASS guarded routes.py:/impact
+PASS guarded routes.py:/documents/{document_id}/similar
+PASS guarded routes.py:/evidence-packs
+PASS guarded routes.py:/evidence-packs/{pack_id}
+PASS guarded routes.py:/graph/{part_number}/sync
+PASS guarded routes.py:/graph/{part_number}/neighborhood
+PASS guarded routes.py:/documents/{document_id}/history
+PASS guarded routes.py:/documents/{document_id}/history/note
+PASS guarded routes.py:/documents/{document_id}/engineering-analysis
+PASS guarded routes.py:/documents/{document_id}/engineering-analyze
+PASS guarded routes.py:/documents/{document_id}/geometry-links
+PASS guarded routes.py:/documents/{document_id}/link-geometry
+PASS guarded routes.py:/documents/{document_id}/visual-inspect
+PASS guarded routes.py:/changes
+PASS guarded routes.py:/changes
+PASS guarded routes.py:/changes/{change_id}
+PASS guarded routes.py:/changes/{change_id}/impact
+PASS guarded routes.py:/changes/{change_id}/submit
+PASS guarded routes.py:/changes/{change_id}/decision
+PASS guarded routes.py:/changes/{change_id}/implementation
+PASS guarded routes.py:/changes/{change_id}/complete
+PASS guarded routes.py:/projects
+PASS guarded routes.py:/projects
+PASS guarded routes.py:/projects/{project_code}
+PASS guarded routes.py:/projects/{project_code}/workspace
+PASS guarded routes.py:/projects/{project_code}/areas
+PASS guarded routes.py:/projects/{project_code}/areas/{area_code}
+PASS guarded routes.py:/documents/{document_id}/manufacturing-area
+PASS guarded routes.py:/projects/{project_code}/milestones
+PASS guarded routes.py:/projects/{project_code}/milestones/{milestone_id}
+PASS guarded routes.py:/projects/{project_code}/quality
+PASS guarded routes.py:/projects/{project_code}/quality/apqp
+PASS guarded routes.py:/projects/{project_code}/quality/apqp/{item_id}
+PASS guarded routes.py:/projects/{project_code}/quality/characteristics
+PASS guarded routes.py:/projects/{project_code}/quality/characteristics/{item_id}
+PASS guarded routes.py:/projects/{project_code}/quality/pfmea
+PASS guarded routes.py:/projects/{project_code}/quality/pfmea/{item_id}
+PASS guarded routes.py:/projects/{project_code}/quality/control-plan
+PASS guarded routes.py:/projects/{project_code}/quality/control-plan/{item_id}
+PASS guarded routes.py:/projects/{project_code}/quality/ppap
+PASS guarded routes.py:/projects/{project_code}/quality/ppap/{item_id}
+PASS guarded routes.py:/projects/{project_code}/quality/8d
+PASS guarded routes.py:/projects/{project_code}/quality/8d/{item_id}
+PASS guarded routes.py:/projects/{project_code}/process-thread
+PASS guarded routes.py:/projects/{project_code}/process/lines
+PASS guarded routes.py:/projects/{project_code}/process/lines/{line_id}/stations
+PASS guarded routes.py:/projects/{project_code}/process/stations/{station_id}/operations
+PASS guarded routes.py:/projects/{project_code}/process/operations/{operation_id}/assets
+PASS guarded routes.py:/projects/{project_code}/process/operations/{operation_id}/parameters
+PASS guarded routes.py:/projects/{project_code}/process/defects
+PASS guarded routes.py:/projects/{project_code}/process/defects/{defect_id}
+PASS guarded routes.py:/projects/{project_code}/launch-readiness
+PASS guarded routes.py:/projects/{project_code}/launch/checks
+PASS guarded routes.py:/projects/{project_code}/launch/checks/{item_id}
+PASS guarded routes.py:/projects/{project_code}/launch/trials
+PASS guarded routes.py:/projects/{project_code}/launch/trials/{trial_id}
+PASS guarded routes.py:/projects/{project_code}/requirements-matrix
+PASS guarded routes.py:/projects/{project_code}/requirements
+PASS guarded routes.py:/projects/{project_code}/requirements/{requirement_id}
+PASS guarded routes.py:/projects/{project_code}/requirements/{requirement_id}/verifications
+PASS guarded routes.py:/projects/{project_code}/requirements/verifications/{verification_id}
+PASS guarded routes.py:/projects/{project_code}/supplier-localization
+PASS guarded routes.py:/projects/{project_code}/localization/items
+PASS guarded routes.py:/projects/{project_code}/localization/items/{item_id}
+PASS guarded routes.py:/projects/{project_code}/localization/incoming-quality
+PASS guarded routes.py:/projects/{project_code}/localization/incoming-quality/{record_id}
+PASS guarded routes.py:/projects/{project_code}/localization/items/{item_id}/evidence-pack
+PASS guarded routes.py:/projects/{project_code}/cost-economics
+PASS guarded routes.py:/projects/{project_code}/cost/baselines
+PASS guarded routes.py:/projects/{project_code}/cost/baselines/{baseline_id}
+PASS guarded routes.py:/projects/{project_code}/cost/lines
+PASS guarded routes.py:/projects/{project_code}/cost/lines/{line_id}
+PASS guarded routes.py:/projects/{project_code}/cost/quotes
+PASS guarded routes.py:/projects/{project_code}/cost/quotes/{quote_id}
+PASS guarded routes.py:/projects/{project_code}/cost/baselines/{baseline_id}/evidence-pack
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/impact
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/nodes
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/nodes/{node_id}
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/interfaces
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/interfaces/{interface_id}
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/interfaces/{interface_id}/verifications
+PASS guarded routes.py:/projects/{project_code}/vehicle-architecture/verifications/{verification_id}
+PASS guarded routes.py:/projects/{project_code}/configurations
+PASS guarded routes.py:/projects/{project_code}/configurations/impact
+PASS guarded routes.py:/projects/{project_code}/configurations/variants
+PASS guarded routes.py:/projects/{project_code}/configurations/variants/{variant_id}
+PASS guarded routes.py:/projects/{project_code}/configurations/applicability
+PASS guarded routes.py:/projects/{project_code}/configurations/applicability/{applicability_id}
+PASS guarded routes.py:/projects/{project_code}/digital-thread
+PASS guarded routes.py:/projects/{project_code}/change-intelligence
+PASS guarded routes.py:/projects/{project_code}/change-impact-simulate
+PASS guarded routes.py:/projects/{project_code}/digital-thread/ask
+PASS guarded routes.py:/projects/{project_code}/engineering-memory
+PASS guarded routes.py:/projects/{project_code}/engineering-memory/ask
+PASS guarded routes.py:/projects/{project_code}/engineering-memory/lessons/promote
+PASS guarded routes.py:/projects/{project_code}/engineering-memory/lessons/{lesson_id}
+PASS guarded routes.py:/projects/{project_code}/closed-loop
+PASS guarded routes.py:/projects/{project_code}/closed-loop/decisions
+PASS guarded routes.py:/projects/{project_code}/closed-loop/decisions/{decision_id}
+PASS guarded routes.py:/projects/{project_code}/closed-loop/production-feedback
+PASS guarded routes.py:/projects/{project_code}/closed-loop/effectiveness
+PASS guarded routes.py:/projects/{project_code}/closed-loop/deviations
+PASS guarded routes.py:/projects/{project_code}/closed-loop/deviations/{deviation_id}
+PASS guarded routes.py:/projects/{project_code}/closed-loop/risks
+PASS guarded routes.py:/projects/{project_code}/closed-loop/risks/{risk_id}
+PASS guarded routes.py:/projects/{project_code}/closed-loop/validation-plan
+PASS guarded routes.py:/projects/{project_code}/closed-loop/defects/{defect_id}/root-cause
+PASS guarded routes.py:/projects/{project_code}/program-control
+PASS guarded routes.py:/projects/{project_code}/program-control/dependencies
+PASS guarded routes.py:/projects/{project_code}/program-control/dependencies/{dependency_id}
+PASS guarded routes.py:/projects/{project_code}/program-control/dependencies/{dependency_id}
+PASS guarded routes.py:/projects/{project_code}/program-control/slip-simulation
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/ask
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/release-package
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/mbom
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/effectivity
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/cutins
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/as-built
+PASS guarded routes.py:/projects/{project_code}/configuration-assurance/supersessions
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence/builds
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence/builds/{build_id}/genealogy
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence/builds/{build_id}/defects
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence/safe-launch
+PASS guarded routes.py:/projects/{project_code}/build-launch-intelligence/safe-launch/{control_id}
+PASS guarded routes.py:/projects/{project_code}/release-baselines
+PASS guarded routes.py:/projects/{project_code}/release-baselines
+PASS guarded routes.py:/projects/{project_code}/release-baselines/comparison
+PASS guarded routes.py:/projects/{project_code}/release-baselines/{baseline_id}
+PASS guarded routes.py:/projects/{project_code}/bom-versions
+PASS guarded routes.py:/projects/{project_code}/bom-compare
+PASS guarded routes.py:/projects/{project_code}/series-intelligence
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/ask
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/observations
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/capability
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/suspect-population
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/containments
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/containments/{containment_id}
+PASS guarded routes.py:/projects/{project_code}/series-intelligence/field-claims
+PASS guarded routes.py:/projects/{project_code}/field-intelligence
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/ask
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/vin/{vehicle_identifier}
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/exposures
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/dfmea
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/service-actions
+PASS guarded routes.py:/projects/{project_code}/field-intelligence/service-actions/{action_id}
+PASS guarded routes.py:/projects/{project_code}/engineering-os
+PASS guarded routes.py:/projects/{project_code}/engineering-os/ask
+PASS guarded routes.py:/projects/{project_code}/engineering-os/workflows
+PASS guarded routes.py:/projects/{project_code}/engineering-os/workflows/{workflow_id}
+PASS: 236 human-facing API routes enforce get_identity; 4 explicit exceptions
+
+## Enterprise security
+Enterprise security preflight
+PASS oidc.no-error-disclosure               — OIDC parser/JWKS errors are not returned to callers
+PASS oidc.asymmetric-allowlist              — symmetric/none algorithms rejected
+PASS trusted-header.fail-closed             — production trusted headers require explicit opt-in + proxy secret
+PASS oidc.bounded-skew                      — clock skew is configurable and bounded
+PASS cors.explicit-methods-headers          — CORS methods/headers are explicit, not wildcard
+PASS audit.admin-api                        — security posture/export/retention endpoints exist
+PASS schema-migrate.nnp                     — no privilege escalation
+PASS schema-migrate.caps                    — all Linux capabilities dropped
+PASS schema-migrate.readonly                — read-only root filesystem
+PASS enterprise-edge.nnp                    — no privilege escalation
+PASS enterprise-edge.caps                   — all Linux capabilities dropped
+PASS enterprise-edge.readonly               — read-only root filesystem
+PASS least-privilege.api-no-migrate         — runtime API does not perform schema DDL
+PASS least-privilege.beat-no-migrate        — scheduler does not perform schema DDL
+PASS least-privilege.migration-role         — one-shot migration connection is separate
+PASS tls.protocols                          — TLS 1.2/1.3 only
+PASS mtls.integration-edge                  — machine webhook edge requires client certificate
+PASS tls.hsts                               — HSTS enabled at enterprise edge
+PASS supply-chain.sbom                      — offline SBOM generator included
+PASS supply-chain.secrets                   — deterministic source secret scanner included
+PASS supply-chain.cve-hook                  — approved build-host CVE scanner hook included
+PASS supply-chain.npm-ci                    — frontend build uses npm ci when an approved lockfile is present
+PASS supply-chain.enterprise-no-latest      — enterprise deployment template forbids floating latest tags
+PASS: 23 checks, 0 failures
+
+## Architecture simplification
+PASS release_version — 6.2.0
+PASS six_bounded_contexts — ['configuration_change', 'engineering_core', 'intelligence_search', 'manufacturing_quality', 'platform_operations', 'supplier_field']
+PASS profile_monotonicity
+PASS core_postgres_required
+PASS core_qdrant_optional
+PASS core_neo4j_optional
+PASS ai_qdrant_required
+PASS advanced_graph_supported
+PASS postgres_core_invariant
+PASS core_object360_surface
+PASS invalid_profile_fail_closed
+PASS qdrant_profiled
+PASS model_server_profiled
+PASS neo4j_advanced_only
+PASS api_no_optional_hard_dependency — ['postgres', 'redis']
+PASS core_profile_default
+PASS object360_api
+PASS runtime_api
+PASS connector_contract_api
+PASS object360_primary_nav
+PASS legacy_tabs_not_primary_nav
+PASS capability_gate
+PASS supplier_surface_gated
+PASS native_cad_surface_gated
+PASS generic_pre_auth_404
+SUMMARY 25/25 PASS
+
+## Secret scan
+PASS: deterministic source secret scan found 0 committed secret candidates

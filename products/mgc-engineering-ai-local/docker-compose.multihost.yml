@@ -1,0 +1,45 @@
+# v6.3.29 per-node multi-host application-tier overlay.
+# Run this release independently on each app host with unique MGC_NODE_ID/MGC_FAILURE_DOMAIN.
+# It is NOT a cross-host orchestrator; external LB, PostgreSQL/Redis HA and evidence replication
+# remain corporate infrastructure responsibilities.
+x-mgc-multihost-env: &mgc-multihost-env
+  HA_ENABLED: "true"
+  MULTI_HOST_TOPOLOGY_ENABLED: "true"
+  TOPOLOGY_NODE_ID: ${MGC_NODE_ID:?set MGC_NODE_ID}
+  TOPOLOGY_FAILURE_DOMAIN: ${MGC_FAILURE_DOMAIN:?set MGC_FAILURE_DOMAIN}
+  TOPOLOGY_NODE_ROLE: ${MGC_NODE_ROLE:-application}
+  DATABASE_URL: ${DATABASE_URL:?set corporate PostgreSQL writer endpoint}
+  REDIS_URL: ${REDIS_URL:?set shared corporate Redis endpoint}
+  DATABASE_HA_ENABLED: "true"
+  DATABASE_HA_EXPECTED_SYSTEM_IDENTIFIER: ${DATABASE_HA_EXPECTED_SYSTEM_IDENTIFIER:?set PostgreSQL system identifier}
+  EVIDENCE_HA_ENABLED: "true"
+  EVIDENCE_HA_CLUSTER_ID: ${EVIDENCE_HA_CLUSTER_ID:?set evidence cluster id}
+
+services:
+  api:
+    environment:
+      <<: *mgc-multihost-env
+  worker:
+    environment:
+      <<: *mgc-multihost-env
+  worker-cpu:
+    environment:
+      <<: *mgc-multihost-env
+  worker-io:
+    environment:
+      <<: *mgc-multihost-env
+  worker-cad:
+    environment:
+      <<: *mgc-multihost-env
+  worker-ai:
+    environment:
+      <<: *mgc-multihost-env
+  beat:
+    environment:
+      <<: *mgc-multihost-env
+  gateway:
+    ports:
+      - "${MGC_NODE_BIND_IP:?set dedicated management/application VLAN bind IP}:${MGC_NODE_EDGE_PORT:-18080}:8080"
+    environment:
+      API_UPSTREAM: api:8080
+      FRONTEND_UPSTREAM: frontend:8080

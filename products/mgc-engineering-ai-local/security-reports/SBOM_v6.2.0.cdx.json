@@ -1,0 +1,605 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:mgc-v6.2.0-offline-sbom",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-05T10:16:38.382657+00:00",
+    "component": {
+      "type": "application",
+      "name": "MGC Engineering AI Local",
+      "version": "6.2.0"
+    },
+    "properties": [
+      {
+        "name": "mgc:generator",
+        "value": "offline-declared-component-sbom"
+      },
+      {
+        "name": "mgc:warning",
+        "value": "Declared dependency ranges are not a substitute for build-host resolved SBOM/CVE scan."
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "fastapi",
+      "version": ">=0.116,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "uvicorn",
+      "version": ">=0.35,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "python-multipart",
+      "version": ">=0.0.20,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pydantic-settings",
+      "version": ">=2.10,<3",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "sqlalchemy",
+      "version": ">=2.0,<3",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "psycopg",
+      "version": ">=3.2,<4",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "qdrant-client",
+      "version": ">=1.15,<2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "sentence-transformers",
+      "version": ">=5.0,<6",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "docling",
+      "version": ">=2.50,<3",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cadquery",
+      "version": ">=2.5,<3",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "trimesh",
+      "version": ">=4.7,<5",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "httpx",
+      "version": ">=0.28,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "orjson",
+      "version": ">=3.10,<4",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "celery",
+      "version": ">=5.5,<6",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "redis",
+      "version": ">=6,<7",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "prometheus-fastapi-instrumentator",
+      "version": ">=7,<8",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "prometheus-client",
+      "version": ">=0.21,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "neo4j",
+      "version": ">=6,<7",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "minio",
+      "version": ">=7.2,<8",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "opentelemetry-api",
+      "version": ">=1.36,<2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "opentelemetry-sdk",
+      "version": ">=1.36,<2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "opentelemetry-instrumentation-fastapi",
+      "version": ">=0.57b0,<1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "opentelemetry-exporter-otlp-proto-http",
+      "version": ">=1.36,<2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "PyMuPDF",
+      "version": ">=1.26,<2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "PyJWT",
+      "version": ">=2.10,<3",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "python"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-range"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@vitejs/plugin-react",
+      "version": "6.1.1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "dependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.2.8",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "dependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.8",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "dependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "three",
+      "version": "0.185.1",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "dependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vite",
+      "version": "8.2.2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "dependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/react",
+      "version": "19.2.18",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "devDependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/react-dom",
+      "version": "19.2.7",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "devDependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/three",
+      "version": "0.185.4",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "devDependencies"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "7.0.2",
+      "properties": [
+        {
+          "name": "mgc:ecosystem",
+          "value": "npm"
+        },
+        {
+          "name": "mgc:resolution",
+          "value": "declared-exact"
+        },
+        {
+          "name": "mgc:scope",
+          "value": "devDependencies"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "node:22-alpine",
+      "version": "22-alpine",
+      "properties": [
+        {
+          "name": "mgc:source",
+          "value": "frontend/Dockerfile"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "nginx:1.27-alpine",
+      "version": "1.27-alpine",
+      "properties": [
+        {
+          "name": "mgc:source",
+          "value": "frontend/Dockerfile"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "python:3.12-slim-bookworm",
+      "version": "3.12-slim-bookworm",
+      "properties": [
+        {
+          "name": "mgc:source",
+          "value": "backend/Dockerfile"
+        }
+      ]
+    }
+  ]
+}

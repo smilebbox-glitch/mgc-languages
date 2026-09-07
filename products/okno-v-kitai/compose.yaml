@@ -1,0 +1,117 @@
+services:
+  china-auto-radar:
+    image: okno-v-kitai:${APP_VERSION:-1.6.1-pilot}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      APP_VERSION: ${APP_VERSION:-1.6.1-pilot}
+      RAG_API_URL: ${RAG_API_URL:-}
+      RAG_API_KEY: ${RAG_API_KEY:-}
+      RAG_MODEL: ${RAG_MODEL:-}
+      AUTH_MODE: ${AUTH_MODE:-disabled}
+      AUTH_PROXY_SECRET: ${AUTH_PROXY_SECRET:-}
+      AUTH_ADMIN_GROUP: ${AUTH_ADMIN_GROUP:-okno-china-admin}
+      AUTH_EDITOR_GROUP: ${AUTH_EDITOR_GROUP:-okno-china-editor}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:-}
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
+      OUTBOUND_ALLOWLIST: ${OUTBOUND_ALLOWLIST:-}
+      OUTBOUND_ALLOW_HTTP_HOSTS: ${OUTBOUND_ALLOW_HTTP_HOSTS:-host.docker.internal}
+      RUNTIME_CONFIG_PATH: /data/runtime-config.json
+      PILOT_DB_PATH: /data/okno.sqlite
+      AUDIT_LOG_PATH: /data/audit/audit.jsonl
+      AUDIT_HMAC_KEY: ${AUDIT_HMAC_KEY:-}
+      AUDIT_MAX_BYTES: ${AUDIT_MAX_BYTES:-10485760}
+      RATE_LIMIT_READ_PER_MINUTE: ${RATE_LIMIT_READ_PER_MINUTE:-120}
+      RATE_LIMIT_EXPENSIVE_PER_MINUTE: ${RATE_LIMIT_EXPENSIVE_PER_MINUTE:-20}
+      RATE_LIMIT_ADMIN_MUTATION_PER_5_MIN: ${RATE_LIMIT_ADMIN_MUTATION_PER_5_MIN:-30}
+      FX_CACHE_TTL_SECONDS: ${FX_CACHE_TTL_SECONDS:-900}
+      FX_CACHE_STALE_SECONDS: ${FX_CACHE_STALE_SECONDS:-86400}
+      NEWS_CACHE_TTL_SECONDS: ${NEWS_CACHE_TTL_SECONDS:-900}
+      NEWS_CACHE_STALE_SECONDS: ${NEWS_CACHE_STALE_SECONDS:-21600}
+      SOURCE_HISTORY_RETENTION_DAYS: ${SOURCE_HISTORY_RETENTION_DAYS:-30}
+      SOURCE_HISTORY_MAX_ROWS: ${SOURCE_HISTORY_MAX_ROWS:-5000}
+      EXPIRED_SNAPSHOT_RETENTION_DAYS: ${EXPIRED_SNAPSHOT_RETENTION_DAYS:-7}
+      ARCHIVED_CONTENT_RETENTION_DAYS: ${ARCHIVED_CONTENT_RETENTION_DAYS:-365}
+      SCHEDULER_LOCK_TTL_SECONDS: ${SCHEDULER_LOCK_TTL_SECONDS:-120}
+      SOURCE_SLA_FX_SECONDS: ${SOURCE_SLA_FX_SECONDS:-1800}
+      SOURCE_SLA_FX_MIN_QUALITY: ${SOURCE_SLA_FX_MIN_QUALITY:-60}
+      SOURCE_SLA_NEWS_SECONDS: ${SOURCE_SLA_NEWS_SECONDS:-3600}
+      SOURCE_SLA_NEWS_MIN_QUALITY: ${SOURCE_SLA_NEWS_MIN_QUALITY:-50}
+      SCHEDULER_TOKEN: ${SCHEDULER_TOKEN:-change-me-before-pilot}
+      SCHEDULER_INTERVAL_SECONDS: ${SCHEDULER_INTERVAL_SECONDS:-300}
+      INTERNAL_APP_URL: http://127.0.0.1:3000
+      WRANGLER_WRITE_LOGS: "false"
+      WRANGLER_LOG_PATH: /tmp/wrangler.log
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - okno-runtime-data:/data
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /app/.wrangler:rw,noexec,nosuid,size=16m,uid=1000,gid=1000
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: ${APP_MEMORY_LIMIT:-768m}
+    cpus: ${APP_CPU_LIMIT:-1.5}
+    stop_grace_period: 20s
+    labels:
+      com.mgc.service: okno-v-kitai
+      com.mgc.tier: internal-pilot
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 35s
+
+  china-auto-radar-scheduler:
+    image: okno-v-kitai:${APP_VERSION:-1.6.1-pilot}
+    depends_on:
+      china-auto-radar:
+        condition: service_healthy
+    command: ["node", "scripts/scheduler-client.mjs"]
+    environment:
+      NODE_ENV: production
+      APP_VERSION: ${APP_VERSION:-1.6.1-pilot}
+      SCHEDULER_APP_URL: http://china-auto-radar:3000
+      SCHEDULER_TOKEN: ${SCHEDULER_TOKEN:-change-me-before-pilot}
+      SCHEDULER_INTERVAL_SECONDS: ${SCHEDULER_INTERVAL_SECONDS:-300}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 64
+    mem_limit: ${SCHEDULER_MEMORY_LIMIT:-128m}
+    cpus: ${SCHEDULER_CPU_LIMIT:-0.25}
+    stop_grace_period: 10s
+    labels:
+      com.mgc.service: okno-v-kitai-scheduler
+      com.mgc.tier: internal-pilot
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+volumes:
+  okno-runtime-data:

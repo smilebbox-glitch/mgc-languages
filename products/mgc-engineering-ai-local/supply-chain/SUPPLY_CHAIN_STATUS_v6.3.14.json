@@ -1,0 +1,104 @@
+{
+  "release": "6.3.14",
+  "strict": false,
+  "status": "CONDITIONAL",
+  "production_authorized": false,
+  "checks": [
+    {
+      "name": "frontend direct dependency specs exact",
+      "ok": true,
+      "detail": "exact pins",
+      "required": true
+    },
+    {
+      "name": "frontend package-lock",
+      "ok": false,
+      "detail": "package-lock.json missing",
+      "required": true
+    },
+    {
+      "name": "frontend offline npm cache",
+      "ok": false,
+      "detail": "offline npm cache missing",
+      "required": true
+    },
+    {
+      "name": "python core hashed lock",
+      "ok": false,
+      "detail": "missing",
+      "required": true
+    },
+    {
+      "name": "python core wheelhouse",
+      "ok": false,
+      "detail": "manifest missing",
+      "required": true
+    },
+    {
+      "name": "python ai hashed lock",
+      "ok": false,
+      "detail": "missing",
+      "required": true
+    },
+    {
+      "name": "python ai wheelhouse",
+      "ok": false,
+      "detail": "manifest missing",
+      "required": true
+    },
+    {
+      "name": "python advanced hashed lock",
+      "ok": false,
+      "detail": "missing",
+      "required": true
+    },
+    {
+      "name": "python advanced wheelhouse",
+      "ok": false,
+      "detail": "manifest missing",
+      "required": true
+    },
+    {
+      "name": "immutable container/base image digests",
+      "ok": false,
+      "detail": "unresolved/not-digest: PYTHON_BASE_IMAGE,NODE_BASE_IMAGE,NGINX_BASE_IMAGE,POSTGRES_IMAGE,REDIS_IMAGE,QDRANT_IMAGE,NEO4J_IMAGE,MINIO_IMAGE,VLLM_IMAGE,LLAMA_CPP_IMAGE,OAUTH2_PROXY_IMAGE,PROMETHEUS_IMAGE,GRAFANA_IMAGE,JAEGER_IMAGE",
+      "required": true
+    },
+    {
+      "name": "offline OS package bundle",
+      "ok": false,
+      "detail": "OS package manifest missing",
+      "required": true
+    },
+    {
+      "name": "offline OS package install receipt",
+      "ok": false,
+      "detail": "OS package manifest missing",
+      "required": true
+    },
+    {
+      "name": "build input provenance manifest",
+      "ok": true,
+      "detail": "48 build inputs verified",
+      "required": true
+    },
+    {
+      "name": "backend locked/offline install path",
+      "ok": true,
+      "detail": "locked mode uses hashed wheels + verified offline OS bundle",
+      "required": true
+    },
+    {
+      "name": "frontend locked/offline install path",
+      "ok": true,
+      "detail": "locked mode uses npm ci --offline",
+      "required": true
+    },
+    {
+      "name": "reproducible compose overlay",
+      "ok": true,
+      "detail": "offline build network disabled + OS bundle enforced",
+      "required": true
+    }
+  ]
+}

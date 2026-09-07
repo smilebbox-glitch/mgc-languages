@@ -1,0 +1,14 @@
+from,to,port,protocol,scope,purpose
+Corporate users,Enterprise Edge,443,TCP/TLS,Inbound,Browser and SSO
+Approved machine clients,Enterprise Edge,9443,TCP/mTLS,Inbound,Webhook ingress
+Enterprise Edge,Gateway/API,8080,TCP,Internal,Application routing
+API/Worker/Beat,PostgreSQL,5432,TCP,Internal,MGC state
+API/Worker/Beat,Qdrant,6333,TCP,Internal,Vector search
+API/Worker/Beat,Redis,6379,TCP,Internal,Queue broker
+API/Worker,Neo4j,7687,TCP,Internal,Optional graph
+API/Worker,MinIO,9000,TCP,Internal,Optional object store
+API/Worker,Model server,8000,TCP,Internal,Local AI inference
+Auth proxy/API,Corporate IdP,443,TCP/TLS,Outbound corporate,OIDC
+Integration workers,PLM ERP MES QMS gateways,443,TCP/TLS,Outbound corporate,Read-only integration
+MGC hosts,Corporate DNS,53,UDP/TCP,Infrastructure,DNS
+MGC hosts,Corporate NTP,123,UDP,Infrastructure,Time synchronization

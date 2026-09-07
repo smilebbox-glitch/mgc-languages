@@ -1,0 +1,6 @@
+Engineering Change Request ECR-2041
+Part Number: 8450012345
+Revision: D
+Reason: increase stiffness after vibration test observation and add one mounting feature.
+Affected evidence: CAD model, drawing, BOM, vibration validation report.
+Status: engineering review required.

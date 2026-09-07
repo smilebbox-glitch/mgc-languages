@@ -1,0 +1,13 @@
+MGC Engineering AI Local v4.9.0 — static security verification
+
+Backend regression: 145/145 PASS
+Human-facing API identity enforcement: 133/133 guarded; 2 explicit exceptions (/health and HMAC machine webhook)
+Docker/Dockle-compatible Dockerfile preflight: 32/32 PASS
+Compose/access/runtime preflight: 82/82 PASS
+Build-context preflight: PASS
+Release baseline hidden-evidence fail-closed regression: PASS
+Release/SOP baseline admin gate: implemented in API
+Immutable baseline: no update endpoint; SHA-256 snapshot fingerprint
+BOM compare: deterministic; source-document ACL required for both versions
+
+Real image build and Dockle layer scan: NOT executed in this environment (Docker daemon/Dockle unavailable).

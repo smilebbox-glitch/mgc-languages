@@ -1,0 +1,27 @@
+MGC Engineering AI Local v5.1.0 — Static Verification
+
+Backend regression: 153/153 PASS
+v5.1 dedicated scenarios: 4/4 PASS
+Human-facing API auth: 137/137 guarded; 2 explicit exceptions
+Dockerfile static security: 32/32 PASS
+Compose/access/runtime security: 82/82 PASS
+Compose YAML parse: 12/12 PASS
+TypeScript/TSX transpile: PASS
+Shell syntax: PASS
+Docker build source/context preflight: PASS
+
+Security invariants:
+- document/area/project ACL fail closed across Digital Thread and Change Intelligence;
+- mixed hidden evidence does not leak related entity metadata;
+- what-if simulation is read-only;
+- UNKNOWN vehicle applicability is explicit;
+- human release authority remains mandatory.
+
+Not executed in this packaging runtime:
+- real Docker image build/runtime acceptance;
+- Dockle image-layer scan.
+
+Corporate build-host gate:
+  docker compose build
+  make dockle
+  make acceptance

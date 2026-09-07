@@ -1,0 +1,13 @@
+{
+  "connector_type": "erp_rest",
+  "source_domain": "erp",
+  "expected_freshness_minutes": 240,
+  "required_fields": ["external_id", "kind", "modified_at", "metadata.part_number"],
+  "config": {
+    "base_url": "http://erp-gateway.internal",
+    "list_path": "/api/material-records",
+    "record_mode": true,
+    "integration_contract": {"allowed_kinds": ["material", "mbom", "supplier_record"]}
+  },
+  "secrets": {"token_env": "MGC_ERP_TOKEN"}
+}

@@ -1,0 +1,52 @@
+# Strict reproducible/offline build overlay. Use only with an approved .env.reproducible.
+services:
+  api:
+    build:
+      network: none
+      args:
+        PYTHON_BASE_IMAGE: ${PYTHON_BASE_IMAGE:?Set immutable PYTHON_BASE_IMAGE repo@sha256:digest}
+        PYTHON_DEPENDENCY_MODE: locked
+        OS_DEPENDENCY_MODE: bundle
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}
+  worker:
+    build:
+      network: none
+      args:
+        PYTHON_BASE_IMAGE: ${PYTHON_BASE_IMAGE:?Set immutable PYTHON_BASE_IMAGE repo@sha256:digest}
+        PYTHON_DEPENDENCY_MODE: locked
+        OS_DEPENDENCY_MODE: bundle
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}
+  beat:
+    build:
+      network: none
+      args:
+        PYTHON_BASE_IMAGE: ${PYTHON_BASE_IMAGE:?Set immutable PYTHON_BASE_IMAGE repo@sha256:digest}
+        PYTHON_DEPENDENCY_MODE: locked
+        OS_DEPENDENCY_MODE: bundle
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}
+  frontend:
+    build:
+      network: none
+      args:
+        NODE_BASE_IMAGE: ${NODE_BASE_IMAGE:?Set immutable NODE_BASE_IMAGE repo@sha256:digest}
+        NGINX_BASE_IMAGE: ${NGINX_BASE_IMAGE:?Set immutable NGINX_BASE_IMAGE repo@sha256:digest}
+        NPM_DEPENDENCY_MODE: locked
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}
+  gateway:
+    build:
+      network: none
+      args:
+        NGINX_BASE_IMAGE: ${NGINX_BASE_IMAGE:?Set immutable NGINX_BASE_IMAGE repo@sha256:digest}
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}
+  webhook-edge:
+    build:
+      network: none
+      args:
+        NGINX_BASE_IMAGE: ${NGINX_BASE_IMAGE:?Set immutable NGINX_BASE_IMAGE repo@sha256:digest}
+        MGC_BUILD_VERSION: ${MGC_VERSION:-6.3.34}
+        MGC_BUILD_SOURCE_SHA256: ${MGC_BUILD_SOURCE_SHA256:?Generate supply-chain/BUILD_INPUTS.sha256}

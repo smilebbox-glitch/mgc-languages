@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Static fail-closed checks for v6.3.8 Data Lifecycle, Retention & Compliance."""
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+def read(x): return (ROOT/x).read_text()
+rt=read('backend/app/core/runtime_contract.py'); cfg=read('backend/app/core/config.py'); models=read('backend/app/db/models.py'); mig=read('backend/app/db/migrations.py'); svc=read('backend/app/services/data_lifecycle.py'); po=read('backend/app/api/contexts/platform_operations.py'); idp=read('backend/app/services/identity_policy.py'); env=read('.env.example'); ops=read('backend/app/services/production_support.py'); search=read('backend/app/ports/search.py'); graph=read('backend/app/ports/graph.py')
+checks=[]
+def ck(n,o,d=''): checks.append((n,bool(o),d))
+ck('version','APP_VERSION = "6.3.34"' in rt and 'SCHEMA_VERSION = "6.3.13"' in rt)
+ck('authoritative purge safe default','data_lifecycle_authoritative_purge_enabled: bool = False' in cfg)
+ck('quota unlimited defaults','data_lifecycle_project_quota_mb: int = 0' in cfg and 'data_lifecycle_area_quota_mb: int = 0' in cfg)
+for c in ('EngineeringRetentionPolicy','EngineeringLegalHold','EngineeringDataLifecycleState','EngineeringPurgeRequest','EngineeringLifecycleEvent'): ck('model '+c,('class '+c) in models)
+ck('migration marker','def ensure_v638_schema' in mig and "'6.3.8'" in mig)
+ck('append-only db trigger','mgc_v638_lifecycle_append_only' in mig and 'lifecycle events are append-only' in mig)
+ck('legal hold gate','Active legal hold blocks purge' in svc)
+ck('released package immutable','immutable retention evidence and are not purgeable' in svc)
+ck('four eyes maker checker','Purge maker cannot authorize own request' in svc and 'Maker cannot execute own purge' in svc)
+ck('human purge actor','Human checker required' in svc and 'Human identity required' in svc)
+ck('snapshot stale gate','Entity changed after purge authorization' in svc)
+ck('authoritative global switch','Authoritative purge is globally disabled' in svc)
+ck('authoritative policy gate','Retention policy does not allow authoritative purge' in svc)
+ck('retention elapsed gate','Retention period has not elapsed' in svc)
+ck('controlled reference protection','controlled engineering evidence' in svc)
+ck('projection purge keeps source','postgresql_authoritative_preserved' in svc and 'local_evidence_preserved' in svc and 'postgresql_chunks_deleted":False' in svc)
+ck('qdrant deletion contract','delete_document' in search)
+ck('neo4j deletion contract','delete_document' in graph and 'delete_document_projection' in read('backend/app/services/graph_store.py'))
+ck('quota upload gate','enforce_upload_quota' in read('backend/app/api/contexts/engineering_core.py'))
+for path in ('/lifecycle/summary','/lifecycle/retention-policies','/lifecycle/legal-holds','/lifecycle/purge-requests','/lineage'): ck('api '+path,path in po)
+ck('identity actions',all(x in idp for x in ('retention_policy_admin','legal_hold_admin','purge_create','purge_authorize','purge_execute')))
+ck('operations summary','lifecycle_dashboard(db)' in ops and '"data_lifecycle": lifecycle' in ops)
+ck('prometheus metrics','mgc_lifecycle_purge_requests' in ops and 'mgc_lifecycle_active_legal_holds' in ops and 'mgc_lifecycle_authoritative_purge_enabled' in ops)
+ck('safe env default','DATA_LIFECYCLE_AUTHORITATIVE_PURGE_ENABLED=false' in env)
+ck('machine control absent','"machine_control":False' in svc)
+failed=[x for x in checks if not x[1]]
+for n,o,d in checks: print(f"{'PASS' if o else 'FAIL'} {n}"+(f' — {d}' if d else ''))
+print(f"SUMMARY {len(checks)-len(failed)}/{len(checks)} PASS")
+if failed: raise SystemExit(1)

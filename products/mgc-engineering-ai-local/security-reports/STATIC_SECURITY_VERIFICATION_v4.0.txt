@@ -1,0 +1,27 @@
+MGC Engineering AI Local v4.0.0 — STATIC SECURITY VERIFICATION
+
+Packaging-environment results:
+- backend regression: 72/72 PASS
+- engineer-only human API preflight: 68/68 guarded; 2 explicit exceptions (/health and HMAC machine webhook)
+- Dockerfile security preflight: 32/32 PASS
+- Compose/access/runtime security preflight: 82/82 PASS
+- project/area ACL does not promote hidden document-derived facts: PASS
+- SSO area-name suggestion is contextual only and grants no authorization: PASS
+- production direct model/database/application host-port exposure checks: PASS
+- build context preflight / plain docker compose build structure: PASS
+- Python compile / Compose YAML / shell syntax / TSX transpile syntax: PASS
+
+Manufacturing-area security model:
+- project ACL controls project visibility
+- ProjectArea ACL can narrow access per manufacturing zone
+- Document ACL remains authoritative and cannot be widened by Project/ProjectArea membership
+- AI/RAG area filtering is applied in addition to document authorization
+
+Not executed in this environment:
+- real Docker image layer build
+- real Dockle image-layer scan
+
+Required on corporate build host:
+  docker compose build
+  make dockle
+  make acceptance

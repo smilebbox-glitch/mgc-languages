@@ -1,0 +1,224 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../vendor/shadcn-tailwind-4.13.0.css";
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+:root {
+  --background: #eef0f3;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #285fff;
+  --primary-foreground: #ffffff;
+  --secondary: #e4e7ec;
+  --secondary-foreground: #27272a;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #e8edff;
+  --accent-foreground: #1f4ed8;
+  --destructive: #fb7185;
+  --border: #d4d4d8;
+  --input: #d4d4d8;
+  --ring: #285fff;
+  --chart-1: #fb923c;
+  --chart-2: #67e8f9;
+  --chart-3: #34d399;
+  --chart-4: #a78bfa;
+  --chart-5: #facc15;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #285fff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8edff;
+  --sidebar-accent-foreground: #1f4ed8;
+  --sidebar-border: #d4d4d8;
+  --sidebar-ring: #285fff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-width: 320px;
+}
+
+.mgc-surface {
+  background-color: #eef0f3;
+  background-image:
+    linear-gradient(rgb(17 18 22 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(17 18 22 / 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 86% 0%, rgb(40 95 255 / 0.11), transparent 25%);
+  background-size: 42px 42px, 42px 42px, auto;
+}
+
+::selection {
+  background: rgb(103 232 249 / 0.25);
+  color: #ffffff;
+}
+
+.radar-grid {
+  color: #18181b;
+  background-color: #eef0f3;
+  background-image:
+    linear-gradient(rgb(17 18 22 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(17 18 22 / 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 86% 0%, rgb(40 95 255 / 0.11), transparent 25%);
+  background-size: 42px 42px, 42px 42px, auto;
+}
+
+.radar-grid [class*="bg-[#0a1516]"],
+.radar-grid [class*="bg-[#0c1718]"] {
+  background-color: rgb(255 255 255 / 0.96) !important;
+}
+
+.radar-grid [class*="bg-[#071011]"] {
+  background-color: rgb(244 244 245 / 0.92) !important;
+}
+
+.radar-grid [class*="border-white/"] {
+  border-color: #d4d4d8 !important;
+}
+
+.radar-grid .text-white { color: #18181b !important; }
+.radar-grid .text-slate-200,
+.radar-grid .text-slate-300 { color: #3f3f46 !important; }
+.radar-grid .text-slate-400 { color: #52525b !important; }
+.radar-grid .text-slate-500,
+.radar-grid .text-slate-600 { color: #71717a !important; }
+.radar-grid .text-cyan-200,
+.radar-grid .text-cyan-300 { color: #285fff !important; }
+.radar-grid .text-violet-200,
+.radar-grid .text-violet-300 { color: #6d4acf !important; }
+.radar-grid .text-orange-200,
+.radar-grid .text-orange-300 { color: #c2410c !important; }
+.radar-grid .text-amber-100,
+.radar-grid .text-amber-200,
+.radar-grid .text-amber-300 { color: #92400e !important; }
+.radar-grid .text-emerald-100,
+.radar-grid .text-emerald-300 { color: #047857 !important; }
+
+.signal-dot {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #34d399;
+  box-shadow: 0 0 12px rgb(52 211 153 / 0.8);
+}
+
+.signal-dot::after {
+  content: "";
+  position: absolute;
+  inset: -0.25rem;
+  border: 1px solid rgb(52 211 153 / 0.35);
+  border-radius: inherit;
+  animation: signal-pulse 2s ease-out infinite;
+}
+
+@keyframes signal-pulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+
+@media print {
+  body:has([data-print-sheet]) * {
+    visibility: hidden;
+  }
+
+  body:has([data-print-sheet]) [data-print-sheet],
+  body:has([data-print-sheet]) [data-print-sheet] * {
+    visibility: visible;
+  }
+
+  body:has([data-print-sheet]) [data-print-sheet] {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,1093 @@
+{
+  "schema": "mgc-api-route-contract-v2",
+  "source_release": "6.2.0",
+  "route_count": 181,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/me",
+      "handler": "me",
+      "handler_ast_sha256": "12f0acb65b8fadeb071d37b828e5ff25954a8d1a132847e613036077073045e6"
+    },
+    {
+      "method": "GET",
+      "path": "/local-ai/health",
+      "handler": "local_ai_health",
+      "handler_ast_sha256": "47fee897c2c1d370d66ca64b75753500b0445ba4deea11ac4690416f9fb943e0"
+    },
+    {
+      "method": "GET",
+      "path": "/stats",
+      "handler": "stats",
+      "handler_ast_sha256": "eea721c14e0135eda7290764f8ecfa0fb0e1375c1cbe364569e4ad7128671273"
+    },
+    {
+      "method": "GET",
+      "path": "/documents",
+      "handler": "documents",
+      "handler_ast_sha256": "c1357c78c68db257b16a554bf02e9f0943ec88529dc4227d9535a984e887042f"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}",
+      "handler": "document",
+      "handler_ast_sha256": "9c913b429370848a3da6ccc45b8c54dbad262b795f2ce65a62270e564b877de5"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/upload",
+      "handler": "upload",
+      "handler_ast_sha256": "905355447e482f57e4c6afac18c83822b097e0ec3bbeb65d8d31651ca6b2fffe"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/{document_id}/reindex",
+      "handler": "reindex",
+      "handler_ast_sha256": "ea21498e2308b4b0b059f87ce618e37a89d14502f9454952a4637103e1473caf"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}/preview",
+      "handler": "preview",
+      "handler_ast_sha256": "b00f1f69061006e4e1908fd7d9f03febaa124ea860cc8a69da31dfae8d82330b"
+    },
+    {
+      "method": "POST",
+      "path": "/search",
+      "handler": "search_api",
+      "handler_ast_sha256": "8cb8b9de8c1a5349a62509d4ac875a74825cd6643a140825acc84b4d0e00ee0e"
+    },
+    {
+      "method": "POST",
+      "path": "/ask",
+      "handler": "ask_api",
+      "handler_ast_sha256": "985792ae22d15ac3d3de5becfb2e95b6f6003b7ad0e62107b15eaf98fd241732"
+    },
+    {
+      "method": "GET",
+      "path": "/parts",
+      "handler": "parts",
+      "handler_ast_sha256": "48c418b05b5a42b5ba742577f2635bb138f7319101c67364c577545e8dcf1adc"
+    },
+    {
+      "method": "GET",
+      "path": "/parts/{part_number}",
+      "handler": "part_360",
+      "handler_ast_sha256": "4ce11976cc9313d4b7be2df6c7107f870ef1f9cf87a7cfae1600732d11ce10a5"
+    },
+    {
+      "method": "GET",
+      "path": "/parts/{part_number}/graph",
+      "handler": "graph",
+      "handler_ast_sha256": "a4e888d31fa932c5f40dacf668314ef453365143e17ca0dcdf1c8e53073e4d49"
+    },
+    {
+      "method": "GET",
+      "path": "/parts/{part_number}/compare",
+      "handler": "compare",
+      "handler_ast_sha256": "8c5b442963474a932869dab7794c345135d3d77ddb578f5ea19cb0abbbb629cb"
+    },
+    {
+      "method": "POST",
+      "path": "/parts/{part_number}/validate",
+      "handler": "validate",
+      "handler_ast_sha256": "08e86b8c5fa4cd3d1abc225695bb04f812dcca32bb4809b684dba46c42ce0c18"
+    },
+    {
+      "method": "GET",
+      "path": "/issues",
+      "handler": "issues",
+      "handler_ast_sha256": "a350e0d66708f1ef6792d01bd1fd78e145dced62158546908036b13bd0d8d6aa"
+    },
+    {
+      "method": "PATCH",
+      "path": "/issues/{issue_id}",
+      "handler": "update_issue",
+      "handler_ast_sha256": "fa217422d7c1db278be4dafe0de153d0a31383063d7d23da3f1b14d98b497d3d"
+    },
+    {
+      "method": "POST",
+      "path": "/scanner/run",
+      "handler": "scanner_run",
+      "handler_ast_sha256": "d47c7746ee0cde45b1df0e441d7c9f278289f29437069669a56c9571a38daac3"
+    },
+    {
+      "method": "GET",
+      "path": "/audit",
+      "handler": "audit",
+      "handler_ast_sha256": "b47b86083c4fe4ff01ad14cd07cb7de27a614fc46344f735cbc54d1660d5115e"
+    },
+    {
+      "method": "GET",
+      "path": "/security/posture",
+      "handler": "enterprise_security_posture",
+      "handler_ast_sha256": "97da09e3086b3c32f66aedd4cf9c5722d92ab497f500dd779f6842f570caeea3"
+    },
+    {
+      "method": "GET",
+      "path": "/security/audit/export",
+      "handler": "enterprise_audit_export",
+      "handler_ast_sha256": "eae49e0be10fb2bfafaba347d4015ab28a0627f1cc78d7af07e6c86b16ef6c70"
+    },
+    {
+      "method": "GET",
+      "path": "/security/audit/retention",
+      "handler": "enterprise_audit_retention_preview",
+      "handler_ast_sha256": "5598f1b94ad8bd8fe2ede162da9f2336e1e777ed594c5076afbe954737fc6226"
+    },
+    {
+      "method": "POST",
+      "path": "/security/audit/retention",
+      "handler": "enterprise_audit_retention_apply",
+      "handler_ast_sha256": "76abb0a8a36a97159e04297a5111d2d9977e626637a94e418d9eabf7313efde7"
+    },
+    {
+      "method": "POST",
+      "path": "/agent/run",
+      "handler": "agent_run",
+      "handler_ast_sha256": "5811dfb74148c28cace32bb8d8f74614ed85cb1f3abdc586ef468bc588d7fec4"
+    },
+    {
+      "method": "POST",
+      "path": "/design-reviews",
+      "handler": "create_design_review",
+      "handler_ast_sha256": "a3c30df8f36e87479c042cec3b6ee79de37472cbdec3d1416cf571cba6e7e7b3"
+    },
+    {
+      "method": "POST",
+      "path": "/design-reviews/async",
+      "handler": "create_design_review_async",
+      "handler_ast_sha256": "5a676c8cf2e0964be2817f996bd71737546319d8ade001dd5187428255153c7e"
+    },
+    {
+      "method": "GET",
+      "path": "/compute/tasks/{job_id}",
+      "handler": "compute_task_status",
+      "handler_ast_sha256": "591daa8e1f98382ac4bb0b0dd6d68d9a3ce8cbff28315d18ec3311bfa5b8be3c"
+    },
+    {
+      "method": "GET",
+      "path": "/design-reviews",
+      "handler": "list_design_reviews",
+      "handler_ast_sha256": "93ef24c7a40bb602e318a2cb2fda0076e73ebefb4b12e2250fbcb459f10d4d1a"
+    },
+    {
+      "method": "POST",
+      "path": "/design-reviews/{review_id}/approve",
+      "handler": "approve_design_review",
+      "handler_ast_sha256": "01dce2ac909bb9391ed4e764c24fa6a6c85233e9207fb8e7ebea665d2e0571bd"
+    },
+    {
+      "method": "POST",
+      "path": "/impact",
+      "handler": "impact",
+      "handler_ast_sha256": "8f64f285c881e586f35c1bf029752761f896a3eb5c0c101979c085b4f0875e51"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}/similar",
+      "handler": "similar",
+      "handler_ast_sha256": "c171ab68323e4c0fef83168d7234a3709f3260e85b2592157c2df08caf3a3721"
+    },
+    {
+      "method": "POST",
+      "path": "/evidence-packs",
+      "handler": "evidence_pack",
+      "handler_ast_sha256": "7e8590001774a38edbc9fb164c2352e2dc5c33eac02f5ed40165a58338de5e62"
+    },
+    {
+      "method": "GET",
+      "path": "/evidence-packs/{pack_id}",
+      "handler": "get_evidence_pack",
+      "handler_ast_sha256": "a8a3e161d954d9f279dca1e731f79ded60bd1f1cab4b306546d3b2b4d14b43d6"
+    },
+    {
+      "method": "POST",
+      "path": "/graph/{part_number}/sync",
+      "handler": "graph_sync",
+      "handler_ast_sha256": "08179ff6c0d0670c4f3fb6a99a75011faee1bb63bb28986393bfd01ea75401ad"
+    },
+    {
+      "method": "GET",
+      "path": "/graph/{part_number}/neighborhood",
+      "handler": "graph_neighborhood_api",
+      "handler_ast_sha256": "4623f2883603f7bda6c0f2d3730aacdafff268c6788ac086bd9c309e06e8ee95"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}/history",
+      "handler": "document_history",
+      "handler_ast_sha256": "d3acd8a050e2ef9b03f8a055e0887a6a3895d212369d938f84172c23e49952ea"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/{document_id}/history/note",
+      "handler": "add_document_history_note",
+      "handler_ast_sha256": "f06cf61ac7cfe9cf40804a28d1cc6fc1ed108b67fbea30026a22cdfa8e382d34"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}/engineering-analysis",
+      "handler": "engineering_analysis",
+      "handler_ast_sha256": "7ca40d810f90186365de76ae5dae8edfcc1e37594084870868d4733dbd79af5a"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/{document_id}/engineering-analyze",
+      "handler": "rerun_engineering_analysis",
+      "handler_ast_sha256": "574f54cbcc9bad1642aec4b373f92c3fab0ef7204c391d421f7b64ad61b63105"
+    },
+    {
+      "method": "GET",
+      "path": "/documents/{document_id}/geometry-links",
+      "handler": "geometry_links",
+      "handler_ast_sha256": "411457be45882bedeb58f2260eba7f8925810fba093f7e41199da565c3bd0250"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/{document_id}/link-geometry",
+      "handler": "link_geometry",
+      "handler_ast_sha256": "abcdc1fca6eea37d8508d4608da09c67528d3bdb1b74d29b37bad5c99a7c2849"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/{document_id}/visual-inspect",
+      "handler": "visual_inspect",
+      "handler_ast_sha256": "f22c2d2a2f3301e8673011dc644ce97be30981550366bd6c278e9f034da8279d"
+    },
+    {
+      "method": "GET",
+      "path": "/changes",
+      "handler": "list_changes",
+      "handler_ast_sha256": "0469001ec3f5d42b97ead46de4193a29cf65cb07fbc2d2e81a3d0c84bfa9c103"
+    },
+    {
+      "method": "POST",
+      "path": "/changes",
+      "handler": "create_engineering_change",
+      "handler_ast_sha256": "8b76f3c7f8549778f177a6c7d70216951354b21f0c7b79770830fa6050f46a01"
+    },
+    {
+      "method": "GET",
+      "path": "/changes/{change_id}",
+      "handler": "get_engineering_change",
+      "handler_ast_sha256": "d7eebaef123bf70f303e1de748619193e34df44ab69f8c37e4de50f64665d931"
+    },
+    {
+      "method": "POST",
+      "path": "/changes/{change_id}/impact",
+      "handler": "analyze_engineering_change",
+      "handler_ast_sha256": "ac7cce5bb6582e0d6a7a1eda86969770d8c5decac62f7928e62e8f9db75c9f7e"
+    },
+    {
+      "method": "POST",
+      "path": "/changes/{change_id}/submit",
+      "handler": "submit_engineering_change",
+      "handler_ast_sha256": "a303d0512c76ef2fe648913f9fa23b560fbd25b3a43bbdf00f5c6cda49ed2748"
+    },
+    {
+      "method": "POST",
+      "path": "/changes/{change_id}/decision",
+      "handler": "decide_engineering_change",
+      "handler_ast_sha256": "817ef01d30ecf3e23cfda80eaf9215195f5fa379bc9de46f539046e9b69f6604"
+    },
+    {
+      "method": "POST",
+      "path": "/changes/{change_id}/implementation",
+      "handler": "start_engineering_change_implementation",
+      "handler_ast_sha256": "d3fc8191674b632969a4c59842f221d444d15353cc7c5f08f7e3134c684db1f1"
+    },
+    {
+      "method": "POST",
+      "path": "/changes/{change_id}/complete",
+      "handler": "complete_engineering_change",
+      "handler_ast_sha256": "8c8bb277850ee5fec05f19002e92969e31e586f76d70043db060b13d808dfa66"
+    },
+    {
+      "method": "GET",
+      "path": "/projects",
+      "handler": "list_projects",
+      "handler_ast_sha256": "f7ffd4d3259f006b2f824ac239c2e3a39b46f464e11affdacc89ffdf2fc0abbb"
+    },
+    {
+      "method": "POST",
+      "path": "/projects",
+      "handler": "create_project",
+      "handler_ast_sha256": "ce72c66d93fea9d6b96a9d8c196a9e293005df29ca148e3d5ad79d08fdd97d5c"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}",
+      "handler": "update_project",
+      "handler_ast_sha256": "18b2b5194c86562e87090ca6fa53f25bb46c6fe5f1d047ae71fe409ba7c4e1d0"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/workspace",
+      "handler": "get_project_workspace",
+      "handler_ast_sha256": "b13f4f1fa0772b7307ab960e3f75c47a5cd50e6efd8ab39bada59c286ac264bb"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/areas",
+      "handler": "project_areas",
+      "handler_ast_sha256": "57d707ad4e5bd1211ae3616e0f6517b4e6fb0d9cb360ddfbde57dfc1fd34ff24"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/areas/{area_code}",
+      "handler": "update_project_area",
+      "handler_ast_sha256": "13a23e7a80b385ac787a484815adccc553c573267fba9172ff840157648feeaf"
+    },
+    {
+      "method": "PATCH",
+      "path": "/documents/{document_id}/manufacturing-area",
+      "handler": "update_document_area",
+      "handler_ast_sha256": "7a48b9e93736f796bb254244e7d70b291642149d50f8c7c2a30bf955c6c9a166"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/milestones",
+      "handler": "create_project_milestone",
+      "handler_ast_sha256": "fb5c4acbfe696746c2c467476bdfc1656421fde313d49779f96201610926887f"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/milestones/{milestone_id}",
+      "handler": "update_project_milestone",
+      "handler_ast_sha256": "cbbee2df72f7b92bb1d6d462c3635c98a14c1c65a4d153e3c8658d4927131fe2"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/quality",
+      "handler": "project_quality_workspace",
+      "handler_ast_sha256": "14d677ab8a5a321cac8d2d5ea4b83ea77867cc637184ec7e704035fabeed48d6"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/apqp",
+      "handler": "create_apqp_deliverable",
+      "handler_ast_sha256": "8ff96c9feadfb4c79be335c1eb926299fa1eb8d45a451e7d9095b07210feed65"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/apqp/{item_id}",
+      "handler": "update_apqp_deliverable",
+      "handler_ast_sha256": "3b5cce1ae0d2da9efbf4e01832d32bc0cfbb227e97f8e38c77123a41696cdd4c"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/characteristics",
+      "handler": "create_special_characteristic",
+      "handler_ast_sha256": "0d0d4bd3fc8b4000a6088e21819fb82826f3d8c11841163098b5fa792f3770b3"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/characteristics/{item_id}",
+      "handler": "update_special_characteristic",
+      "handler_ast_sha256": "1dfa60dadff63ff68e70279994c6f22dbee120005ba345e9640db9020d07356a"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/pfmea",
+      "handler": "create_pfmea_item",
+      "handler_ast_sha256": "6b1395bab2a11fc5cf4f6aab435629ad4e8af98496960b1e2777f8cd8ae62f28"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/pfmea/{item_id}",
+      "handler": "update_pfmea_item",
+      "handler_ast_sha256": "f7030fdb727009b01a368aad57fa056ac564bf7f201ccf2dc61e13dc7051b546"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/control-plan",
+      "handler": "create_control_plan_item",
+      "handler_ast_sha256": "27a3713415ae1eac4d16078de7f19b0200803abf42b6869c39e9cccf80fb3326"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/control-plan/{item_id}",
+      "handler": "update_control_plan_item",
+      "handler_ast_sha256": "3333a6d8a82500808ec73e44f1c73d64ea3a76b06fa5c77152003230e4bdf220"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/ppap",
+      "handler": "create_ppap",
+      "handler_ast_sha256": "a72bea044a826b696c3ba92c762b612c0afc8d63401a7830d416bde27d986f35"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/ppap/{item_id}",
+      "handler": "update_ppap",
+      "handler_ast_sha256": "d3c13a9ec303e233c5320eb8c2a1379e4c95bced00def9e0f3fc20f30a51f220"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/quality/8d",
+      "handler": "create_problem_8d",
+      "handler_ast_sha256": "9c5a8c815d2a3dd0c677a9903d09dfcdb5840ded50961009b3c82f667c5530cd"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/quality/8d/{item_id}",
+      "handler": "update_problem_8d",
+      "handler_ast_sha256": "fa04e9974474521217a11763bd99c0ba16a5a1e465b8dddac9cb19a374c602bf"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/process-thread",
+      "handler": "get_process_thread",
+      "handler_ast_sha256": "722368f21e89463cf4d7bfeb1dc397b370ac31d31582053ea812dc18ba7c2708"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/lines",
+      "handler": "create_manufacturing_line",
+      "handler_ast_sha256": "d7bb288a6fa847937d7bd2098b7ce0908f75b60564ac342c4b6c9c92e8dd431e"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/lines/{line_id}/stations",
+      "handler": "create_process_station",
+      "handler_ast_sha256": "8abeccac1a0dc3a8521976a6ecabce36733ee5727909f334e7366b28db0b2182"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/stations/{station_id}/operations",
+      "handler": "create_process_operation",
+      "handler_ast_sha256": "be6e91bff257518301ca1328b2dd38aa287f4e06c7a4b2d7ed6f685c169052c2"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/operations/{operation_id}/assets",
+      "handler": "create_process_asset",
+      "handler_ast_sha256": "dd67cff536d1660831d4df743273b2f5b4ef87195d1c89c649a779bd5541c948"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/operations/{operation_id}/parameters",
+      "handler": "create_process_parameter",
+      "handler_ast_sha256": "c58f18d7bd982a662386b9716da0dd052cf6adbb46f21749220c53fb9d829f84"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/process/defects",
+      "handler": "create_process_defect",
+      "handler_ast_sha256": "aa9402645600515984d1c76027470faabbc5c00d17c27e3307277e76636e16f4"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/process/defects/{defect_id}",
+      "handler": "update_process_defect",
+      "handler_ast_sha256": "d668e293ae209593950459dc8b9a38dfe42698bee8e044850f613cb601c894ab"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/launch-readiness",
+      "handler": "project_launch_readiness",
+      "handler_ast_sha256": "75c6a331f910bd51d3c63e4c88da605f078c11879d8422f2ef39a579c710356a"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/launch/checks",
+      "handler": "create_launch_check",
+      "handler_ast_sha256": "738104febb3222314e3b560e9b90aa0e5b744e1b52935a3623ad1ff43cbec151"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/launch/checks/{item_id}",
+      "handler": "update_launch_check",
+      "handler_ast_sha256": "3a934d4f6d329ffe18016950dc8298bb947a7ac1caedce6226ad077e8dc29bbc"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/launch/trials",
+      "handler": "create_launch_trial",
+      "handler_ast_sha256": "97f4ff87789d0883fd286580ecc4a7efa50770e7884467f164e668e194fb7ecb"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/launch/trials/{trial_id}",
+      "handler": "update_launch_trial",
+      "handler_ast_sha256": "e0ff882aec1c5040f1aa8307b28ed7525dac46e8d80cd431dcebbfbae433d3f1"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/requirements-matrix",
+      "handler": "get_requirements_matrix",
+      "handler_ast_sha256": "2799a8b2210004346278a075db7d7379e3546789cc46c8414f5923693aa1689d"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/requirements",
+      "handler": "create_requirement",
+      "handler_ast_sha256": "50d114c4be1343d135864f9d00081031925672e6bb19be53522398d13d764fd9"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/requirements/{requirement_id}",
+      "handler": "update_requirement",
+      "handler_ast_sha256": "302a93a08b98d764c1219617d565e69284134ca4de6501e09dc116744ae20083"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/requirements/{requirement_id}/verifications",
+      "handler": "create_requirement_verification",
+      "handler_ast_sha256": "c9963dbb795cf663d785c070eff85bf3f6edee5b9208fa425b19bc31c2e60007"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/requirements/verifications/{verification_id}",
+      "handler": "update_requirement_verification",
+      "handler_ast_sha256": "d85f39136f065aff1bc9c92916bf5bdf4dacd896d69ea739eca1d98c0d314706"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/supplier-localization",
+      "handler": "get_supplier_localization",
+      "handler_ast_sha256": "5ef1b29e95155fb98503cacdecfee83c8c79a2fdcef8b0060145411ab338cd20"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/localization/items",
+      "handler": "create_localization_item",
+      "handler_ast_sha256": "b41c11490db8236a7c6c5473b5252c712ea3cb385d25428145c97839c547a916"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/localization/items/{item_id}",
+      "handler": "update_localization_item",
+      "handler_ast_sha256": "5a66f78f156fe40604505f38974f1b84e0842994a20b42b5e07adc61c6fd3c93"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/localization/incoming-quality",
+      "handler": "create_incoming_quality",
+      "handler_ast_sha256": "2e95b71c11c9c3a683c3e81f281146a4cfb71583a62a4f106fee4fde9443e46b"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/localization/incoming-quality/{record_id}",
+      "handler": "update_incoming_quality",
+      "handler_ast_sha256": "49cf6fd21772a24ed86a43a5cb5591412956a651c4077462ce7bcb3a44c5192f"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/localization/items/{item_id}/evidence-pack",
+      "handler": "create_supplier_evidence_pack",
+      "handler_ast_sha256": "6a982a53529bffb520d0e759bb7af95f622ed0acdc1aa702f1707cfe2034bc22"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/cost-economics",
+      "handler": "get_cost_economics",
+      "handler_ast_sha256": "8536e9d65d7dda9648fa25a86bd07256c18cbce835cd6b9734e8f9de65e76b6d"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/cost/baselines",
+      "handler": "create_cost_baseline",
+      "handler_ast_sha256": "ac061bae1b110fcf058cf6b315735d503a515e66c4d523f5a0f08abab637358f"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/cost/baselines/{baseline_id}",
+      "handler": "update_cost_baseline",
+      "handler_ast_sha256": "20a88b2afe1a45a6402973cad54855546a0eb30b0e214698b3973408b790f3e7"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/cost/lines",
+      "handler": "create_cost_line",
+      "handler_ast_sha256": "dfd3f57adcad6fe93b86b3bd554c15e83779571bc811e535e71263e89e6ec761"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/cost/lines/{line_id}",
+      "handler": "update_cost_line",
+      "handler_ast_sha256": "2bf24873df207122d3e6b4454808c881c78349c2ec8af22bf97981c51a551d50"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/cost/quotes",
+      "handler": "create_supplier_quotation",
+      "handler_ast_sha256": "bb70a214cc86805785ebb847635c042dd2a1f0fea5fbd37be4dd58cbecef53db"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/cost/quotes/{quote_id}",
+      "handler": "update_supplier_quotation",
+      "handler_ast_sha256": "8a442082fa5db20d4044f2b6d22850b0f1887a488125a0c6de7367ef1dabc5b5"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/cost/baselines/{baseline_id}/evidence-pack",
+      "handler": "create_cost_pack",
+      "handler_ast_sha256": "aa21cd72009b0000eecb8a925b9b7d99f55e58ba217cb116fe3e755ec07fee96"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/vehicle-architecture",
+      "handler": "get_vehicle_architecture",
+      "handler_ast_sha256": "d17ce55bc54b9fd917b5298568099f31a23b9196cb9e101a3a2db741d48774b4"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/vehicle-architecture/impact",
+      "handler": "get_vehicle_architecture_impact",
+      "handler_ast_sha256": "f3bb7d2eb9a55c37e5c206c9a7b6ff066287debe5f47e19ef6e92d5714f27255"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/vehicle-architecture/nodes",
+      "handler": "create_architecture_node",
+      "handler_ast_sha256": "167ee46b4b4c5ac603c29a2bc5228b7d75dfcfce1e03766ce4d1ab42157b2df0"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/vehicle-architecture/nodes/{node_id}",
+      "handler": "update_architecture_node",
+      "handler_ast_sha256": "55e06c977e3f4693fe8c7fcc0e0571ac833c4410a35fd74e73cf93c0a9c03f2b"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/vehicle-architecture/interfaces",
+      "handler": "create_interface",
+      "handler_ast_sha256": "c2101712680b146f6ae2c16605ed45090411350de8b1470503e616e64fad2c66"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/vehicle-architecture/interfaces/{interface_id}",
+      "handler": "update_interface",
+      "handler_ast_sha256": "0762b8d4a047f2b2b079c0301afda9106f0db9561c2a181092377daaa3032d68"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/vehicle-architecture/interfaces/{interface_id}/verifications",
+      "handler": "create_interface_verification",
+      "handler_ast_sha256": "013d34fad3101768c44d7609514ec1a3a50f371688c92fe4c96b7a003db04c45"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/vehicle-architecture/verifications/{verification_id}",
+      "handler": "update_interface_verification",
+      "handler_ast_sha256": "cea870ca991d5e240f2a58f27243dbbac7bf865db211a7674b2d6d7900ebccc6"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/configurations",
+      "handler": "get_configurations",
+      "handler_ast_sha256": "8f3086f64fedbc7b89c6cb0f0273b5deaeea785eb6bbdb8c297443060f2f9996"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/configurations/impact",
+      "handler": "get_configuration_impact",
+      "handler_ast_sha256": "9c2c36d869732c4981354f24af1ede989bdf0e004adad28b809545433b7c9950"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configurations/variants",
+      "handler": "create_vehicle_variant",
+      "handler_ast_sha256": "c06a3f189c521b4e90f1953657b4e1d3f108a61cc28a5c1bcc3f334c285f7748"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/configurations/variants/{variant_id}",
+      "handler": "update_vehicle_variant",
+      "handler_ast_sha256": "5b64be7b6f4fa8cc3d6b20346cfed7597bdcb63cc5b07faf64270954f747a170"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configurations/applicability",
+      "handler": "create_configuration_applicability",
+      "handler_ast_sha256": "0cfc6b90c3e9e8f1fe099291beb69cfaf696bb3f0cfb2f7ca8cd3cd7377a4852"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/configurations/applicability/{applicability_id}",
+      "handler": "update_configuration_applicability",
+      "handler_ast_sha256": "eca6ed125a4e0ac5cf66faa66bf5ab60f3bcb3d072804b53e397a88779289f12"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/digital-thread",
+      "handler": "project_digital_thread",
+      "handler_ast_sha256": "bf36888ced7d01663910da8628d06e3008b55b86c0ead710ef061d4d1ea31b66"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/change-intelligence",
+      "handler": "project_change_intelligence",
+      "handler_ast_sha256": "3513d6ffe2811f2f35ad4724ef6754b8a11d5115f064a341cb8bdaf829087c0f"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/change-impact-simulate",
+      "handler": "project_change_impact_simulate",
+      "handler_ast_sha256": "e3fe3c15ad99997d1200b093039305f4022c2a504fe9b5fe56335ab5d75e58f8"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/digital-thread/ask",
+      "handler": "ask_digital_thread_api",
+      "handler_ast_sha256": "2eb1e5eed0b465aef3ec5e4185ff2f4776dc26f02e030259fa5e2a09ce1cc19f"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/engineering-memory",
+      "handler": "project_engineering_memory",
+      "handler_ast_sha256": "0562fa4140c71010134af0059789b50486858b97f9cf6e85899bd2e0c84b7e71"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/engineering-memory/ask",
+      "handler": "ask_engineering_memory",
+      "handler_ast_sha256": "02c7b20d8f1e7b2c264d8969207d29f3244e88d79c1f2b16bf253c27c9536ad8"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/engineering-memory/lessons/promote",
+      "handler": "promote_engineering_lesson",
+      "handler_ast_sha256": "17452475635b98d55d376f57292966fa8bf00d5beed7484d80f38a4db01404ab"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/engineering-memory/lessons/{lesson_id}",
+      "handler": "update_engineering_lesson",
+      "handler_ast_sha256": "a329d4de69da3623255b7ca33cc649a53bee1f3cd3253a64052cb3890888d429"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/closed-loop",
+      "handler": "project_closed_loop",
+      "handler_ast_sha256": "457aa8c3c26b4ff2ccc9fa4422811d7377f3a2080d4abb8f9e234b7716553463"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/decisions",
+      "handler": "create_engineering_decision",
+      "handler_ast_sha256": "714a38655c3374895ca03d93825f57c3122ad6cc8338954cfc19748b879f91fe"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/closed-loop/decisions/{decision_id}",
+      "handler": "update_engineering_decision",
+      "handler_ast_sha256": "7827151d8acbc660dce69a245dbcad18b6f4956fc05e795f9282b7f12ecc9fdc"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/production-feedback",
+      "handler": "create_production_feedback",
+      "handler_ast_sha256": "75cc0349556c825b8ed4b2770ada2c69221ec9629a79f9cb50cfdcfe902c2e76"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/effectiveness",
+      "handler": "create_change_effectiveness",
+      "handler_ast_sha256": "7f54ff2eba1c90f35eced3485069b24da17afe22f66d6d1dd349d013993e0a37"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/deviations",
+      "handler": "create_engineering_deviation",
+      "handler_ast_sha256": "e2741ff245013cca926a37da2ae5c5e28010155cee75397c1802516af9b1387e"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/closed-loop/deviations/{deviation_id}",
+      "handler": "update_engineering_deviation",
+      "handler_ast_sha256": "5ceeb92aad99126d85c62df405e6658655de50d04dd1f9a8064f9a682e278d09"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/risks",
+      "handler": "create_engineering_risk",
+      "handler_ast_sha256": "f530da6901d0b667331a783c0dd6114d46fe62fb40d86c1668ce2ddbec2fc01b"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/closed-loop/risks/{risk_id}",
+      "handler": "update_engineering_risk",
+      "handler_ast_sha256": "69e9ff86c2d6130e27df5207f0c795f745f4935eb40655342c34c2d2391a2a8a"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/closed-loop/validation-plan",
+      "handler": "closed_loop_validation_plan",
+      "handler_ast_sha256": "4340b21fce8869af285edaa4aa543419ff9d62a336721da16492267fdf34b693"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/closed-loop/defects/{defect_id}/root-cause",
+      "handler": "closed_loop_root_cause",
+      "handler_ast_sha256": "22ba5b24e23e21c4eda01b8e7bbdaa71a92b9ac5651ea4e913eda741d6a3bc5f"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/program-control",
+      "handler": "get_program_control",
+      "handler_ast_sha256": "8cf4b54cf61529ac5c8b17f281c92b3decedec952814faf6b19ab69a3cfbdea0"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/program-control/dependencies",
+      "handler": "create_program_dependency",
+      "handler_ast_sha256": "87387071504af10de74a62fc37fa6f05a3c43d346a7ab3f325d6759fef232e0a"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/program-control/dependencies/{dependency_id}",
+      "handler": "update_program_dependency",
+      "handler_ast_sha256": "63582d589ce08a2a4b690d0b2df394888a06a034f468d6ac0b3aa54e082313bd"
+    },
+    {
+      "method": "DELETE",
+      "path": "/projects/{project_code}/program-control/dependencies/{dependency_id}",
+      "handler": "delete_program_dependency",
+      "handler_ast_sha256": "cc15603f64b2e15ea4cf977278740f18f80f4ef3a456093bb3b5d22d5fbaf208"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/program-control/slip-simulation",
+      "handler": "simulate_program_slip",
+      "handler_ast_sha256": "8b5725d204a0e78354940ad94f19c1e39c01c86e45bbf81fd4c593aed0f1f2dd"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/configuration-assurance",
+      "handler": "get_configuration_assurance",
+      "handler_ast_sha256": "8fce21e81cbd1b05de7c7b4da57e05ccecf461d8ccd9cac54f9fe9a9596be24f"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/ask",
+      "handler": "ask_configuration_assurance",
+      "handler_ast_sha256": "bd78f07c145371ca8d26df43d803a42f0075cda27d9a12b8ff166976ca6e8b50"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/configuration-assurance/release-package",
+      "handler": "get_configuration_release_package",
+      "handler_ast_sha256": "f409f9800e56e5567edaf2d1330ceb8cfb8083078fbbed31a5fccb7653f359e2"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/mbom",
+      "handler": "create_mbom_item",
+      "handler_ast_sha256": "2510aacbeaeeb932967a68d65f3fbd6aeaec2b52b3c5f19d3f16bf54e0c52d39"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/effectivity",
+      "handler": "create_effectivity",
+      "handler_ast_sha256": "1493350bbb38b617251333c2f482504e42926cf0b3f7715bd40e2a6f14c34c6c"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/cutins",
+      "handler": "create_change_cutin",
+      "handler_ast_sha256": "ca81528fefeac598073f273d2c705c2c834d58331f846986bd25b845a53123aa"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/as-built",
+      "handler": "create_as_built",
+      "handler_ast_sha256": "8a830163cf1d1b4fecc6eb98c822aa3cd1cdfbb4b5bb95ea96cbfae30e5ee7ec"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/configuration-assurance/supersessions",
+      "handler": "create_part_supersession",
+      "handler_ast_sha256": "c8be8efd17c052c8ae6953f6bc1a512c4f11ac72ed0d2c82a490750eccc699b4"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/build-launch-intelligence",
+      "handler": "get_build_launch_intelligence",
+      "handler_ast_sha256": "06d34926559976263de3d636e0c84cd12489d5def330babf18b6abd416de8078"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/build-launch-intelligence/builds",
+      "handler": "create_vehicle_build",
+      "handler_ast_sha256": "be184c689a0118932ed408e423a46d27a3b2988fc0aee9ca02e719dbe61086ae"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/build-launch-intelligence/builds/{build_id}/genealogy",
+      "handler": "add_build_genealogy",
+      "handler_ast_sha256": "577820aaf10ee7aca1298f1b49c8556a215c41de9c956df7a85f33dcb645b1c2"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/build-launch-intelligence/builds/{build_id}/defects",
+      "handler": "link_build_defect",
+      "handler_ast_sha256": "7bdd6c362da5bcb5855ff296e30a106a84bacc3d143e5b61fdf3e87cd268050d"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/build-launch-intelligence/safe-launch",
+      "handler": "create_safe_launch_control",
+      "handler_ast_sha256": "90d7f29be4bc5df44d71415c8855843bd27b84dfe57e2162cbf400911652158b"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/build-launch-intelligence/safe-launch/{control_id}",
+      "handler": "update_safe_launch_control",
+      "handler_ast_sha256": "523783ba0838bc4104a6af80888ee9c405e8046a28b6f5e52ded59daeecccccd"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/release-baselines",
+      "handler": "get_release_baselines",
+      "handler_ast_sha256": "01ea0da3a570bf8fc5610a3682870040bc046b2a9bbc26e9e26ec886537ccab3"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/release-baselines",
+      "handler": "freeze_release_baseline",
+      "handler_ast_sha256": "e5b453927fcc126200dd8ff007b573978808c334e3e0fd941429c1ed838bb244"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/release-baselines/comparison",
+      "handler": "compare_release_baseline_api",
+      "handler_ast_sha256": "7b485080fad06b50d30aa6d7dbafac763f8f40246f2817f6f8d6957670bad081"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/release-baselines/{baseline_id}",
+      "handler": "get_release_baseline",
+      "handler_ast_sha256": "5255852ffdf4f02057d293ce568f9c1385916d932db842e685d27ecf4b876910"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/bom-versions",
+      "handler": "get_bom_versions",
+      "handler_ast_sha256": "f8d3ed8dcef4f6b7b5aa7df3ba07b00ee3251ac41ad1070828442edbfc940917"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/bom-compare",
+      "handler": "get_bom_compare",
+      "handler_ast_sha256": "ad647a00b3a15ed5153fe42dd1f651116ec6102ceb00bef7315cfa5777f83352"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/series-intelligence",
+      "handler": "get_series_intelligence",
+      "handler_ast_sha256": "8b95d490cc17887cab9061267e3b8eecbc87911970b2be1992d03cd4f5cc7371"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/ask",
+      "handler": "ask_series_intelligence",
+      "handler_ast_sha256": "5ec2a165fdf7520a79676a3a1710ed5b759b43d7b91fa9ae3cbdf92555726ba2"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/observations",
+      "handler": "create_series_observation",
+      "handler_ast_sha256": "341f76387c5e0e7c46c6bc91b4c8004ff8e901ff6d0e7680a92cb092b7649c1a"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/capability",
+      "handler": "create_process_capability",
+      "handler_ast_sha256": "99399045a82558c3a87d95a32fad45ea9069ede4633b764a396c56cd39ef4968"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/suspect-population",
+      "handler": "build_suspect_population",
+      "handler_ast_sha256": "ffb3ea1502e2e43a5aafd3dc1d2eab3140b8af0ee5a3541e683accca703316be"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/containments",
+      "handler": "create_series_containment",
+      "handler_ast_sha256": "094040c13682a025397d27483865ea76d8e11bc0ecec132cafd87bd45ab0f5a0"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/series-intelligence/containments/{containment_id}",
+      "handler": "update_series_containment",
+      "handler_ast_sha256": "4374e473314a8768b54a5833c9f957c1fa88164662c624e07df06eece6e8d72f"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/series-intelligence/field-claims",
+      "handler": "create_field_quality_claim",
+      "handler_ast_sha256": "cdfdcb3132f295bf754199b53faa0e9aa52c2c34d018d0b4204a86a5864a6bb3"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/field-intelligence",
+      "handler": "get_field_reliability_intelligence",
+      "handler_ast_sha256": "ae325e9f145df9ff40384b1d438060ff54263603fe4f2155d135b2d491b32db4"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/field-intelligence/ask",
+      "handler": "ask_field_reliability_intelligence",
+      "handler_ast_sha256": "bf00d170afde70f29e6a44aef18207d6e32a29fb3f175b675767d85f10f277e8"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/field-intelligence/vin/{vehicle_identifier}",
+      "handler": "get_field_vin_trace",
+      "handler_ast_sha256": "8e8a5ffd0064a61cafe11d15a67db0c0cfc322a9a73cdc393c27bfe303a4c3c3"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/field-intelligence/exposures",
+      "handler": "create_field_reliability_exposure",
+      "handler_ast_sha256": "f43fc1c09d733ed3c6fdacec004e08c784a909b9c1b3ace1879c817e5df747d4"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/field-intelligence/dfmea",
+      "handler": "create_design_fmea_item",
+      "handler_ast_sha256": "c38a72d69b31be4e64011c82ee449896e1a7cdbd0f7eb0f0f73d5b147031546f"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/field-intelligence/service-actions",
+      "handler": "create_field_service_action",
+      "handler_ast_sha256": "5c6fb1d242c51fcbc38eb119fd3a5850370763577073bc326f26145d5cb69c47"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/field-intelligence/service-actions/{action_id}",
+      "handler": "update_field_service_action",
+      "handler_ast_sha256": "9bd29d0b3ae8aa96c2634938d513053c52a390882e79c468ece1a47d0b7d10db"
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_code}/engineering-os",
+      "handler": "get_engineering_os",
+      "handler_ast_sha256": "35a141629c20566eb0cf4851a7b79b8856c48f04f1622f5cf7e7ca01817777db"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/engineering-os/ask",
+      "handler": "ask_engineering_os",
+      "handler_ast_sha256": "39275e53a807b4b8513dc9e36e276b094daa5298e40f2f388394914f03a094f9"
+    },
+    {
+      "method": "POST",
+      "path": "/projects/{project_code}/engineering-os/workflows",
+      "handler": "create_engineering_workflow",
+      "handler_ast_sha256": "13fbb6ef24640f21c92dcd5eecceedc4408cc572172db24b3fcc062cca779957"
+    },
+    {
+      "method": "PATCH",
+      "path": "/projects/{project_code}/engineering-os/workflows/{workflow_id}",
+      "handler": "update_engineering_workflow",
+      "handler_ast_sha256": "0e53763a112ead10eadf63eebc0ef3ba3bf9c9b16f26279d86748645bb50a6f5"
+    }
+  ]
+}

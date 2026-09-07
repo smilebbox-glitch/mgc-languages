@@ -1,0 +1,39 @@
+{
+  "plm": {
+    "source_domain": "plm",
+    "record_mode": true,
+    "reconciliation": {
+      "role": "ebom",
+      "project_code": "VEHICLE-X",
+      "authoritative_for": ["ebom"],
+      "mapping_review_minutes": 10080
+    },
+    "field_map": {
+      "external_id": "id",
+      "kind": "kind",
+      "part_number": "child_part_number",
+      "revision": "child_revision",
+      "project_code": "project_code",
+      "modified_at": "modified_at"
+    }
+  },
+  "erp": {
+    "source_domain": "erp",
+    "record_mode": true,
+    "reconciliation": {
+      "role": "mbom",
+      "project_code": "VEHICLE-X",
+      "authoritative_for": ["mbom"]
+    }
+  },
+  "mes": {
+    "source_domain": "mes",
+    "record_mode": true,
+    "reconciliation": {"role": "genealogy", "project_code": "VEHICLE-X"}
+  },
+  "qms": {
+    "source_domain": "qms",
+    "record_mode": true,
+    "reconciliation": {"role": "defects", "project_code": "VEHICLE-X"}
+  }
+}

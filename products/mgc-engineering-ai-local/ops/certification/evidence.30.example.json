@@ -1,0 +1,32 @@
+{
+  "database_pool": {
+    "max_saturation_ratio": 0.72
+  },
+  "dependencies": {
+    "availability": 0.998
+  },
+  "external_load_balancer": {
+    "non_idempotent_replay_detected": false,
+    "successful_probes": 30
+  },
+  "failover": {
+    "authoritative_failover_passed": true,
+    "evidence_integrity_passed": true,
+    "host_loss_passed": true,
+    "rpo_seconds": 90,
+    "rto_seconds": 150
+  },
+  "governance": {
+    "example_only": true,
+    "must_be_replaced_with_target_host_measurements": true,
+    "v6322_load_evidence_supplied_separately": true
+  },
+  "http": {
+    "error_rate": 0.004,
+    "p95_ms": 420,
+    "requests": 5000
+  },
+  "load_certification": null,
+  "named_users": 30,
+  "schema": "mgc-production-acceptance-evidence-v1"
+}

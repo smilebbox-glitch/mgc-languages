@@ -1,0 +1,102 @@
+{
+  "format": "okno-v-kitai-it-acceptance",
+  "schema": 1,
+  "createdAt": "2026-09-06T19:16:11.992Z",
+  "mode": "package",
+  "online": false,
+  "appVersion": "1.6.1-pilot",
+  "status": "CONDITIONAL",
+  "sbomComponents": 878,
+  "results": [
+    {
+      "name": "Security preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 44,
+      "stdout": "PASS  compose read-only root filesystem\nPASS  compose no-new-privileges\nPASS  compose drops all capabilities\nPASS  compose localhost bind default\nPASS  runtime config has dedicated volume\nPASS  healthcheck uses readiness endpoint\nPASS  auth mode is explicit\nPASS  trusted proxy secret configurable\nPASS  metrics protection configurable\nPASS  outbound allow-list configurable\nPASS  all external server fetch calls centralized; only internal refresh loopback is excepted\n\n11/11 security preflight checks passed.",
+      "stderr": ""
+    },
+    {
+      "name": "Operations preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 32,
+      "stdout": "PASS  package version is v1.6.1 pilot\nPASS  admin audit endpoint exists\nPASS  admin backup endpoint exists\nPASS  admin restore endpoint exists\nPASS  audit trail has hash chaining and optional HMAC\nPASS  audit file is created with owner-only mode\nPASS  runtime backup excludes application secrets\nPASS  backup/restore operations are audited\nPASS  runtime source changes are audited\nPASS  pilot rate limiter and SIEM event exist\nPASS  correlation request IDs are implemented\nPASS  compose exposes audit and rate-limit controls\nPASS  environment template documents operations controls\nPASS  single pilot preflight command includes SBOM generation\nPASS  online dependency vulnerability gate is defined\n\n15/15 operations preflight checks passed.",
+      "stderr": ""
+    },
+    {
+      "name": "Reliability preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 32,
+      "stdout": "PASS  package version is v1.6.1 pilot\nPASS  SQLite WAL persistent store configured\nPASS  reliability/content tables exist\nPASS  fresh/stale/expired cache policy exists\nPASS  FX persistent stale fallback exists\nPASS  news persistent cache exists\nPASS  authenticated locked refresh orchestration exists\nPASS  scheduler worker script exists\nPASS  separate scheduler service waits for healthy app\nPASS  SQLite persists in /data volume\nPASS  reliability dashboard packaged\nPASS  managed content CRUD packaged\nPASS  published managed content is exposed to user UI\n\n13/13 reliability preflight checks passed.",
+      "stderr": ""
+    },
+    {
+      "name": "Governance preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 32,
+      "stdout": "PASS  package version is v1.6.1 pilot\nPASS  versioned SQLite migrations packaged\nPASS  retention policy implementation packaged\nPASS  scheduler locking with TTL packaged\nPASS  refresh orchestration uses lock and retention cleanup\nPASS  runtime maintenance mode is versioned\nPASS  governance control plane packaged\nPASS  managed content import/export bundle implemented\nPASS  managed content import/export API packaged\nPASS  source SLA policy packaged\nPASS  configuration validation packaged\nPASS  automated IT acceptance report generator packaged\n\n12/12 governance preflight checks passed.",
+      "stderr": ""
+    },
+    {
+      "name": "Business operations preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 33,
+      "stdout": "PASS  package version is v1.6.1 pilot\nPASS  user business-operation tables exist\nPASS  pseudonymous user identity layer packaged\nPASS  subscription notification generator packaged\nPASS  favorites, trip and aggregate usage store packaged\nPASS  offline travel pack and personal workspace packaged\nPASS  favorite and personal UX components packaged\nPASS  admin aggregate usage analytics packaged\nPASS  scheduler generates notifications and applies user retention\nPASS  personal workspace is in main navigation\nPASS  privacy and usage-retention controls documented in env\nPASS  single pilot preflight includes business operations gate\n\n12/12 business preflight checks passed.",
+      "stderr": ""
+    },
+    {
+      "name": "One-click deployment preflight",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 29,
+      "stdout": "PASS  package version is v1.6.1 pilot\nPASS  START.bat packaged\nPASS  STOP.bat packaged\nPASS  STATUS.bat packaged\nPASS  start.sh packaged\nPASS  stop.sh packaged\nPASS  status.sh packaged\nPASS  ONE_CLICK_DEPLOYMENT.md packaged\nPASS  scripts/one-click-start.sh packaged\nPASS  scripts/one-click-stop.sh packaged\nPASS  scripts/one-click-status.sh packaged\nPASS  scripts/one-click-start.ps1 packaged\nPASS  scripts/one-click-stop.ps1 packaged\nPASS  scripts/one-click-status.ps1 packaged\nPASS  launchers bootstrap .env\nPASS  Linux launcher generates required secrets\nPASS  Windows launcher generates required secrets\nPASS  Linux launcher builds and starts Compose\nPASS  Windows launcher builds and starts Compose\nPASS  Linux offline image path validates tag and skips build\nPASS  Windows offline image path validates tag and skips build\nPASS  launchers wait for healthy state\nPASS  launchers produce local access file\nPASS  Windows launcher uses PowerShell 5.1-compatible cryptographic RNG\nPASS  generated access file excluded from package/build context\nPASS  runtime .env excluded from package/build context\n\nOne-click preflight passed.",
+      "stderr": ""
+    },
+    {
+      "name": "TypeScript syntax",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 762,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "SBOM generation",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 59,
+      "stdout": "SBOM written: SBOM_v1.6.1.cdx.json (878 components)",
+      "stderr": ""
+    },
+    {
+      "name": "Targeted pilot tests",
+      "required": true,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 146,
+      "stdout": "TAP version 13\n# Subtest: v1.6 user data is pseudonymized and persisted\nok 1 - v1.6 user data is pseudonymized and persisted\n  ---\n  duration_ms: 4.211857\n  type: 'test'\n  ...\n# Subtest: v1.6 business operations endpoints exist\nok 2 - v1.6 business operations endpoints exist\n  ---\n  duration_ms: 4.512921\n  type: 'test'\n  ...\n# Subtest: scheduler includes notifications and user retention\nok 3 - scheduler includes notifications and user retention\n  ---\n  duration_ms: 1.904509\n  type: 'test'\n  ...\n# (node:12765) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: SQLite supports the governance locking primitives required by v1.6\nok 4 - SQLite supports the governance locking primitives required by v1.6\n  ---\n  duration_ms: 1.889777\n  type: 'test'\n  ...\n# Subtest: v1.6 governance controls are packaged\nok 5 - v1.6 governance controls are packaged\n  ---\n  duration_ms: 7.97204\n  type: 'test'\n  ...\n# Subtest: v1.6.1 packages native one-click launchers\nok 6 - v1.6.1 packages native one-click launchers\n  ---\n  duration_ms: 3.94318\n  type: 'test'\n  ...\n# Subtest: one-click launchers bootstrap secrets and support offline image\nok 7 - one-click launchers bootstrap secrets and support offline image\n  ---\n  duration_ms: 1.271812\n  type: 'test'\n  ...\n# Subtest: v1.6 operations endpoints and controls are packaged\nok 8 - v1.6 operations endpoints and controls are packaged\n  ---\n  duration_ms: 5.541106\n  type: 'test'\n  ...\n# Subtest: runtime backup implementation does not reference known secret variables\nok 9 - runtime backup implementation does not reference known secret variables\n  ---\n  duration_ms: 1.063217\n  type: 'test'\n  ...\n# Subtest: container remains hardened while /data is the only persistent writable volume\nok 10 - container remains hardened while /data is the only persistent writable volume\n  ---\n  duration_ms: 1.759079\n  type: 'test'\n  ...\n# (node:12798) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: Node runtime provides SQLite required by v1.6\nok 11 - Node runtime provides SQLite required by v1.6\n  ---\n  duration_ms: 1.589753\n  type: 'test'\n  ...\n# Subtest: v1.6 packages persistent cache and scheduler\nok 12 - v1.6 packages persistent cache and scheduler\n  ---\n  duration_ms: 6.025478\n  type: 'test'\n  ...\n# Subtest: managed content is audited and published through a separate public endpoint\nok 13 - managed content is audited and published through a separate public endpoint\n  ---\n  duration_ms: 2.820513\n  type: 'test'\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 111.24964",
+      "stderr": ""
+    },
+    {
+      "name": "Dependency vulnerability audit",
+      "required": false,
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 6,
+      "stdout": "PENDING: set ONLINE_ACCEPTANCE=YES where registry/advisory network access is available",
+      "stderr": ""
+    }
+  ]
+}

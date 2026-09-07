@@ -1,0 +1,10 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Bookmark } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+type FavoriteInput={itemType:"news"|"event"|"link";itemId:string;title:string;url:string;metadata?:Record<string,unknown>};
+let loaded=false; let loadPromise:Promise<void>|null=null; const keys=new Set<string>();
+function keyOf(x:Pick<FavoriteInput,"itemType"|"itemId">){return `${x.itemType}:${x.itemId}`;}
+async function ensureLoaded(){if(loaded)return;if(!loadPromise)loadPromise=fetch("/api/user/favorites",{cache:"no-store"}).then(r=>r.ok?r.json():{favorites:[]}).then(p=>{for(const f of p.favorites||[])keys.add(`${f.itemType}:${f.itemId}`);loaded=true;}).catch(()=>{loaded=true;});return loadPromise;}
+export function FavoriteButton({item,className=""}:{item:FavoriteInput;className?:string}){const [active,setActive]=useState(false),[busy,setBusy]=useState(false);useEffect(()=>{let mounted=true;void ensureLoaded().then(()=>mounted&&setActive(keys.has(keyOf(item))));return()=>{mounted=false};},[item.itemId,item.itemType]);async function toggle(){if(busy)return;setBusy(true);const key=keyOf(item),next=!active;setActive(next);if(next)keys.add(key);else keys.delete(key);try{const response=await fetch(next?"/api/user/favorites":`/api/user/favorites?type=${encodeURIComponent(item.itemType)}&id=${encodeURIComponent(item.itemId)}`,{method:next?"POST":"DELETE",headers:next?{"content-type":"application/json"}:undefined,body:next?JSON.stringify({...item,metadata:item.metadata||{}}):undefined});if(!response.ok)throw new Error();}catch{setActive(!next);if(next)keys.delete(key);else keys.add(key);}finally{setBusy(false);}}return <Button type="button" variant="outline" size="sm" onClick={toggle} disabled={busy} aria-pressed={active} title={active?"Убрать из избранного":"В избранное"} className={`${className} ${active?"border-[#285fff] text-[#285fff]":""}`}><Bookmark className={active?"fill-current":""}/><span className="hidden xl:inline">{active?"Сохранено":"В избранное"}</span></Button>;}

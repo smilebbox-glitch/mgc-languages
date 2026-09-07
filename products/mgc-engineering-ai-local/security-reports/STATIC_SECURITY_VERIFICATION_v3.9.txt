@@ -1,0 +1,19 @@
+MGC Engineering AI Local v3.9.0 — STATIC SECURITY VERIFICATION
+
+Packaging-environment results:
+- backend regression: 67/67 PASS
+- engineer-only human API preflight: 65/65 guarded; 2 explicit exceptions
+- Dockerfile security preflight: 32/32 PASS
+- Compose/access/runtime security preflight: 82/82 PASS
+- project ACL does not promote hidden document-derived facts: PASS
+- project release readiness is advisory; human release approval required: PASS
+- build context preflight / plain docker compose build structure: PASS
+
+Not executed in this environment:
+- real Docker image layer build
+- real Dockle image-layer scan
+
+Required on corporate build host:
+  docker compose build
+  make dockle
+  make acceptance

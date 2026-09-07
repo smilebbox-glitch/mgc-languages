@@ -1,0 +1,6 @@
+Validation Test Report
+Part Number: 8450012345
+Revision: D
+Test: vibration durability
+Result: PASS with engineering observation.
+Observation: mounting area stiffness improved versus previous revision. Verify drawing and BOM remain aligned with released CAD.

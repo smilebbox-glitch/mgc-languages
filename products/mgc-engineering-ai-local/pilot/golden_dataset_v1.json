@@ -1,0 +1,883 @@
+{
+  "authorizes_production_go": false,
+  "bom": [
+    {
+      "child": "P-0002",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0003",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0004",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0005",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0006",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0007",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0008",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0009",
+      "parent": "P-0001",
+      "qty": 2
+    },
+    {
+      "child": "P-0010",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0011",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0012",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0013",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0014",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0015",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0016",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0017",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0018",
+      "parent": "P-0001",
+      "qty": 2
+    },
+    {
+      "child": "P-0019",
+      "parent": "P-0001",
+      "qty": 1
+    },
+    {
+      "child": "P-0020",
+      "parent": "P-0020",
+      "qty": 1
+    },
+    {
+      "child": "P-0021",
+      "parent": "P-0020",
+      "qty": 1
+    },
+    {
+      "child": "P-0022",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0023",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0024",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0025",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0026",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0027",
+      "parent": "P-0030",
+      "qty": 2
+    },
+    {
+      "child": "P-0028",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0029",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0030",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0031",
+      "parent": "P-0030",
+      "qty": 1
+    },
+    {
+      "child": "P-0032",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0033",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0034",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0035",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0036",
+      "parent": "P-0040",
+      "qty": 2
+    },
+    {
+      "child": "P-0037",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0038",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0039",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0040",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0041",
+      "parent": "P-0040",
+      "qty": 1
+    },
+    {
+      "child": "P-0042",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0043",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0044",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0045",
+      "parent": "P-0050",
+      "qty": 2
+    },
+    {
+      "child": "P-0046",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0047",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0048",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0049",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0050",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0051",
+      "parent": "P-0050",
+      "qty": 1
+    },
+    {
+      "child": "P-0052",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0053",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0054",
+      "parent": "P-0060",
+      "qty": 2
+    },
+    {
+      "child": "P-0055",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0056",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0057",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0058",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0059",
+      "parent": "P-0060",
+      "qty": 1
+    },
+    {
+      "child": "P-0060",
+      "parent": "P-0060",
+      "qty": 1
+    }
+  ],
+  "counts": {
+    "bom_edges": 59,
+    "defects": 3,
+    "parts": 60,
+    "vehicles": 24
+  },
+  "defects": [
+    {
+      "code": "D-WELD-01",
+      "part": "P-0014",
+      "severity": "high",
+      "supplier": "SUP-03",
+      "vin": "MGC-PILOT-00003"
+    },
+    {
+      "code": "D-FIT-02",
+      "part": "P-0021",
+      "severity": "medium",
+      "supplier": "SUP-02",
+      "vin": "MGC-PILOT-00009"
+    },
+    {
+      "code": "D-WELD-01",
+      "part": "P-0014",
+      "severity": "high",
+      "supplier": "SUP-03",
+      "vin": "MGC-PILOT-00015"
+    }
+  ],
+  "expected_assertions": {
+    "critical_part": "P-0014",
+    "repeated_defect": {
+      "code": "D-WELD-01",
+      "count": 2,
+      "part": "P-0014",
+      "supplier": "SUP-03"
+    },
+    "required_roles": [
+      "rd",
+      "manufacturing",
+      "quality"
+    ]
+  },
+  "parts": [
+    {
+      "critical": false,
+      "part_number": "P-0001",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0002",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0003",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0004",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0005",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0006",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": true,
+      "part_number": "P-0007",
+      "revision": "D",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0008",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0009",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0010",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0011",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0012",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0013",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": true,
+      "part_number": "P-0014",
+      "revision": "D",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0015",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0016",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0017",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0018",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0019",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0020",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": true,
+      "part_number": "P-0021",
+      "revision": "D",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0022",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0023",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0024",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0025",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0026",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0027",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0028",
+      "revision": "D",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0029",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0030",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0031",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0032",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0033",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0034",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": true,
+      "part_number": "P-0035",
+      "revision": "D",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0036",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0037",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0038",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0039",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0040",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0041",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0042",
+      "revision": "D",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0043",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0044",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0045",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0046",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0047",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0048",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0049",
+      "revision": "D",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0050",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0051",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0052",
+      "revision": "C",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0053",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0054",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0055",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0056",
+      "revision": "D",
+      "supplier": "SUP-01"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0057",
+      "revision": "C",
+      "supplier": "SUP-02"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0058",
+      "revision": "C",
+      "supplier": "SUP-03"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0059",
+      "revision": "C",
+      "supplier": "SUP-04"
+    },
+    {
+      "critical": false,
+      "part_number": "P-0060",
+      "revision": "C",
+      "supplier": "SUP-01"
+    }
+  ],
+  "privacy": {
+    "customer_data": false,
+    "employee_tracking": false,
+    "real_people": false,
+    "real_vins": false
+  },
+  "project": {
+    "code": "GOLDEN-X1",
+    "name": "Synthetic Automotive UAT Vehicle"
+  },
+  "scenarios": [
+    {
+      "code": "RD-CHANGE-IMPACT",
+      "domain": "change",
+      "expected": "impact path + evidence",
+      "required": true,
+      "role": "rd"
+    },
+    {
+      "code": "RD-BOM-DIFF",
+      "domain": "configuration",
+      "expected": "deterministic BOM diff",
+      "required": true,
+      "role": "rd"
+    },
+    {
+      "code": "MFG-BUILDABILITY",
+      "domain": "manufacturing",
+      "expected": "buildability blockers",
+      "required": true,
+      "role": "manufacturing"
+    },
+    {
+      "code": "MFG-CUT-IN",
+      "domain": "configuration",
+      "expected": "cut-in/effectivity trace",
+      "required": true,
+      "role": "manufacturing"
+    },
+    {
+      "code": "QUALITY-DEFECT-TRACE",
+      "domain": "quality",
+      "expected": "VIN→part→supplier→defect trace",
+      "required": true,
+      "role": "quality"
+    },
+    {
+      "code": "QUALITY-CONTAINMENT",
+      "domain": "quality",
+      "expected": "suspect population + containment",
+      "required": true,
+      "role": "quality"
+    }
+  ],
+  "schema": "mgc-golden-automotive-dataset-v1",
+  "synthetic_only": true,
+  "vehicles": [
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00001"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00002"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00003"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00004"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00005"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00006"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00007"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00008"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00009"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00010"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00011"
+    },
+    {
+      "build": "PB-01",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00012"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00013"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00014"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00015"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00016"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00017"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00018"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00019"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00020"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00021"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00022"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Comfort",
+      "vin": "MGC-PILOT-00023"
+    },
+    {
+      "build": "PB-02",
+      "variant": "Premium",
+      "vin": "MGC-PILOT-00024"
+    }
+  ]
+}

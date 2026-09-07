@@ -1,0 +1,97 @@
+# v6.3.29 authoritative database/evidence HA overlay.
+# Use together with docker-compose.ha.yml on a target where PostgreSQL failover and
+# evidence replication/shared storage are provided by approved external infrastructure.
+# MGC verifies authority/fencing; it does NOT elect/promote PostgreSQL or replicate evidence.
+
+x-authority-env: &authority-env
+  DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to the approved PostgreSQL HA writer VIP/DNS}
+  AUTHORITATIVE_WRITE_FENCE_ENABLED: "true"
+  DATABASE_HA_ENABLED: "true"
+  DATABASE_HA_REQUIRE_PRIMARY_FOR_WRITES: "true"
+  DATABASE_HA_EXPECTED_SYSTEM_IDENTIFIER: ${DATABASE_HA_EXPECTED_SYSTEM_IDENTIFIER:?Set approved PostgreSQL system_identifier}
+  EVIDENCE_HA_ENABLED: "true"
+  EVIDENCE_HA_MODE: ${EVIDENCE_HA_MODE:-shared}
+  EVIDENCE_HA_REQUIRE_ACTIVE_FOR_WRITES: "true"
+  EVIDENCE_HA_CLUSTER_ID: ${EVIDENCE_HA_CLUSTER_ID:?Set approved evidence storage cluster id}
+  EVIDENCE_HA_MARKER_RELATIVE_PATH: .mgc-ha/STORAGE_EPOCH.json
+
+x-authority-storage: &authority-storage
+  - ./models:/models:ro
+  - ${MGC_STORAGE_PATH:?Set MGC_STORAGE_PATH to the active shared/replicated evidence mount}:/data/storage
+  - ./inbox:/data/inbox:ro
+  - ${ENGINEERING_SHARE_PATH:-./inbox}:/integrations/share:ro
+
+services:
+  api:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  api-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-cpu:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-io:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-cad:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-ai:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-cpu-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-io-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-cad-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  worker-ai-ha:
+    environment:
+      <<: *authority-env
+    volumes: *authority-storage
+
+  beat:
+    environment:
+      <<: *authority-env
+    volumes:
+      - ${MGC_STORAGE_PATH:?Set MGC_STORAGE_PATH to the active shared/replicated evidence mount}:/data/storage
+      - ./inbox:/data/inbox:ro
+
+  beat-ha:
+    environment:
+      <<: *authority-env
+    volumes:
+      - ${MGC_STORAGE_PATH:?Set MGC_STORAGE_PATH to the active shared/replicated evidence mount}:/data/storage
+      - ./inbox:/data/inbox:ro

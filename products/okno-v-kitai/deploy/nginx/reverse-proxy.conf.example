@@ -1,0 +1,51 @@
+# Пример периметра для «Окно в Китай» Pilot v1.6.
+# Конкретный OIDC/SAML/Kerberos адаптер выбирает корпоративный IT.
+# Ниже показан типовой auth_request-контракт: браузерские identity headers
+# НЕ проксируются в приложение напрямую.
+
+upstream okno_v_kitai {
+    server 127.0.0.1:3000;
+    keepalive 32;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name okno-china.company.local;
+
+    ssl_certificate     /etc/nginx/tls/okno-china.crt;
+    ssl_certificate_key /etc/nginx/tls/okno-china.key;
+
+    # Пример: заменить на корпоративный auth endpoint / oauth2-proxy / ingress auth.
+    # auth_request /_sso_auth;
+    # auth_request_set $sso_user   $upstream_http_x_auth_request_user;
+    # auth_request_set $sso_email  $upstream_http_x_auth_request_email;
+    # auth_request_set $sso_groups $upstream_http_x_auth_request_groups;
+
+    location / {
+        # В production этот location должен быть защищён auth_request/SSO.
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # Генерируется доверенным proxy, а не принимается от клиента.
+        proxy_set_header X-Request-ID $request_id;
+
+        # Использовать ТОЛЬКО server-side variables, полученные от SSO adapter.
+        # Никогда не ставить сюда $http_x_forwarded_user / пользовательские headers.
+        proxy_set_header X-Forwarded-User   __SSO_USER_VARIABLE__;
+        proxy_set_header X-Forwarded-Email  __SSO_EMAIL_VARIABLE__;
+        proxy_set_header X-Forwarded-Groups __SSO_GROUPS_VARIABLE__;
+
+        # Заменить через secret management / deployment templating.
+        # Не принимать это значение от клиентского HTTP-запроса.
+        proxy_set_header X-Okno-Proxy-Secret "__AUTH_PROXY_SECRET__";
+
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_pass http://okno_v_kitai;
+    }
+
+    # В production рекомендуется закрыть /api/metrics от пользовательского
+    # трафика и разрешить только monitoring subnet либо использовать METRICS_TOKEN.
+}

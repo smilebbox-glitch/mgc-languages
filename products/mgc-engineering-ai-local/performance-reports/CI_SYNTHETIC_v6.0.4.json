@@ -1,0 +1,37 @@
+{
+  "schema": "mgc-performance-certification-v1",
+  "profile": "ci",
+  "synthetic": true,
+  "database": "sqlite",
+  "counts": {
+    "parts": 5000,
+    "bom_edges": 25000,
+    "vins": 2000,
+    "genealogy_rows": 20000,
+    "quality_observations": 50000
+  },
+  "load_ms": 430.834,
+  "queries": {
+    "bom_children": {
+      "p50_ms": 1.173,
+      "p95_ms": 1.673,
+      "max_ms": 1.852
+    },
+    "vin_genealogy": {
+      "p50_ms": 0.023,
+      "p95_ms": 0.135,
+      "max_ms": 0.179
+    },
+    "series_quality_7d": {
+      "p50_ms": 41.582,
+      "p95_ms": 45.85,
+      "max_ms": 47.557
+    }
+  },
+  "db_size_bytes": 8155136,
+  "governance": {
+    "ci_scale_only": true,
+    "not_enterprise_certification": true,
+    "real_postgresql_load_test_required": true
+  }
+}

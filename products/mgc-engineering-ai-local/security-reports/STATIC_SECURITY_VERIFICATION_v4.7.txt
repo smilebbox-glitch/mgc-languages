@@ -1,0 +1,24 @@
+MGC Engineering AI Local v4.8.0 — STATIC SECURITY VERIFICATION
+
+Engineer-only API preflight: 121/121 human-facing routes protected
+Explicit exceptions: 2 (/health; HMAC-signed machine webhook)
+Dockerfile/Dockle-style static preflight: 32/32 PASS
+Compose/access/runtime security preflight: 82/82 PASS
+Plain docker compose build preflight: PASS
+Vehicle architecture Manufacturing-Area / Document / visible-part ACL: PASS (regression-tested)
+Mixed evidence ACL: fail-closed; an architecture object referencing inaccessible evidence is not partially exposed
+
+Interface governance:
+- critical interface requires requirement traceability and evidence-backed verification
+- PASSED without accessible proof is not effective
+- interface/endpoint changes make previous verification stale
+- architecture readiness is advisory; human release approval remains required
+
+Not executed in this environment:
+- real Docker image build/layer inspection (Docker CLI/daemon unavailable)
+- real Dockle image scan (Dockle unavailable)
+
+Required on corporate build host:
+  docker compose build
+  make dockle
+  make acceptance

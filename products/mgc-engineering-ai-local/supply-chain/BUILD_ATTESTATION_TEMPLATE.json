@@ -1,0 +1,18 @@
+{
+  "schema": "mgc.build-attestation.v1",
+  "release": "6.3.12",
+  "production_authorized": false,
+  "required_evidence": [
+    "BUILD_INPUTS SHA-256",
+    "frontend package-lock",
+    "three Python hashed locks",
+    "three wheelhouse manifests",
+    "CycloneDX SBOM",
+    "HIGH/CRITICAL CVE scanner report",
+    "hashed offline OS package manifest",
+    "immutable base/runtime image references captured in BUILD_INPUTS",
+    "built application image IDs/digests",
+    "human corporate change approval"
+  ],
+  "note": "Generate on the approved corporate build host; do not fill with fabricated values."
+}

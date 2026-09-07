@@ -1,0 +1,42 @@
+{
+  "schema": "mgc-http-load-test-v1",
+  "profile": "ci",
+  "endpoint": "/api/v1/health/live",
+  "concurrency": 4,
+  "summary": {
+    "requests": 100,
+    "successful": 100,
+    "errors": 0,
+    "error_rate": 0.0,
+    "p50_ms": 3.267,
+    "p95_ms": 8.186,
+    "p99_ms": 30.885,
+    "max_ms": 31.651,
+    "wall_seconds": 0.127,
+    "requests_per_second": 787.402
+  },
+  "statuses": {
+    "200": 100
+  },
+  "acceptance": {
+    "status": "PASS",
+    "checks": [
+      {
+        "code": "HTTP_P95",
+        "pass": true,
+        "actual": 8.186,
+        "expected": "<=750ms"
+      },
+      {
+        "code": "HTTP_ERROR_RATE",
+        "pass": true,
+        "actual": 0.0,
+        "expected": "<=1.00%"
+      }
+    ]
+  },
+  "governance": {
+    "read_only_probe": true,
+    "not_a_business_transaction_test": true
+  }
+}

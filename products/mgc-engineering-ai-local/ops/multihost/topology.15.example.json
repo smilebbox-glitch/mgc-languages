@@ -1,0 +1,37 @@
+{
+  "schema": "mgc-multihost-topology-v1",
+  "external_load_balancer": {
+    "configured": true,
+    "health_path": "/api/v1/health/lb",
+    "non_idempotent_retry_enabled": false
+  },
+  "authoritative_data": {
+    "database_ha_fencing": true,
+    "evidence_ha_fencing": true
+  },
+  "profile": "15",
+  "nodes": [
+    {
+      "node_id": "mgc-app-a",
+      "failure_domain": "host-a",
+      "roles": [
+        "api",
+        "interactive",
+        "cpu",
+        "io",
+        "beat"
+      ]
+    },
+    {
+      "node_id": "mgc-app-b",
+      "failure_domain": "host-b",
+      "roles": [
+        "api",
+        "interactive",
+        "cpu",
+        "io",
+        "beat"
+      ]
+    }
+  ]
+}

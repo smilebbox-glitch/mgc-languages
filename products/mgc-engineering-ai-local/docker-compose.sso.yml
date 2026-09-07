@@ -1,0 +1,45 @@
+# Production engineer-only entry point. The base gateway has no host port.
+services:
+  api:
+    environment:
+      APP_ENV: prod
+      AUTH_MODE: oidc
+      ENGINEER_ONLY_ACCESS: "true"
+      ENGINEER_ACCESS_GROUPS: ${ENGINEER_ACCESS_GROUPS:-engineering-ai-users,engineering-ai-admins}
+      ENGINEERING_ADMIN_GROUPS: ${ENGINEERING_ADMIN_GROUPS:-engineering-ai-admins}
+      ALLOW_API_KEY_AUTH_IN_PROD: "false"
+      OIDC_ISSUER: ${SSO_ISSUER_URL:?Set SSO_ISSUER_URL to the corporate OIDC issuer}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:?Set OIDC_AUDIENCE to the registered API audience}
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL:-}
+      OIDC_GROUPS_CLAIM: ${OIDC_GROUPS_CLAIM:-groups}
+      OIDC_USER_CLAIM: ${OIDC_USER_CLAIM:-preferred_username}
+
+  auth-proxy:
+    image: ${OAUTH2_PROXY_IMAGE:?Set OAUTH2_PROXY_IMAGE to an approved pinned tag or digest}
+    pull_policy: never
+    command:
+      - --provider=oidc
+      - --oidc-issuer-url=${SSO_ISSUER_URL:?Set SSO_ISSUER_URL}
+      - --client-id=${SSO_CLIENT_ID:?Set SSO_CLIENT_ID}
+      - --client-secret=${SSO_CLIENT_SECRET:?Set SSO_CLIENT_SECRET}
+      - --cookie-secret=${SSO_COOKIE_SECRET:?Set SSO_COOKIE_SECRET}
+      - --cookie-secure=${SSO_COOKIE_SECURE:-true}
+      - --cookie-samesite=strict
+      - --email-domain=*
+      - --http-address=0.0.0.0:4180
+      - --upstream=http://gateway:8080
+      - --pass-access-token=true
+      - --pass-user-headers=true
+      - --oidc-groups-claim=${OIDC_GROUPS_CLAIM:-groups}
+      - --allowed-group=${ENGINEER_SSO_GROUP:-engineering-ai-users}
+      - --allowed-group=${ENGINEERING_ADMIN_SSO_GROUP:-engineering-ai-admins}
+      - --skip-provider-button=true
+    ports:
+      - "${SSO_BIND_IP:-127.0.0.1}:${SSO_PORT:-3000}:4180"
+    depends_on: [gateway]
+    networks: [mgc_edge]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    restart: unless-stopped

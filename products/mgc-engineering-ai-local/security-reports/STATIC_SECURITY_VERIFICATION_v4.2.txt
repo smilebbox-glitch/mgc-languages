@@ -1,0 +1,37 @@
+MGC Engineering AI Local v4.2.0 — STATIC SECURITY VERIFICATION
+
+RESULTS
+=======
+Backend regression                         87/87 PASS
+Human-facing API identity enforcement      89/89 PASS
+Explicit exceptions                        /health + HMAC machine webhook
+Dockerfile static security                 32/32 PASS
+Compose/access/runtime security             82/82 PASS
+Build-context preflight                     PASS
+Python compileall                           PASS
+Shell syntax                                PASS
+Frontend TSX transpile                      PASS
+All-zones manufacturing-area ACL regression PASS
+Document ACL non-promotion                  PASS
+
+V4.2 PROCESS SECURITY
+=====================
+- Project ACL does not override Manufacturing Area ACL.
+- Manufacturing Area ACL does not override Document ACL.
+- Aggregate “All zones” filters unauthorized area documents, quality records,
+  process lines/stations/operations, milestones and readiness evidence.
+- PFMEA/Control Plan operation references are validated against project/part/area scope.
+- Process work-instruction/evidence document references pass document visibility checks.
+- Process Digital Thread contains no machine-control API and is not MES/SCADA.
+
+DOCKLE NOTE
+===========
+The repository includes Dockle-compatible static hardening and `make dockle`, but the
+packaging environment has no Docker daemon/CLI or Dockle binary. A real image-layer
+scan must be executed on the connected corporate Docker build host after images are built:
+
+  docker compose build
+  make dockle
+  make acceptance
+
+Do not treat this static report as a substitute for the real image scan.

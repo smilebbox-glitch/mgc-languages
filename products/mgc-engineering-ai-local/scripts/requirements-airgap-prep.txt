@@ -1,0 +1,2 @@
+huggingface_hub>=0.34,<2
+docling>=2.50,<3

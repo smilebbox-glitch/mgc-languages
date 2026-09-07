@@ -1,0 +1,62 @@
+services:
+  model-server:
+    image: ${VLLM_IMAGE:?Set VLLM_IMAGE to an approved pinned tag or digest}
+    pull_policy: never
+    ipc: host
+    command:
+      - --model
+      - /models/generative
+      - --served-model-name
+      - ${LOCAL_SERVED_MODEL_NAME:-mgc-local}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --generation-config
+      - vllm
+      - --gpu-memory-utilization
+      - ${VLLM_GPU_MEMORY_UTILIZATION:-0.90}
+      - --max-model-len
+      - ${VLLM_MAX_MODEL_LEN:-32768}
+      - --api-key
+      - ${LOCAL_MODEL_API_KEY:-local-only}
+    environment:
+      AIR_GAPPED_MODE: "true"
+      HF_HUB_OFFLINE: "1"
+      HF_DATASETS_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      DO_NOT_TRACK: "1"
+      TOKENIZERS_PARALLELISM: "false"
+    volumes:
+      - ./models/generative:/models/generative:ro
+    expose: ["8000"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${VLLM_GPU_COUNT:-1}
+              capabilities: [gpu]
+    networks: [mgc_internal]
+    restart: unless-stopped
+
+  api:
+    environment:
+      INFERENCE_RUNTIME: gpu
+      LLM_BASE_URL: http://model-server:8000/v1
+      LLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      LLM_MODEL: ${LOCAL_SERVED_MODEL_NAME:-mgc-local}
+      VLM_BASE_URL: http://model-server:8000/v1
+      VLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      VLM_MODEL: ${LOCAL_SERVED_MODEL_NAME:-mgc-local}
+
+  worker:
+    environment:
+      INFERENCE_RUNTIME: gpu
+      LLM_BASE_URL: http://model-server:8000/v1
+      LLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      LLM_MODEL: ${LOCAL_SERVED_MODEL_NAME:-mgc-local}
+      VLM_BASE_URL: http://model-server:8000/v1
+      VLM_API_KEY: ${LOCAL_MODEL_API_KEY:-local-only}
+      VLM_MODEL: ${LOCAL_SERVED_MODEL_NAME:-mgc-local}

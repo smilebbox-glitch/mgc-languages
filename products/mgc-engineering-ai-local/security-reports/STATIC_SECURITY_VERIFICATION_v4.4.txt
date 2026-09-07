@@ -1,0 +1,14 @@
+MGC Engineering AI Local v4.4.0 — STATIC SECURITY VERIFICATION
+
+Docker/Dockle-compatible Dockerfile preflight: PASS 32/32
+Compose/access/runtime preflight: PASS 82/82
+Human-facing API identity guard: PASS 99/99
+Explicit unauthenticated exceptions: /health and signed HMAC machine webhook only
+Requirements Matrix ACL regression: PASS
+- Project access does not override Manufacturing Area ACL
+- Project/Area access does not override Document ACL
+- requirement source/evidence hidden from caller is not promoted into aggregate matrix
+- PASSED verification requires visible evidence / passed Launch Trial / approved Design Review
+- requirement/source changes mark old verification stale
+
+This is a static source/configuration verification. Real Docker image layer scanning with Dockle must run on the corporate Docker build host after images are built.

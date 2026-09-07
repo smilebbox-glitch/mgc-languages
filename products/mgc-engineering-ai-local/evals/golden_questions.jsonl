@@ -1,0 +1,4 @@
+{"question":"Какие геометрические параметры есть у 8450012345 Rev D?","expected_part":"8450012345","expected_revision":"D","expected_source_contains":"REV_D_mounting_plate.step"}
+{"question":"Какой материал указан для 8450012345 Rev C?","expected_part":"8450012345","expected_revision":"C","expected_source_contains":"REV_C_spec.txt"}
+{"question":"Есть ли противоречия по материалу у 8450012345 Rev D?","expected_part":"8450012345","expected_revision":"D","expected_source_contains":"REV_D_drawing_conflict.txt"}
+{"question":"Из каких компонентов состоит 8450012345?","expected_part":"8450012345","expected_source_contains":"REV_D_bom.csv"}

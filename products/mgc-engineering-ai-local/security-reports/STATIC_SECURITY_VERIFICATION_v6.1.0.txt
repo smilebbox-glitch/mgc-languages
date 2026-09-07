@@ -1,0 +1,14 @@
+MGC Engineering AI Local v6.1.0 — static/release verification
+Backend regression: 316/316 PASS
+Dedicated v6.1.0 deployment: 8/8 PASS
+Human-facing API: 232/232 guarded; 4 explicit exceptions (health x3 + HMAC webhook x1)
+Docker static: 38/38 PASS
+Compose/runtime: 100/100 PASS
+Enterprise Security: 23/23 PASS
+Corporate Deployment preflight: 13/13 PASS
+Observability: 16/16 PASS
+Game Day: 15/15 PASS
+UX acceptance: 9/9 PASS
+Secret scan: 0 findings
+SBOM: 37 declared components
+Real Docker/Dockle/Trivy/Grype/runtime corporate acceptance: NOT RUN in packaging environment.

@@ -1,0 +1,14 @@
+services:
+  postgres:
+    command:
+      - postgres
+      - -c
+      - wal_level=replica
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_timeout=${MGC_PITR_ARCHIVE_TIMEOUT:-300s}
+      - -c
+      - archive_command=test ! -f /var/lib/postgresql/wal-archive/%f && cp %p /var/lib/postgresql/wal-archive/%f
+    volumes:
+      - ${MGC_PITR_ARCHIVE_PATH:?Set MGC_PITR_ARCHIVE_PATH to approved external WAL archive storage}:/var/lib/postgresql/wal-archive

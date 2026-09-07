@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+rt=(ROOT/'backend/app/core/runtime_contract.py').read_text(); cfg=(ROOT/'backend/app/core/config.py').read_text(); models=(ROOT/'backend/app/db/models.py').read_text(); mig=(ROOT/'backend/app/db/migrations.py').read_text(); svc=(ROOT/'backend/app/services/read_models.py').read_text(); hooks=(ROOT/'backend/app/services/read_model_hooks.py').read_text(); outbox=(ROOT/'backend/app/services/projection_outbox.py').read_text(); simp=(ROOT/'backend/app/api/simplified_routes.py').read_text(); mq=(ROOT/'backend/app/api/contexts/manufacturing_quality.py').read_text(); ec=(ROOT/'backend/app/api/contexts/engineering_core.py').read_text(); po=(ROOT/'backend/app/api/contexts/platform_operations.py').read_text()
+checks=[]
+def ck(n,v): checks.append((n,bool(v)))
+ck('version','APP_VERSION = "6.3.34"' in rt and 'SCHEMA_VERSION = "6.3.13"' in rt)
+ck('schema','class EngineeringReadModel' in models and 'def ensure_v6310_schema' in mig and "'6.3.11'" in mig)
+ck('rebuildable_model','authoritative' in svc and 'rebuildable' in svc)
+ck('safe_aggregate','wi_coverage_payload' in svc and 'original_text' not in svc.split('def wi_coverage_payload',1)[1].split('def get_wi_coverage_read_model',1)[0])
+ck('acl_fingerprint','def acl_fingerprint' in svc)
+ck('etag','def etag_for_payload' in svc and 'if-none-match' in simp and 'if-none-match' in mq and 'if-none-match' in ec)
+ck('private_cache','Cache-Control' in simp and 'private, no-cache' in simp)
+ck('redis_optional','redis_cache_get' in svc and 'except Exception' in svc and 'redis_required_for_correctness' in svc)
+ck('pending_bypass','pending_read_model_invalidation' in svc and 'read_model_pending_invalidation_bypass' in cfg)
+ck('transactional_hook','after_flush_postexec' in hooks and 'ProjectionOutboxEvent' in hooks and 'read_model_invalidate' in hooks)
+ck('api_session_hook','mgc_read_model_invalidation_enabled' in (ROOT/'backend/app/db/session.py').read_text())
+ck('document_outbox_invalidation','TARGET_READ_MODEL' in outbox and 'read_model_invalidate' in outbox)
+ck('worker_delivery','event.target == TARGET_READ_MODEL' in outbox and 'invalidate_read_models' in outbox)
+ck('redis_eviction','redis_cache_delete_prefix' in outbox)
+ck('object360_acl_cache','acl_fingerprint' in simp and 'cfg.runtime_profile' in simp)
+ck('wi_read_model','get_wi_coverage_read_model' in mq)
+ck('project_cache','project_workspace' in ec and 'redis_cache_get' in ec)
+ck('ops_status','/operations/read-models' in po)
+ck('ops_rebuild','/operations/read-models/rebuild' in po)
+ck('cache_ttl','read_model_cache_ttl_seconds' in cfg and 'object360_cache_ttl_seconds' in cfg)
+ck('hard_source_truth_boundary','EngineeringReadModel' in models and 'ForeignKey' not in models.split('class EngineeringReadModel',1)[1][:1800])
+ck('no_redis_authority','redis_cache_set' in svc and 'return' in svc)
+failed=[x for x in checks if not x[1]]
+for n,v in checks: print(('PASS' if v else 'FAIL'),n)
+print(f'SUMMARY {len(checks)-len(failed)}/{len(checks)} PASS')
+if failed: raise SystemExit(1)

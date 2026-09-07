@@ -1,0 +1,40 @@
+PASS | version 6.3.6
+PASS | identity policy model
+PASS | delegation model
+PASS | approval submit identity evidence
+PASS | approval decision identity evidence
+PASS | release identity evidence
+PASS | identity field subject
+PASS | identity field auth_mode
+PASS | identity field issuer
+PASS | identity field acr
+PASS | identity field auth_time
+PASS | identity field client_id
+PASS | identity field is_service_account
+PASS | service account claim configurable
+PASS | service account not guessed from username
+PASS | human-only privileged actions
+PASS | scoped policy resolution
+PASS | deny wins
+PASS | allow groups enforced
+PASS | OIDC enforcement
+PASS | fresh-auth enforcement
+PASS | ACR enforcement
+PASS | delegation is narrow
+PASS | delegation cannot mint admin
+PASS | policy API
+PASS | delegation API
+PASS | approval decision PEP
+PASS | approval submit PEP
+PASS | release create PEP
+PASS | release submit PEP
+PASS | final release PEP
+PASS | release manifest endpoint
+PASS | qualified signature not falsely claimed
+PASS | optional RLS scoped to governance
+PASS | existing ACL explicitly preserved
+PASS | migration 6.3.6
+PASS | admin UI identity metrics
+PASS | no token stored in identity snapshot
+
+38/38 PASS

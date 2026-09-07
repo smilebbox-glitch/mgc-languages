@@ -1,0 +1,47 @@
+{
+  "realm": "mgc-engineering",
+  "enabled": true,
+  "displayName": "MGC Engineering AI Demo Realm",
+  "groups": [
+    {"name": "engineering-admin"},
+    {"name": "engineering-rd"},
+    {"name": "supplier-quality"}
+  ],
+  "clients": [
+    {
+      "clientId": "mgc-engineering-ai",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:3000/oauth2/callback"],
+      "webOrigins": ["http://localhost:3000"],
+      "attributes": {"post.logout.redirect.uris": "http://localhost:3000/*"},
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "demo.engineer",
+      "enabled": true,
+      "email": "demo.engineer@example.invalid",
+      "credentials": [{"type": "password", "value": "change-me-demo", "temporary": true}],
+      "groups": ["/engineering-admin", "/engineering-rd"]
+    }
+  ]
+}

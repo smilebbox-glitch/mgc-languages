@@ -1,0 +1,1 @@
+SKIP: Trivy/Grype unavailable; set MGC_REQUIRE_CVE_SCANNER=true on the approved build host.

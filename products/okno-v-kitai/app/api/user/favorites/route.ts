@@ -1,0 +1,7 @@
+import { createRequestContext, jsonWithContext } from "@/lib/request-context";
+import { listFavorites, removeFavorite, saveFavorite, trackUsage } from "@/lib/user-store";
+import { resolveUserContext, withUserCookie } from "@/lib/user-context";
+export const dynamic="force-dynamic";
+export async function GET(request:Request){const c=createRequestContext(request),u=resolveUserContext(request);return jsonWithContext(c,{favorites:listFavorites(u.userKey)},{headers:withUserCookie(u,{"cache-control":"no-store"})});}
+export async function POST(request:Request){const c=createRequestContext(request),u=resolveUserContext(request),body=await request.json().catch(()=>({}));try{const favorite=saveFavorite(u.userKey,body);trackUsage(u.userKey,"favorite_add",new URL(request.url).pathname,{itemType:favorite.itemType});return jsonWithContext(c,{favorite},{headers:withUserCookie(u,{"cache-control":"no-store"})});}catch(error){return jsonWithContext(c,{error:error instanceof Error?error.message:"Некорректные данные."},{status:400,headers:withUserCookie(u)});}}
+export async function DELETE(request:Request){const c=createRequestContext(request),u=resolveUserContext(request),url=new URL(request.url);const itemType=url.searchParams.get("type")||"",itemId=url.searchParams.get("id")||"";const removed=removeFavorite(u.userKey,itemType,itemId);if(removed)trackUsage(u.userKey,"favorite_remove",url.pathname,{itemType});return jsonWithContext(c,{removed},{headers:withUserCookie(u,{"cache-control":"no-store"})});}

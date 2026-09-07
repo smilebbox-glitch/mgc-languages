@@ -1,0 +1,1006 @@
+{
+  "files": [
+    {
+      "bytes": 548,
+      "path": "frontend/package.json",
+      "present": true,
+      "sha256": "9b0707d6e3f643316d3da2d7373aa06f3bb1a49a1e8161593357aeb2e866537c"
+    },
+    {
+      "bytes": null,
+      "path": "frontend/package-lock.json",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": 1772,
+      "path": "frontend/Dockerfile",
+      "present": true,
+      "sha256": "4aa8b828c49a5ebd991cd333972298631fc1933cc8df9627d708c4d4cf41a89d"
+    },
+    {
+      "bytes": 24,
+      "path": "frontend/.dockerignore",
+      "present": true,
+      "sha256": "17f0180ccdc0588398c6455335fd32af8a9cb80a6f8f390a356504857d9d8a84"
+    },
+    {
+      "bytes": 509,
+      "path": "backend/requirements-core.txt",
+      "present": true,
+      "sha256": "c195a542d1eb71d8f0321123d3ed29a2565626b365b4b518de3cc6eb20d0e12e"
+    },
+    {
+      "bytes": 78,
+      "path": "backend/requirements-ai.txt",
+      "present": true,
+      "sha256": "7eefbf2b87b4b7e2b54b5d71966c59d0b0bd9e421b7a53bf5e04b35ecdfe36bc"
+    },
+    {
+      "bytes": 49,
+      "path": "backend/requirements-advanced.txt",
+      "present": true,
+      "sha256": "849ab20c4cc4c776a30ccbb8d37b055c1aaf0e8a041363008dc0e2012fa7693e"
+    },
+    {
+      "bytes": 122,
+      "path": "backend/requirements.txt",
+      "present": true,
+      "sha256": "404fdde59e1370fc8046aaaccf57e319a5ff2ced6bacbf86484c34fd72574193"
+    },
+    {
+      "bytes": 3923,
+      "path": "backend/Dockerfile",
+      "present": true,
+      "sha256": "bf2a6f665848c6ca9fe3136f4ade1a66a4e8597097294b48a408470a2f937ab7"
+    },
+    {
+      "bytes": 3169,
+      "path": "backend/verify_os_package_bundle.py",
+      "present": true,
+      "sha256": "dbd4993fa4435e61ae9500ddacfbb3ff0c4e06ac53b1185f641158912bb8b5d9"
+    },
+    {
+      "bytes": 984,
+      "path": "ops/gateway/Dockerfile",
+      "present": true,
+      "sha256": "549eb2a916fd735dcb3b4701cfacd908a199b83d839f00d1896323deaa78272a"
+    },
+    {
+      "bytes": 825,
+      "path": "ops/webhook-gateway/Dockerfile",
+      "present": true,
+      "sha256": "e6adc69c23daad12f338a213e2daf097205de9342ddb1a6a8ff8b93e263a9766"
+    },
+    {
+      "bytes": 659,
+      "path": "ops/enterprise-edge/Dockerfile",
+      "present": true,
+      "sha256": "d260e9d4742c1aae02b22e4f36a958f78ccae98bc785e97d7ab6eae26b5898c8"
+    },
+    {
+      "bytes": 924,
+      "path": "ops/mock-integrations/Dockerfile",
+      "present": true,
+      "sha256": "903eedd71930ac4ace8faab847aa2d3dc38b7efb1c7ed10519847ff98b1fe9dc"
+    },
+    {
+      "bytes": 10515,
+      "path": "docker-compose.yml",
+      "present": true,
+      "sha256": "89a2dcd0f87a4d4b2a02453bf947ce0966a85a7f9b89b2a1c82b2ce6e1bf5754"
+    },
+    {
+      "bytes": 8497,
+      "path": "docker-compose.airgap.yml",
+      "present": true,
+      "sha256": "a823fe4f2f247d95f9a5f63754050618925fb5b530383e5a6bfc2de5ee4c2cbd"
+    },
+    {
+      "bytes": 1042,
+      "path": "docker-compose.build.yml",
+      "present": true,
+      "sha256": "f9bf29d34ad29ea947a9481a6227758c9cc147a86be57a2576c6602e705db93a"
+    },
+    {
+      "bytes": 6896,
+      "path": "docker-compose.connected.yml",
+      "present": true,
+      "sha256": "fc43af12e25a6153256bde6a60a9851ea69e36baa69f55ce75b6776f57d92767"
+    },
+    {
+      "bytes": 2283,
+      "path": "docker-compose.reproducible.yml",
+      "present": true,
+      "sha256": "b8816daf2dfdce34821362326f82b338b83b329cc90273a5d1a8922e882ac229"
+    },
+    {
+      "bytes": 463,
+      "path": "docker-compose.pitr.yml",
+      "present": true,
+      "sha256": "55d0014b43bb57c9651c79631c484cfbf27d6442be857011733238f6bee73cf3"
+    },
+    {
+      "bytes": 2115,
+      "path": "scripts/reproducible_build.sh",
+      "present": true,
+      "sha256": "d02054fc02c732fa6ef045bd10043066982f36769bd18e43c8b66ee2018d6b8a"
+    },
+    {
+      "bytes": 1478,
+      "path": "scripts/docker_build.sh",
+      "present": true,
+      "sha256": "d96f42cf3d021b11666c14574e3dfabc8556ec8c242f871e1fdd7e6d3b1f30a1"
+    },
+    {
+      "bytes": 3495,
+      "path": "scripts/prepare_airgap_bundle.sh",
+      "present": true,
+      "sha256": "74d393523b591fa36ae1ce4de4b91c3611dcc7f64f1727c9d5273ab5e1404877"
+    },
+    {
+      "bytes": 3652,
+      "path": "scripts/prepare_python_lock.py",
+      "present": true,
+      "sha256": "367d2a00dc86ab75af54406d662a60e38cfba514e1d401e7fb20452b85d857b6"
+    },
+    {
+      "bytes": 794,
+      "path": "scripts/prepare_frontend_lock.sh",
+      "present": true,
+      "sha256": "e0e91f787ad4e99044a49ee13f7664396ba3afdded2acaef6604c0cb23f67146"
+    },
+    {
+      "bytes": 2049,
+      "path": "scripts/prepare_os_package_bundle.sh",
+      "present": true,
+      "sha256": "afa1e52a591303e8b1283695a2a224d18041004a764e52a939a2df83beea349d"
+    },
+    {
+      "bytes": 2140,
+      "path": "scripts/verify_os_package_install.sh",
+      "present": true,
+      "sha256": "02d3335461fbc4580f2df732eef267d99e6157174cdddefc88146a562a53660a"
+    },
+    {
+      "bytes": 2088,
+      "path": "scripts/resolve_container_digests.py",
+      "present": true,
+      "sha256": "0546506fb4e66a2811347b57cef37d09ef7df0b876f9c412866935263b27b412"
+    },
+    {
+      "bytes": 8696,
+      "path": "scripts/generate_build_inputs.py",
+      "present": true,
+      "sha256": "3fcb763e7d78ea9495788c955ddde978dd96c5141ec19937991cd4de45d6c626"
+    },
+    {
+      "bytes": 10496,
+      "path": "scripts/supply_chain_preflight.py",
+      "present": true,
+      "sha256": "9d7170e77399382765210f17fe25872145a5c4807ef89809769b94bbb0cf57e1"
+    },
+    {
+      "bytes": 3947,
+      "path": "scripts/supply_chain_v6_3_12_preflight.py",
+      "present": true,
+      "sha256": "32d184ba98a75302dae473818fee0cabc2276ba92998a562a08beb6aabb8eee4"
+    },
+    {
+      "bytes": 6653,
+      "path": "scripts/backup_core.sh",
+      "present": true,
+      "sha256": "93d0f162d1244ab89dfebcac70439e30c60f408f8bddc21dde3aa60bc57ed168"
+    },
+    {
+      "bytes": 6689,
+      "path": "scripts/restore_core.sh",
+      "present": true,
+      "sha256": "dc2b1a950181eb94fd6b31d87628fcefd1b479c70bcb839dadac6ae0ad384499"
+    },
+    {
+      "bytes": 3466,
+      "path": "scripts/backup_manifest.py",
+      "present": true,
+      "sha256": "48f3afa652a9e9acfea8522ea834ec11aa2deb97ae9f28802c42bf2362ef51ea"
+    },
+    {
+      "bytes": 2138,
+      "path": "scripts/dr_consistency_compare.py",
+      "present": true,
+      "sha256": "1043b851c03c3d9e39f03720a1288cd544c4a7063e57bd318247c065521272c7"
+    },
+    {
+      "bytes": 5244,
+      "path": "scripts/dr_consistency_preflight.py",
+      "present": true,
+      "sha256": "62ab5f41fdd7112dc17eb296d21ace56074163906022ed0dd87706947142d672"
+    },
+    {
+      "bytes": 4487,
+      "path": "scripts/generate_build_attestation.py",
+      "present": true,
+      "sha256": "4337df26d6ea0b3ee9b06ad8400055253caf8930d8ba4f663aab3a9378ff06a3"
+    },
+    {
+      "bytes": 2300,
+      "path": "scripts/verify_build_attestation.py",
+      "present": true,
+      "sha256": "ac1469a7e88921f15fbdcba8e2ef1550c8062dc9b2c35c26362792f61cafb17f"
+    },
+    {
+      "bytes": 2223,
+      "path": "scripts/dependency_lock_preflight.py",
+      "present": true,
+      "sha256": "3672762448f4cb3ab2e79bd2bf8212f33b94224568be1eb50636744cee80e774"
+    },
+    {
+      "bytes": 1770,
+      "path": "scripts/validate_airgap_image_pins.py",
+      "present": true,
+      "sha256": "4b12653bc2f53f5634d7ba945047a1709a29581d88cb6508729e0016bf68b682"
+    },
+    {
+      "bytes": 5511,
+      "path": "scripts/rolling_upgrade.sh",
+      "present": true,
+      "sha256": "d48f0ab6fc7206d20c689bb615e5ba6b70660133bd030de106d2f8c1661e8b6b"
+    },
+    {
+      "bytes": 5082,
+      "path": "scripts/rolling_upgrade_preflight.py",
+      "present": true,
+      "sha256": "2fe0f36655116124236adc0f8b45de30d523f14b9916ecbb0f67749c4ddfac31"
+    },
+    {
+      "bytes": 807,
+      "path": "docker-compose.bluegreen.yml",
+      "present": true,
+      "sha256": "0eef1ad19423c78104d81ae4e892d87e5db70d17bf04b2238c0537087dfdc306"
+    },
+    {
+      "bytes": 1790,
+      "path": "docker-compose.ha.yml",
+      "present": true,
+      "sha256": "87b894d29cfa1718554da404d941b3691f1c75e518a96485f7dd59939d98f2d7"
+    },
+    {
+      "bytes": 1630,
+      "path": "ops/gateway/templates/default.conf.template",
+      "present": true,
+      "sha256": "e970755b4f072aea050b48d7b4cb8d8d94fa6184d4dd8303fef578c5a6c798c1"
+    },
+    {
+      "bytes": 2496,
+      "path": "ops/gateway/templates/ha.conf.template",
+      "present": true,
+      "sha256": "592c483e91f65636e55898bdfc30bd3354b53a83439a320485441d90aa7cfd8d"
+    },
+    {
+      "bytes": 5608,
+      "path": "scripts/blue_green_cutover.sh",
+      "present": true,
+      "sha256": "99ba8d805b0ce919c00f6b0e23081ef73480f87df20e8aa8e4c8452481da3f47"
+    },
+    {
+      "bytes": 1619,
+      "path": "scripts/blue_green_rollback.sh",
+      "present": true,
+      "sha256": "29f7d82ea6bec9a8547acc534a992fcb02e18a835211645200e1caa9f21609d4"
+    },
+    {
+      "bytes": 1211,
+      "path": "scripts/blue_green_finalize.sh",
+      "present": true,
+      "sha256": "08c4e72b6df4448fbf930cf81de022bf25f07f2e77031eab9b8bed4466a927b4"
+    },
+    {
+      "bytes": 4886,
+      "path": "scripts/blue_green_cutover_preflight.py",
+      "present": true,
+      "sha256": "8623c329d63eff3b29d800f7c503f3c7e7c588c71f855f382018c0084dd567c6"
+    },
+    {
+      "bytes": 1941,
+      "path": "scripts/cutover_contract_check.py",
+      "present": true,
+      "sha256": "0a13695fd322637a956dd88c5f6956f5878e6b892a7d617a371822e7da231c48"
+    },
+    {
+      "bytes": 4204,
+      "path": "scripts/ha_failover_preflight.py",
+      "present": true,
+      "sha256": "bc0fa0332cb064268fe0bed77b1c20c7ebe37a30f9bbd4a3337affd6759352a0"
+    },
+    {
+      "bytes": 2145,
+      "path": "scripts/ha_failover_drill.sh",
+      "present": true,
+      "sha256": "7e033882300e8a6edb79a6deef552e6626cd1f0fd4a6010e196b60e2d17400fe"
+    },
+    {
+      "bytes": 2727,
+      "path": "docker-compose.authoritative-ha.yml",
+      "present": true,
+      "sha256": "2c67865ed78246223a650da8fcbb39caf7f2e4b54a5db12286b2b13fcbe3cc93"
+    },
+    {
+      "bytes": 283,
+      "path": "scripts/authoritative_ha_runtime_check.py",
+      "present": true,
+      "sha256": "3b7dc122e326824675f8a087552528be897a528dfd42f19f8eea399440b7fdb0"
+    },
+    {
+      "bytes": 2670,
+      "path": "scripts/authoritative_recovery_point.py",
+      "present": true,
+      "sha256": "be0e56b844e6c4d56bee20e12d8faf886f63a50c65201d1fa61b10fba3d186b6"
+    },
+    {
+      "bytes": 4912,
+      "path": "scripts/db_evidence_ha_preflight.py",
+      "present": true,
+      "sha256": "194e401ba11890f39d53e18bd8f867a9b88b8a5296cbba284c3a16383261e5cf"
+    },
+    {
+      "bytes": 6612,
+      "path": "scripts/evidence_ha_marker.py",
+      "present": true,
+      "sha256": "3d3b5ccb885e565ee8b2f72162f1a2c61f143997165f957abe3433f983ac7633"
+    },
+    {
+      "bytes": 1601,
+      "path": "docker-compose.multihost.yml",
+      "present": true,
+      "sha256": "6e91dbe283088656217988cc86c5f79cf0c48acdbffe1b2cc0a802f18363bcfa"
+    },
+    {
+      "bytes": 821,
+      "path": "ops/external-lb/haproxy.cfg.example",
+      "present": true,
+      "sha256": "90d7ef2899ab35c2fd10cd27774e496db81d202730737a573661c92591d364e6"
+    },
+    {
+      "bytes": 685,
+      "path": "ops/multihost/topology.15.example.json",
+      "present": true,
+      "sha256": "9f07a24d0355f550dc6725618de6d12ca0861a9388017a85abe46b57bcb7a3d7"
+    },
+    {
+      "bytes": 685,
+      "path": "ops/multihost/topology.30.example.json",
+      "present": true,
+      "sha256": "378bf0d4d392b46d17c563643a0e99ca1e8fc9edbf7f3b869539f28286793f05"
+    },
+    {
+      "bytes": 870,
+      "path": "ops/multihost/topology.100.example.json",
+      "present": true,
+      "sha256": "39c25128d194e1ad6ba4c252294a9527bb635de33848af820fc83ed0819d7503"
+    },
+    {
+      "bytes": 3169,
+      "path": "scripts/topology_certify.py",
+      "present": true,
+      "sha256": "12ce46b8b6fa2a84bb25c000cbf89a21b60a0c016d22cecce6c8cd41fb582996"
+    },
+    {
+      "bytes": 1284,
+      "path": "scripts/multihost_deployment_guard.py",
+      "present": true,
+      "sha256": "7423893d4d5856ab8ba07e6ad896cbab9822a6726ecd7b9f5308915042162532"
+    },
+    {
+      "bytes": 3587,
+      "path": "scripts/multihost_topology_preflight.py",
+      "present": true,
+      "sha256": "f43b11d843122367afd65780547dc22c703db42b51ae2e5b298a2771d7b93270"
+    },
+    {
+      "bytes": 1391,
+      "path": "scripts/multihost_failover_drill.sh",
+      "present": true,
+      "sha256": "93cf0c27b06d1f0f1883f72d7470ef8c7a5e38f8cb04299d9cabed00912d951e"
+    },
+    {
+      "bytes": 13947,
+      "path": "backend/app/core/production_certification.py",
+      "present": true,
+      "sha256": "d52cb9a0c74bc702857b5278b4999c47582643295661e344bb96905cb809dc12"
+    },
+    {
+      "bytes": 1410,
+      "path": "backend/app/core/db_pool_admission.py",
+      "present": true,
+      "sha256": "263f999e7dcaee8d02971ca4fb8b4fade80b0885b30d5b36a85b9320e0e79159"
+    },
+    {
+      "bytes": 12942,
+      "path": "backend/app/core/load_certification.py",
+      "present": true,
+      "sha256": "1b64a7cbc018730eb34084e600e2a84e70ea1963359b84dfb7e2a1a0676575d0"
+    },
+    {
+      "bytes": 4968,
+      "path": "scripts/production_certify.py",
+      "present": true,
+      "sha256": "a5317c6b0e5e4a28c6d951fc3f7b8570dc072d4febf0821883dd6bf7618f328a"
+    },
+    {
+      "bytes": 1198,
+      "path": "scripts/production_deployment_guard.py",
+      "present": true,
+      "sha256": "eedca8123fb656bdad6085e6d03fcd667bea9b5a54b84c4c0959758cdd2ceb32"
+    },
+    {
+      "bytes": 2822,
+      "path": "scripts/production_certification_preflight.py",
+      "present": true,
+      "sha256": "abd8773a29a1d29bd39d1f2c84cb9bf93450e8d928ad74b3adfabb14b0150d30"
+    },
+    {
+      "bytes": 11814,
+      "path": "scripts/production_load_certify.py",
+      "present": true,
+      "sha256": "af38d1cb31c61beb714859d78d0902692cdd7f34d15f0aa6e7fa099ad15c89f4"
+    },
+    {
+      "bytes": 2465,
+      "path": "scripts/production_load_certification_preflight.py",
+      "present": true,
+      "sha256": "6d8e1100fae42e232c4363ff28a6a234efc1ede2d5f223424dc37a2b6bb2191d"
+    },
+    {
+      "bytes": 934,
+      "path": "ops/certification/load-plan.v1.json",
+      "present": true,
+      "sha256": "454919dad40374476e154be7c0b7aab6d54b00c8df29376ee6b4663bc0802b3b"
+    },
+    {
+      "bytes": 747,
+      "path": "ops/certification/evidence.15.example.json",
+      "present": true,
+      "sha256": "7dbe10c6aab360fec00a674d13cc83813bc3ccb31498ba0815982004c04637eb"
+    },
+    {
+      "bytes": 747,
+      "path": "ops/certification/evidence.30.example.json",
+      "present": true,
+      "sha256": "757f109dbb798fbd2bb0bf90584b6f6b5341537a9e10021c6cc94494bb90c5bf"
+    },
+    {
+      "bytes": 748,
+      "path": "ops/certification/evidence.100.example.json",
+      "present": true,
+      "sha256": "1606dfab526286348d19cdd3dc8986ffa06242bebff0c2434d0260dbdfac1012"
+    },
+    {
+      "bytes": 14179,
+      "path": "backend/app/core/release_acceptance.py",
+      "present": true,
+      "sha256": "9c20613cc00fb2f9ffc98688a923aea6a3b931a6804a33187e3cb2d0a36f22e5"
+    },
+    {
+      "bytes": 8376,
+      "path": "scripts/release_acceptance_pipeline.py",
+      "present": true,
+      "sha256": "e16df558944b638bb459e67d1c8272535b50e9cdeaeafb5e29e6b35dd5f7137f"
+    },
+    {
+      "bytes": 2896,
+      "path": "scripts/release_acceptance_preflight.py",
+      "present": true,
+      "sha256": "c3299f48381a0fb13315701a44dd3ffc8d2fe07441ff4d29f9a96cd2158f3b64"
+    },
+    {
+      "bytes": 4345,
+      "path": "scripts/promote_acceptance_baseline.py",
+      "present": true,
+      "sha256": "06cf0a924df11dda3e0275b49d4529ecdaab79a64505b61f5ed5d72b4b80a324"
+    },
+    {
+      "bytes": 2133,
+      "path": "scripts/verify_acceptance_chain.py",
+      "present": true,
+      "sha256": "58fc8b7ea1581bdb8282e1990214aad66706dc431cdeca95a653c71cdecd8ce8"
+    },
+    {
+      "bytes": 33408,
+      "path": "backend/app/core/release_provenance.py",
+      "present": true,
+      "sha256": "8a25b595fbb91f47cd953b08b611b0e18f9033e7cf7bf17bb564a083119968a0"
+    },
+    {
+      "bytes": 29132,
+      "path": "backend/app/core/release_provenance_governance.py",
+      "present": true,
+      "sha256": "3370527edf94645e7bc2fb1e73424d7e5f6149b9aa5907d3a2315e6a50ab04b0"
+    },
+    {
+      "bytes": 8798,
+      "path": "scripts/release_provenance_registry.py",
+      "present": true,
+      "sha256": "3d5dca908c7e8c84b5e12fa1a1ed33a67e3b9d0c165815745bd0d3d9b73c20fd"
+    },
+    {
+      "bytes": 3935,
+      "path": "scripts/release_provenance_preflight.py",
+      "present": true,
+      "sha256": "9bd65217cd4496f2805016f602639638be06573546c5dc5dd49cf775f06b6904"
+    },
+    {
+      "bytes": 4037,
+      "path": "scripts/external_trust_retention_preflight.py",
+      "present": true,
+      "sha256": "fdf87de43f9bf88afdf4c00830ac9274ebabfd782526a236ae2cba5603afaea9"
+    },
+    {
+      "bytes": 135,
+      "path": "mgcctl",
+      "present": true,
+      "sha256": "37c0f497b07fe8a5bc8f7c84644e165eba1e6fa941f298ea3b44880fd4d2cf1d"
+    },
+    {
+      "bytes": 29739,
+      "path": "scripts/mgcctl.py",
+      "present": true,
+      "sha256": "ace35ec53ce0daff6cfa76918a5d8a6b1673bf63bd620304d904e2bddc4d4ffb"
+    },
+    {
+      "bytes": 3299,
+      "path": "scripts/operations_consolidation_preflight.py",
+      "present": true,
+      "sha256": "3bca685559a051508de1d24aa33e353eef6792a8eacb4ff9f03692c8fa7e9d10"
+    },
+    {
+      "bytes": 5176,
+      "path": "backend/tests/test_v6326_operations_consolidation.py",
+      "present": true,
+      "sha256": "97a0fa78f79f43b45f13a6f94dc32b1ac5114682170a5da60a4fe4c12b175dc4"
+    },
+    {
+      "bytes": 18147,
+      "path": "backend/app/services/integration_certification.py",
+      "present": true,
+      "sha256": "313ad343141a5cacdc2a2446a4ffd2ed6c6d3e0f585260941de75cee5359cf46"
+    },
+    {
+      "bytes": 9301,
+      "path": "backend/tests/test_v6327_real_integration_certification.py",
+      "present": true,
+      "sha256": "635672eaf1fe8da8660f87711936af8febab3b1342daf05398b897aa65118eb5"
+    },
+    {
+      "bytes": 6048,
+      "path": "backend/tests/test_v6328_integration_runtime_assurance.py",
+      "present": true,
+      "sha256": "7f4767ae991cce1d2947dfd38063f00f2524282a7b52e26b7af1b987fd187ae1"
+    },
+    {
+      "bytes": 2547,
+      "path": "scripts/integration_certify.py",
+      "present": true,
+      "sha256": "5320cca2bdb4bf101a3aec70728317fd23b6a1cdb04e8130fcd081dfe5bd43ee"
+    },
+    {
+      "bytes": 1842,
+      "path": "scripts/integration_contract_suite.py",
+      "present": true,
+      "sha256": "7e0ddae9f7dc880fd42c8c0777739bf65bbc47e391d4ad20b1f52c25f93ff2bd"
+    },
+    {
+      "bytes": 3181,
+      "path": "scripts/integration_certification_preflight.py",
+      "present": true,
+      "sha256": "cff61526fea5e483abba05954b79f8693e0773cb63fab159fb7ed23b7ffd2f1f"
+    },
+    {
+      "bytes": 2675,
+      "path": "scripts/integration_runtime_assurance_preflight.py",
+      "present": true,
+      "sha256": "a8547364add1dae2f372ab5f4a376a74add4f09d2b7178c822dd53312794ff63"
+    },
+    {
+      "bytes": 9135,
+      "path": "backend/app/core/target_host_assurance.py",
+      "present": true,
+      "sha256": "7c9b30226a17fbb965a88303792327452fb403f4c6a6a590becaf2f4534e1372"
+    },
+    {
+      "bytes": 2692,
+      "path": "backend/tests/test_v6329_target_host_assurance.py",
+      "present": true,
+      "sha256": "7c85aa462d33f82c116aa752119d9ef4c463b6e1aefc61d0cd87a5de32664eb2"
+    },
+    {
+      "bytes": 4900,
+      "path": "scripts/target_host_probe.py",
+      "present": true,
+      "sha256": "be872211e0112afad8e0e6bf7366e17f3d7fcab10baa1db636b4d939815d4c86"
+    },
+    {
+      "bytes": 2738,
+      "path": "scripts/target_host_certify.py",
+      "present": true,
+      "sha256": "6dbcdf5c3216290905d812e88fd851c1adab736ccfb86abcee856761224e2fd7"
+    },
+    {
+      "bytes": 2966,
+      "path": "scripts/target_host_deployment_guard.py",
+      "present": true,
+      "sha256": "7489b73a9ffb62cc475832be4980aefb54687aaa28035fd681fdd22afbf2b501"
+    },
+    {
+      "bytes": 3142,
+      "path": "scripts/target_host_assurance_preflight.py",
+      "present": true,
+      "sha256": "2006685806244cb5d14321999296320e64b629bd2a2237078156b4fba12b87ce"
+    },
+    {
+      "bytes": 8944,
+      "path": "backend/app/core/incident_evidence.py",
+      "present": true,
+      "sha256": "7986ed49134e3d1f2d3c7b53416995cbfdeddc292a96ba41395ae3f39e011cc3"
+    },
+    {
+      "bytes": 5736,
+      "path": "backend/tests/test_v6330_production_observability_incident_evidence.py",
+      "present": true,
+      "sha256": "a2ea1cc9270b1098e18f726ce66bd87a94fe3f30e91fec80320155050b3e9b9e"
+    },
+    {
+      "bytes": 3145,
+      "path": "scripts/incident_evidence_preflight.py",
+      "present": true,
+      "sha256": "9469e1042a5f932bda761ac3e2dc169d7c39fea89bb7911f5bdd0b15b054d608"
+    },
+    {
+      "bytes": 3658,
+      "path": "PRODUCTION_OBSERVABILITY_INCIDENT_EVIDENCE_v6.3.30.md",
+      "present": true,
+      "sha256": "668717b34f9cdc1524288d476c12751bc63865085a6b17cb1b370390e26d59d6"
+    },
+    {
+      "bytes": 3658,
+      "path": "docs/PRODUCTION_OBSERVABILITY_INCIDENT_EVIDENCE_v6.3.30.md",
+      "present": true,
+      "sha256": "668717b34f9cdc1524288d476c12751bc63865085a6b17cb1b370390e26d59d6"
+    },
+    {
+      "bytes": 13294,
+      "path": "backend/app/core/resilience_drill.py",
+      "present": true,
+      "sha256": "bb882301ed20ccd7a44a077483bf9f4f6fd8542daaf177e62fd138a183c50e27"
+    },
+    {
+      "bytes": 4619,
+      "path": "backend/tests/test_v6331_resilience_drill_orchestration.py",
+      "present": true,
+      "sha256": "7afcd14c686dcf63d4eefe384ed0970379665d33a9dd5544b61bed359fcb6d48"
+    },
+    {
+      "bytes": 6725,
+      "path": "scripts/resilience_drill.py",
+      "present": true,
+      "sha256": "ca5e787605a8db7fedc0fc96c6bfb6d4c629670463807cb9b99b54c725965e3f"
+    },
+    {
+      "bytes": 3973,
+      "path": "scripts/resilience_drill_preflight.py",
+      "present": true,
+      "sha256": "e12fd0ff74062c45eba27f41b96917dd6a1411e606f05ee09df4fa125c0361db"
+    },
+    {
+      "bytes": 4006,
+      "path": "RESILIENCE_DRILL_ORCHESTRATION_v6.3.31.md",
+      "present": true,
+      "sha256": "12efa63990ac564c6e3f5f6e2657b4443606064746e1f4d8666496062e8d093c"
+    },
+    {
+      "bytes": 4006,
+      "path": "docs/RESILIENCE_DRILL_ORCHESTRATION_v6.3.31.md",
+      "present": true,
+      "sha256": "12efa63990ac564c6e3f5f6e2657b4443606064746e1f4d8666496062e8d093c"
+    },
+    {
+      "bytes": 23792,
+      "path": "backend/app/core/resilience_certification.py",
+      "present": true,
+      "sha256": "115429c3172ee6cf9331353db672fca47e88f15cc1bf9350f1f4f594b571efb2"
+    },
+    {
+      "bytes": 8190,
+      "path": "backend/tests/test_v6332_resilience_certification_recovery_baselines.py",
+      "present": true,
+      "sha256": "786e6a14fd9cc9691248e166b84d33fb438b6dd58078aa8528871cd16b9935e8"
+    },
+    {
+      "bytes": 7767,
+      "path": "scripts/resilience_certify.py",
+      "present": true,
+      "sha256": "b11445a031f3bcee6936a18cd7d7a4c9d3564d3a1fa93318780ad84e26aff753"
+    },
+    {
+      "bytes": 2668,
+      "path": "scripts/resilience_release_guard.py",
+      "present": true,
+      "sha256": "94117087c030b2584bd46ef74ee5fce1d8f59d12a6ad20cd9140f78b6638569d"
+    },
+    {
+      "bytes": 4770,
+      "path": "scripts/resilience_certification_preflight.py",
+      "present": true,
+      "sha256": "f398ba5a9c171641049ec250773d44b49903131991bd62ac3c59bacb577fb57d"
+    },
+    {
+      "bytes": 5989,
+      "path": "RESILIENCE_CERTIFICATION_RECOVERY_BASELINES_v6.3.34.md",
+      "present": true,
+      "sha256": "f80d733e58e11bf1f219d47c750abcecba0bf0b28bb6c10ffedbe5c610e9f19e"
+    },
+    {
+      "bytes": 5989,
+      "path": "docs/RESILIENCE_CERTIFICATION_RECOVERY_BASELINES_v6.3.34.md",
+      "present": true,
+      "sha256": "f80d733e58e11bf1f219d47c750abcecba0bf0b28bb6c10ffedbe5c610e9f19e"
+    },
+    {
+      "bytes": 28923,
+      "path": "backend/app/services/project_workspace.py",
+      "present": true,
+      "sha256": "2874e26f36737143cd025a7a3a80b7e21ff31bfe94d4416ef2495bfbc257318e"
+    },
+    {
+      "bytes": 3340,
+      "path": "backend/tests/test_v6333_pilot_readiness_ux_simplification.py",
+      "present": true,
+      "sha256": "f3181bd28ebf0b015bc67c6ed0d3596efdb697ef7ea951e06cd5d73f0648a53d"
+    },
+    {
+      "bytes": 2212,
+      "path": "scripts/pilot_readiness_preflight.py",
+      "present": true,
+      "sha256": "c2d6efd3672cdeb25c547d8b9a5fe205dfbeaccec916e5ed99b25836bc2df2e7"
+    },
+    {
+      "bytes": 382461,
+      "path": "frontend/src/main.tsx",
+      "present": true,
+      "sha256": "d660221301dcac0a886822c8532304ec1d57ddb0eba33180d4d78821ad9ca34c"
+    },
+    {
+      "bytes": 82357,
+      "path": "frontend/src/styles.css",
+      "present": true,
+      "sha256": "103f26557e802a8c9f94c297922de2559a0957e5339a18a101cb7bb282339ae5"
+    },
+    {
+      "bytes": 4031,
+      "path": "PILOT_READINESS_UX_SIMPLIFICATION_v6.3.34.md",
+      "present": true,
+      "sha256": "946b02e6473cd968a0eccad8a63d82f054fd42c662aaa2e623674976e2309c4f"
+    },
+    {
+      "bytes": 4031,
+      "path": "docs/PILOT_READINESS_UX_SIMPLIFICATION_v6.3.34.md",
+      "present": true,
+      "sha256": "946b02e6473cd968a0eccad8a63d82f054fd42c662aaa2e623674976e2309c4f"
+    },
+    {
+      "bytes": 3245,
+      "path": "backend/app/core/vehicle_applicability.py",
+      "present": true,
+      "sha256": "84af2954384ed3f5aae32185af9c6d096a5213de12e7b215bc16f6a50d6d11f6"
+    },
+    {
+      "bytes": 5431,
+      "path": "backend/tests/test_v6334_multi_vehicle_applicability.py",
+      "present": true,
+      "sha256": "ae9b54e703daf09c4b7fcc5bc752b0a6a38ad89eb7b1e29d0718b7be54e01dc3"
+    },
+    {
+      "bytes": 2420,
+      "path": "scripts/multi_vehicle_applicability_preflight.py",
+      "present": true,
+      "sha256": "5df68af32e37f713540f9e497add811fe1dd0a7a5c54c4594d5cbd59d6e7d095"
+    },
+    {
+      "bytes": 4223,
+      "path": "MULTI_VEHICLE_PRODUCT_APPLICABILITY_v6.3.34.md",
+      "present": true,
+      "sha256": "883c9657c6a2a052e44c0acdaa43920025cad630e1899f4fc8ef4ad87f3938f7"
+    },
+    {
+      "bytes": 4223,
+      "path": "docs/MULTI_VEHICLE_PRODUCT_APPLICABILITY_v6.3.34.md",
+      "present": true,
+      "sha256": "883c9657c6a2a052e44c0acdaa43920025cad630e1899f4fc8ef4ad87f3938f7"
+    },
+    {
+      "bytes": 817,
+      "path": "ops/certification/target-host/evidence.node-a.example.json",
+      "present": true,
+      "sha256": "af59f4338099b3987c25aa5ffd6f76885430be28f374ac7937dceb72f223ce2c"
+    },
+    {
+      "bytes": 817,
+      "path": "ops/certification/target-host/evidence.node-b.example.json",
+      "present": true,
+      "sha256": "43dfa53ee2ec1de723cf6861b7b31d9e3456cb31f427cf55002d93cbfc8bcb95"
+    },
+    {
+      "bytes": 3931,
+      "path": "TARGET_HOST_DEPLOYMENT_ASSURANCE_v6.3.34.md",
+      "present": true,
+      "sha256": "88e83bb05fd9f49c88c69ef33e1806030a779b5eaf4fa7572c15669759a2f327"
+    },
+    {
+      "bytes": 3931,
+      "path": "docs/TARGET_HOST_DEPLOYMENT_ASSURANCE_v6.3.34.md",
+      "present": true,
+      "sha256": "88e83bb05fd9f49c88c69ef33e1806030a779b5eaf4fa7572c15669759a2f327"
+    },
+    {
+      "bytes": 714,
+      "path": "ops/integrations/README.md",
+      "present": true,
+      "sha256": "b275ab74f23e8e0ef27471dbd4eab6dfc2e66b2e169b6e6b9f72836fdf3a823d"
+    },
+    {
+      "bytes": 1533,
+      "path": "ops/integrations/contracts/plm.example.json",
+      "present": true,
+      "sha256": "d3976631443325e9be85f5a7e7e46ac4f32f8172e8d6278ffddb4b770fcccd6d"
+    },
+    {
+      "bytes": 1533,
+      "path": "ops/integrations/contracts/pdm.example.json",
+      "present": true,
+      "sha256": "d92eefc8ca5c20c23cd332fd0478728acb7d22d834f5476b7dea63d1c409d26e"
+    },
+    {
+      "bytes": 1531,
+      "path": "ops/integrations/contracts/erp.example.json",
+      "present": true,
+      "sha256": "1024a04bf33b283d47abba3a688e2c20dd9d59ad148f0da5b54e07de4431b2df"
+    },
+    {
+      "bytes": 1514,
+      "path": "ops/integrations/contracts/mes.example.json",
+      "present": true,
+      "sha256": "8b544eb085e4a9327b3f37069d6bade98f92f44afb6423c36af183eb04dcc548"
+    },
+    {
+      "bytes": 1513,
+      "path": "ops/integrations/contracts/qms.example.json",
+      "present": true,
+      "sha256": "7b5115b7da3746cffa028e0fb1a8086c5a01e1661540e02cdfdfec9d3d5e9b80"
+    },
+    {
+      "bytes": 1121,
+      "path": "ops/integrations/plm.simulator.json",
+      "present": true,
+      "sha256": "a113b75ca55d448e093a81234fb3d835eebf7b42e26b7f8c8ed99da084c1cf7c"
+    },
+    {
+      "bytes": 29432,
+      "path": "Makefile",
+      "present": true,
+      "sha256": "e20f3391f68f56b99a9baf460cefff59457da4c064cf166c96fc74cc9266d252"
+    },
+    {
+      "bytes": 12558,
+      "path": ".env.example",
+      "present": true,
+      "sha256": "6f7f2cda6b33eb9ce110d1a29ea602b6ac90d35b74a47e0d669352fe91f5adba"
+    },
+    {
+      "bytes": 6947,
+      "path": "EXTERNAL_TRUST_RETENTION_v6.3.25.md",
+      "present": true,
+      "sha256": "43c65b2f18d56ea3a90ea7dbf4e5dc157692223a4f748a6db170d4413ca3a411"
+    },
+    {
+      "bytes": 3476,
+      "path": "OPERATIONS_CONSOLIDATION_v6.3.26.md",
+      "present": true,
+      "sha256": "f2f2f7406ab82cf043826f9b4c164b68244cc4c171677cb5dbda87d50b2dbaef"
+    },
+    {
+      "bytes": 4716,
+      "path": "REAL_INTEGRATION_CERTIFICATION_v6.3.27.md",
+      "present": true,
+      "sha256": "4c9e2977fc8ac44e4320aea889d6edc60297012485ea47c801fc91ce8f493648"
+    },
+    {
+      "bytes": 2651,
+      "path": "INTEGRATION_RUNTIME_ASSURANCE_v6.3.28.md",
+      "present": true,
+      "sha256": "469aa937e74e0cb9e4618f6ce562278a50c9d91d93771fd985032bf8b6691802"
+    },
+    {
+      "bytes": 2971,
+      "path": "RELEASE_NOTES_v6.3.34_RU.md",
+      "present": true,
+      "sha256": "a11dc9eac23e5e2e62e6cd3c80cd874812b836f9355bbb8ef57358e88ee0f9f1"
+    },
+    {
+      "bytes": 4973,
+      "path": "VERIFICATION_v6.3.34.md",
+      "present": true,
+      "sha256": "bdea320cb206bbb8d36ed1f3ba4cd3d1b5560eca3e3a4791e68ce5e69092e4d9"
+    },
+    {
+      "bytes": 20520,
+      "path": "docs/API_BOUNDED_CONTEXTS_v6.3.34.md",
+      "present": true,
+      "sha256": "9364cf9e931a9a79157e19f57435699d060a8fa1d01dac737d5ea2cb60613258"
+    },
+    {
+      "bytes": 1071,
+      "path": "supply-chain/SUPPLY_CHAIN_POLICY.json",
+      "present": true,
+      "sha256": "441bd94cf3e4b1714f7971549e93a5b417593dc470fc99eaacacacfd79cdff80"
+    },
+    {
+      "bytes": null,
+      "path": "backend/locks/requirements-core.lock.txt",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": null,
+      "path": "backend/wheelhouse/core/WHEELHOUSE_MANIFEST.json",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": null,
+      "path": "backend/locks/requirements-ai.lock.txt",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": null,
+      "path": "backend/wheelhouse/ai/WHEELHOUSE_MANIFEST.json",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": null,
+      "path": "backend/locks/requirements-advanced.lock.txt",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": null,
+      "path": "backend/wheelhouse/advanced/WHEELHOUSE_MANIFEST.json",
+      "present": false,
+      "sha256": null
+    },
+    {
+      "bytes": 608,
+      "path": "backend/os-packages/runtime/README.md",
+      "present": true,
+      "sha256": "c0782df08e347020013ea6518ddfcaf520efcf8e771e248b4c700e652e77c00c"
+    }
+  ],
+  "immutable_images": {
+    "GRAFANA_IMAGE": "",
+    "JAEGER_IMAGE": "",
+    "LLAMA_CPP_IMAGE": "",
+    "MINIO_IMAGE": "",
+    "NEO4J_IMAGE": "",
+    "NGINX_BASE_IMAGE": "",
+    "NODE_BASE_IMAGE": "",
+    "OAUTH2_PROXY_IMAGE": "",
+    "POSTGRES_IMAGE": "",
+    "PROMETHEUS_IMAGE": "",
+    "PYTHON_BASE_IMAGE": "",
+    "QDRANT_IMAGE": "",
+    "REDIS_IMAGE": "",
+    "VLLM_IMAGE": ""
+  },
+  "release": "6.3.34",
+  "schema": "mgc.build-inputs.v2"
+}

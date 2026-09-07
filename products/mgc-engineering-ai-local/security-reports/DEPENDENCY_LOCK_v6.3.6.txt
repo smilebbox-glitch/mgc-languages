@@ -1,0 +1,4 @@
+WARN: frontend/package-lock.json is absent
+WARN: backend core profile contains 21 declared ranges; use an approved resolved wheelhouse for enterprise image build
+WARN: backend ai profile contains 23 declared ranges; use an approved resolved wheelhouse for enterprise image build
+WARN: backend advanced profile contains 25 declared ranges; use an approved resolved wheelhouse for enterprise image build

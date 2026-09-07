@@ -1,0 +1,26 @@
+{
+  "default_posture": "conditional_until_corporate_locks_are_generated_and_verified",
+  "release": "6.3.12",
+  "requirements": {
+    "application_build_network": "none_after_artifact_preparation",
+    "container_env": ".env.reproducible",
+    "cve_scanner_required": true,
+    "frontend_lock": "frontend/package-lock.json",
+    "immutable_image_pattern": "@sha256:<64 hex>",
+    "offline_build_required": true,
+    "os_package_bundle": "backend/os-packages/runtime/OS_PACKAGE_MANIFEST.json",
+    "os_package_install_network": "none",
+    "os_package_install_receipt": "backend/os-packages/runtime/OS_PACKAGE_INSTALL_RECEIPT.json",
+    "python_locks": [
+      "backend/locks/requirements-core.lock.txt",
+      "backend/locks/requirements-ai.lock.txt",
+      "backend/locks/requirements-advanced.lock.txt"
+    ],
+    "wheelhouse_manifests": [
+      "backend/wheelhouse/core/WHEELHOUSE_MANIFEST.json",
+      "backend/wheelhouse/ai/WHEELHOUSE_MANIFEST.json",
+      "backend/wheelhouse/advanced/WHEELHOUSE_MANIFEST.json"
+    ]
+  },
+  "schema": "mgc.supply-chain.policy.v1"
+}

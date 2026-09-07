@@ -1,0 +1,17 @@
+MGC Engineering AI Local v6.0.0 — Static Security Verification
+
+Final pre-package checks:
+- Human-facing API authorization: 190/190 guarded; 2 explicit non-human exceptions.
+- Dockerfile/Dockle-style static preflight: 32/32 PASS.
+- Compose/access/runtime security preflight: 82/82 PASS.
+- Docker Compose YAML parse: 12/12 PASS.
+- Role focus does not grant access; Project/Manufacturing Area/Document ACL remain authoritative.
+- Engineering Workflow Case mixed hidden evidence: fail-closed.
+- Trigger/source-linked workflow requires visible evidence.
+
+Not executed here:
+- real Docker image build;
+- runtime container acceptance;
+- Dockle image-layer scan.
+
+Reason: Docker CLI/daemon and Dockle are not installed in the packaging environment.

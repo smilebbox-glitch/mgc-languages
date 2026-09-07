@@ -1,0 +1,17 @@
+services:
+  webhook-edge:
+    image: ${MGC_WEBHOOK_IMAGE:-mgc-engineering-ai-webhook-edge:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: .
+      dockerfile: ops/webhook-gateway/Dockerfile
+    ports:
+      - "${WEBHOOK_PORT:-3003}:8080"
+    depends_on: [api]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+      - /var/cache/nginx:size=16m,mode=0755
+    networks: [mgc_internal]
+    restart: unless-stopped

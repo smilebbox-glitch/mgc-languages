@@ -1,0 +1,14 @@
+{
+  "schema": "mgc-target-host-assurance-evidence-v1",
+  "release": "6.3.30",
+  "schema_version": "6.3.13",
+  "profile": "30",
+  "node_id": "mgc-app-a",
+  "captured_at_utc": "2026-09-06T00:00:00+00:00",
+  "privacy": {"hostname_collected": false, "ip_addresses_collected": false, "environment_collected": false, "secrets_collected": false},
+  "system": {"os": "Linux", "architecture": "x86_64", "kernel_release": "example", "cpu_cores": 8, "memory_gib": 16.0},
+  "storage": {"free_gib": 120.0, "total_gib": 250.0, "used_ratio": 0.52, "rw_fsync_passed": true},
+  "resource_limits": {"nofile_soft": 8192, "nofile_hard": 8192},
+  "container_runtime": {"docker_cli": true, "daemon_reachable": true, "server_version": "27.5.1", "compose_version": "2.32.0"},
+  "time_sync": {"synchronized": true, "source": "timedatectl"}
+}

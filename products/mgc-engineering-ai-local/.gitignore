@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+node_modules/
+dist/
+storage/uploads/*
+storage/previews/*
+!storage/.gitkeep
+models/*
+!models/README.md
+!models/.gitkeep
+!models/MODEL_MANIFEST.json
+
+backups/

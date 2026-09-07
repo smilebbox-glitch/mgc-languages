@@ -1,0 +1,23 @@
+services:
+  api-candidate:
+    extends:
+      file: docker-compose.yml
+      service: api
+    image: ${MGC_CANDIDATE_API_IMAGE:-mgc-engineering-ai-api:${MGC_CANDIDATE_VERSION:-6.3.34}-local}
+    environment:
+      DEPLOYMENT_SLOT: candidate
+      DEPLOYMENT_PROFILE: ${DEPLOYMENT_PROFILE:-core}
+      DATABASE_URL: postgresql+psycopg://mgc:${POSTGRES_PASSWORD:-mgc-change-me}@postgres:5432/mgc
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /data/storage
+      INBOX_DIR: /data/inbox
+    expose: ["8080"]
+
+  frontend-candidate:
+    extends:
+      file: docker-compose.yml
+      service: frontend
+    image: ${MGC_CANDIDATE_FRONTEND_IMAGE:-mgc-engineering-ai-frontend:${MGC_CANDIDATE_VERSION:-6.3.34}-local}
+    depends_on: [api-candidate]
+    expose: ["8080"]

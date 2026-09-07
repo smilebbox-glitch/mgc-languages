@@ -1,0 +1,31 @@
+MGC Engineering AI Local v4.1.0 — STATIC SECURITY VERIFICATION
+
+Packaging-environment results:
+- backend regression: 80/80 PASS
+- engineer-only human API preflight: 81/81 guarded; 2 explicit exceptions (/health and HMAC machine webhook)
+- Dockerfile security preflight: 32/32 PASS
+- Compose/access/runtime security preflight: 82/82 PASS
+- quality Core Tools project/manufacturing-area scoping: PASS
+- quality records do not promote hidden document-derived parts/evidence: PASS
+- Special Characteristic source-document ACL filtering: PASS
+- SSO/Project/Area access never widens Document ACL: PASS
+- production direct model/database/application host-port exposure checks: PASS
+- build context preflight / plain docker compose build structure: PASS
+- Python compile / shell syntax / TSX transpile syntax: PASS
+
+Quality security model:
+- all APQP/PFMEA/Control Plan/PPAP/8D human APIs require engineering identity
+- ProjectArea ACL can narrow visibility by manufacturing area
+- quality records with a part number require that part to be visible in project evidence
+- evidence_document_ids are validated and filtered by Document ACL
+- quality readiness is advisory and has no automatic release authority
+- proprietary AIAG/VDA forms and Action Priority tables are not embedded in source code
+
+Not executed in this environment:
+- real Docker image layer build
+- real Dockle image-layer scan
+
+Required on corporate build host:
+  docker compose build
+  make dockle
+  make acceptance

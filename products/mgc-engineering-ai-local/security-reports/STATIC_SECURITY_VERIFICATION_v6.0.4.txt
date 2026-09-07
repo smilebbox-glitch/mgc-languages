@@ -1,0 +1,34 @@
+Docker/Dockle static preflight
+PASS CIS-DI-0009              backend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              backend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              backend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              backend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              backend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              backend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0007/DKL-DI-0005  backend/Dockerfile — combine apt update/install and clear lists
+PASS CIS-DI-0009              frontend/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              frontend/Dockerfile — do not use sudo
+PASS DKL-DI-0006              frontend/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              frontend/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              frontend/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              frontend/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/gateway/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/mock-integrations/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/mock-integrations/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/mock-integrations/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/mock-integrations/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/mock-integrations/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/mock-integrations/Dockerfile — no embedded secrets in ENV
+PASS CIS-DI-0009              ops/webhook-gateway/Dockerfile — use COPY, not ADD
+PASS DKL-DI-0001              ops/webhook-gateway/Dockerfile — do not use sudo
+PASS DKL-DI-0006              ops/webhook-gateway/Dockerfile — do not use latest base tag
+PASS CIS-DI-0001              ops/webhook-gateway/Dockerfile — final image must run as non-root
+PASS CIS-DI-0006              ops/webhook-gateway/Dockerfile — final image should define HEALTHCHECK
+PASS CIS-DI-0010              ops/webhook-gateway/Dockerfile — no embedded secrets in ENV
+PASS: 32 checks, 0 failures

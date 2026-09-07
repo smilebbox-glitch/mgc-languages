@@ -1,0 +1,26 @@
+{
+  "schema": "mgc-production-load-plan-v1",
+  "release": "6.3.24",
+  "profiles": {
+    "15": {"named_users": 15, "concurrency": 15, "min_requests": 1000, "warmup_requests": 50},
+    "30": {"named_users": 30, "concurrency": 30, "min_requests": 5000, "warmup_requests": 100},
+    "100": {"named_users": 100, "concurrency": 100, "min_requests": 10000, "warmup_requests": 200}
+  },
+  "workload_mix_percent": {
+    "object_360": 25,
+    "bom_versions": 20,
+    "work_instructions": 20,
+    "digital_thread": 15,
+    "rag_search": 12,
+    "rag_ask": 8
+  },
+  "governance": {
+    "live_target_required": true,
+    "engineering_domain_write_scenarios": false,
+    "rag_and_search_are_audited_read_semantics_posts": true,
+    "explicit_audited_post_opt_in_required": true,
+    "raw_fixture_identifiers_must_not_be_retained_in_evidence": true,
+    "detached_signature_required_for_technical_go": true,
+    "production_authorized": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "connector_type": "qms_rest",
+  "source_domain": "qms",
+  "expected_freshness_minutes": 30,
+  "required_fields": ["external_id", "kind", "modified_at", "metadata.failure_code"],
+  "config": {
+    "base_url": "http://qms-gateway.internal",
+    "list_path": "/api/quality-events",
+    "record_mode": true,
+    "integration_contract": {"allowed_kinds": ["quality_record", "defect", "claim", "containment"]}
+  },
+  "secrets": {"token_env": "MGC_QMS_TOKEN"}
+}

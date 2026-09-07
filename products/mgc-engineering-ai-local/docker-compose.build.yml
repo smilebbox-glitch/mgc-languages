@@ -1,0 +1,33 @@
+services:
+  api:
+    image: ${MGC_API_IMAGE:-mgc-engineering-ai-api:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_PROFILE: ${DEPLOYMENT_PROFILE:-core}
+  worker:
+    image: ${MGC_API_IMAGE:-mgc-engineering-ai-api:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_PROFILE: ${DEPLOYMENT_PROFILE:-core}
+  frontend:
+    image: ${MGC_FRONTEND_IMAGE:-mgc-engineering-ai-frontend:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_API_KEY: ""
+  gateway:
+    image: ${MGC_GATEWAY_IMAGE:-mgc-engineering-ai-gateway:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: .
+      dockerfile: ops/gateway/Dockerfile
+  webhook-edge:
+    image: ${MGC_WEBHOOK_IMAGE:-mgc-engineering-ai-webhook-edge:${MGC_VERSION:-6.3.34}-local}
+    build:
+      context: .
+      dockerfile: ops/webhook-gateway/Dockerfile
