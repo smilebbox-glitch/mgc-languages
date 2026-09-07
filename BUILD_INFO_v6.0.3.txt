@@ -1,0 +1,26 @@
+MGC Languages v6.0.3
+Scope: Frontend Learning Module
+
+Active learning view ownership:
+- home
+- topics
+- quiz
+- course30
+
+Architecture:
+- frontend learning module loaded after app-state and before navigation
+- navigation delegates owned views to frontend.learning
+- capture-phase click interception prevents duplicate legacy dispatch
+- legacy renderers remain staged fallback only
+
+Compatibility:
+- static/app.js unchanged
+- API/OpenAPI unchanged
+- ORM/Alembic unchanged (c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话), XP/SRS/games/admin/content unchanged
+
+Verification:
+- v600/v601/v602 regressions
+- new v603 ownership shard
+- focused ci-v603 workflow
