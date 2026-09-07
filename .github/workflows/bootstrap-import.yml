@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.bootstrap/r.complete'
+      - '.bootstrap/p.complete'
 
 permissions:
   contents: write
@@ -20,8 +20,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/r.part* | base64 --decode > /tmp/mgc-v571.tar.xz
-          echo "444697a40fbed944f6ccd02ad2fbaed4d7c0c3e894682089b6ca19fe98e6dd71  /tmp/mgc-v571.tar.xz" | sha256sum -c -
+          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz
+          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz" | sha256sum -c -
           xz -t /tmp/mgc-v571.tar.xz
           mkdir -p /tmp/mgc-v571
           tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
