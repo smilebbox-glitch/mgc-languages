@@ -41,6 +41,7 @@ SHARDS={
  'v600':['tests/v600_frontend_api_state_core_test.py'],
  'v601':['tests/v601_session_lifecycle_frontend_test.py'],
  'v602':['tests/v602_frontend_error_boundary_test.py'],
+ 'v603':['tests/v603_frontend_learning_module_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
