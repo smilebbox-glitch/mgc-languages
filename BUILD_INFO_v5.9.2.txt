@@ -1,0 +1,19 @@
+MGC Languages v5.9.2 — Language Content Router
+
+Scope: extract five authenticated language summary/quiz/scenario routes.
+
+Dependencies: Auth Core current_user + Terminology Service terms_for.
+
+Verification:
+- tests/v592_language_content_router_core_test.py
+- tests/v592_language_content_router_runtime_test.py
+- release shard v592
+- focused ci-v592 Docker binding gate
+
+Compatibility:
+- no DB/Alembic change; head c57d0a31f570
+- no runtime APP_VERSION bump
+- no frontend/content mutation
+- Putonghua (普通话) remains primary Chinese standard
+
+Stacked on v5.9.1; do not merge until previous stack and full CI/Docker are green.

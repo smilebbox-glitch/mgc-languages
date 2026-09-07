@@ -11,6 +11,10 @@ from .auth_bridge import AuthBindingReport, bind_legacy_auth
 from .auth_router_bridge import AuthRouterBindingReport, bind_auth_router
 from .contracts import RouteContractReport, validate_route_contract
 from .governance_bridge import GovernanceBindingReport, bind_legacy_governance
+from .language_content_router_bridge import (
+    LanguageContentRouterBindingReport,
+    bind_language_content_router,
+)
 from .learning_bridge import LearningBindingReport, bind_legacy_learning
 from .learning_router_bridge import LearningRouterBindingReport, bind_learning_router
 from .notifications_router_bridge import NotificationsRouterBindingReport, bind_notifications_router
@@ -49,7 +53,8 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     # learning binds before user services; services bind before workflows. TTS binds
     # before observability so Prometheus, pronunciation and admin ops share one state.
     # Active routers are replaced only after the FastAPI object exists. Auth core
-    # binds before all authenticated/role-protected routers, including notifications.
+    # binds before all authenticated/role-protected routers, including notifications
+    # and language-content routes.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -76,6 +81,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_pilot_admin_router(module, application)
     bind_admin_ops_router(module, application)
     bind_notifications_router(module, application)
+    bind_language_content_router(module, application)
     report = validate_route_contract(application)
     return application, report
 
@@ -136,6 +142,9 @@ ADMIN_OPS_ROUTER_BINDING_REPORT: AdminOpsRouterBindingReport = getattr(
 NOTIFICATIONS_ROUTER_BINDING_REPORT: NotificationsRouterBindingReport = getattr(
     _legacy_module, "MGC_NOTIFICATIONS_ROUTER_BINDING_REPORT"
 )
+LANGUAGE_CONTENT_ROUTER_BINDING_REPORT: LanguageContentRouterBindingReport = getattr(
+    _legacy_module, "MGC_LANGUAGE_CONTENT_ROUTER_BINDING_REPORT"
+)
 
 __all__ = [
     "app",
@@ -158,6 +167,7 @@ __all__ = [
     "PILOT_ADMIN_ROUTER_BINDING_REPORT",
     "ADMIN_OPS_ROUTER_BINDING_REPORT",
     "NOTIFICATIONS_ROUTER_BINDING_REPORT",
+    "LANGUAGE_CONTENT_ROUTER_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
     "load_legacy_module",
