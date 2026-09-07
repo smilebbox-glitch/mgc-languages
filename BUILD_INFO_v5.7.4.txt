@@ -1,0 +1,11 @@
+MGC Languages v5.7.4
+Technical increment: Security Boundary
+
+- dependency-light security primitives: mgc/security.py
+- ASGI runtime binding: mgc_core/security_bridge.py
+- password/session formats preserved
+- CSRF allowlist guarded fail-closed
+- v574 regression shard added
+- Docker verifies active security binding before runtime smoke
+- no database migration
+- no UI/API contract change
