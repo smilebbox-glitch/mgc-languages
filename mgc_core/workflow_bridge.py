@@ -11,6 +11,7 @@ from mgc.services.practice_games import (
     PracticeGameWorkflowBindings,
     build_practice_game_workflows,
 )
+from mgc.services.practice_isolation import build_user_scoped_practice_save
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,7 @@ class WorkflowBindingReport:
     model_contract_preserved: bool
     learning_service_captured: bool
     terminology_service_captured: bool
+    user_scoped_practice_sessions: bool
 
 
 def _column_names(model: object) -> set[str]:
@@ -154,7 +156,7 @@ def bind_legacy_workflows(
     if not terminology_service_captured:
         raise RuntimeError("practice/game workflows must bind after terminology service")
 
-    bindings: PracticeGameWorkflowBindings = build_practice_game_workflows(
+    base_bindings: PracticeGameWorkflowBindings = build_practice_game_workflows(
         practice_result_model=practice_model,
         game_session_model=game_model,
         question_attempt_model=attempt_model,
@@ -170,6 +172,22 @@ def bind_legacy_workflows(
         schedule_srs=getattr(module, "schedule_srs"),
         rate_limit=getattr(module, "rate_limit"),
     )
+    scoped_practice_save = build_user_scoped_practice_save(
+        original_save=base_bindings.save_practice_result,
+        practice_result_model=practice_model,
+        gamification_view=getattr(module, "gamification_view"),
+    )
+    bindings = PracticeGameWorkflowBindings(
+        save_practice_result=scoped_practice_save,
+        start_game=base_bindings.start_game,
+        finish_game=base_bindings.finish_game,
+        question_attempt=base_bindings.question_attempt,
+    )
+    user_scoped_practice_sessions = (
+        bindings.save_practice_result.__module__ == "mgc.services.practice_isolation"
+    )
+    if not user_scoped_practice_sessions:
+        raise RuntimeError("practice result idempotency must be user-scoped")
 
     route_specs = (
         ("save_practice_result", "/api/practice/result", "POST", bindings.save_practice_result),
@@ -194,10 +212,10 @@ def bind_legacy_workflows(
 
     route_contract_ok = all(
         route.dependant.call is call and route.endpoint is call
-        for (name, _path, _method, call), route in zip(route_specs, bound_routes.values())
+        for (_name, _path, _method, call), route in zip(route_specs, bound_routes.values())
     )
     report = WorkflowBindingReport(
-        ok=route_contract_ok and model_contract_ok,
+        ok=route_contract_ok and model_contract_ok and user_scoped_practice_sessions,
         practice_route_bound=(
             bound_routes["save_practice_result"].dependant.call is bindings.save_practice_result
         ),
@@ -214,6 +232,7 @@ def bind_legacy_workflows(
         model_contract_preserved=model_contract_ok,
         learning_service_captured=learning_service_captured,
         terminology_service_captured=terminology_service_captured,
+        user_scoped_practice_sessions=user_scoped_practice_sessions,
     )
     if not report.ok:
         raise RuntimeError("practice/game workflow binding failed closed")
