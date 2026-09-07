@@ -1,4 +1,4 @@
-/* v6.0.3: canonical navigation/session-view facade. */
+/* v6.0.4: canonical navigation/session-view facade. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -10,6 +10,9 @@
   function setView(view) {
     if (frontend.has('learning') && frontend.get('learning').owns(view)) {
       return frontend.get('learning').navigate(view);
+    }
+    if (frontend.has('practice-games') && frontend.get('practice-games').owns(view)) {
+      return frontend.get('practice-games').navigate(view);
     }
     return legacy().setView(view);
   }

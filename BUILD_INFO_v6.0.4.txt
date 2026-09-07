@@ -1,0 +1,25 @@
+MGC Languages v6.0.4
+Scope: Frontend Practice & Games Module
+
+Active view ownership:
+- roleplay
+- games
+- xp
+
+Feature parity:
+- games -> pilot feature `games`
+- xp -> pilot feature `xp_economy`
+- roleplay -> unchanged availability
+
+Architecture:
+- practice-games module loaded after learning and before navigation
+- navigation delegates owned views to frontend.practice-games
+- capture-phase interception prevents duplicate legacy dispatch
+- legacy renderers remain staged fallback only
+
+Compatibility:
+- static/app.js unchanged
+- API/OpenAPI unchanged
+- ORM/Alembic unchanged (c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话), XP/SRS scoring and backend game workflow unchanged
