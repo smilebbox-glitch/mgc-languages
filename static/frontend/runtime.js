@@ -1,4 +1,4 @@
-/* v5.9.9: stable frontend module registry and runtime diagnostics. */
+/* v6.0.0: stable frontend module registry and runtime diagnostics. */
 (function (global) {
   'use strict';
 
@@ -6,7 +6,7 @@
 
   const modules = new Map();
   const diagnostics = {
-    version: '5.9.9',
+    version: '6.0.0',
     startedAt: new Date().toISOString(),
     ready: false,
     failures: []
