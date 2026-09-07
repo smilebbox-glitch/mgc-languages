@@ -1,0 +1,6 @@
+MGC Languages v5.7.1 — Observability & Recovery
+Base: v5.7 Security & Data Integrity
+Schema: unchanged, Alembic head c57d0a31f570
+Primary additions: privacy-safe DB timing telemetry, PostgreSQL pool saturation, backup/restore evidence, RPO/RTO dashboard, automatic pilot backup worker, recovery drills.
+Voice recording: disabled / microphone denied
+Chinese learning standard: Putonghua (普通话)

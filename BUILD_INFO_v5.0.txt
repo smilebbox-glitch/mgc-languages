@@ -1,0 +1,20 @@
+MGC Languages v5.0 — Gamification Pilot
+Build date: 2026-09-06
+Baseline: MGC Languages v4.0 Docker
+
+Validation:
+- python tests/smoke_test.py: PASS
+- python tests/v5_gamification_test.py: PASS
+- python -m py_compile app.py: PASS
+- node --check static/app.js: PASS
+
+Key modules:
+- 100 equal XP levels (500 XP/level)
+- Lifetime XP + spendable XP + weekly XP
+- XP ledger + idempotency + anti-farming
+- practical XP rewards and in-quiz hints
+- 4 server-scored mini-games
+- gentle notification/nudge settings
+- custom terms by language/shop/topic/subtopic/level
+- CSV/XLSX bulk import
+- Admin per-user analytics

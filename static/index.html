@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111319">
+  <title>MGC Languages</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <section id="authView" class="auth-shell">
+    <div class="auth-brand">
+      <div class="brand-mark">M</div>
+      <div>
+        <div class="eyebrow">MGC CORPORATE LEARNING</div>
+        <h1>MGC Languages</h1>
+        <p>Английский и китайский для работы в автопроме</p>
+      </div>
+    </div>
+    <div class="auth-card">
+      <button id="oidcLogin" class="primary wide hidden" type="button">Войти через корпоративный SSO</button>
+      <div id="authTabs" class="auth-tabs" role="tablist">
+        <button class="auth-tab active" data-auth-mode="login">Вход</button>
+        <button class="auth-tab" data-auth-mode="register">Регистрация</button>
+      </div>
+      <form id="authForm">
+        <label id="displayNameWrap" class="hidden">Имя
+          <input id="displayName" autocomplete="name" placeholder="Как к вам обращаться">
+        </label>
+        <label>Логин
+          <input id="username" autocomplete="username" required minlength="3" placeholder="Латинские буквы и цифры">
+        </label>
+        <label>Пароль
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Не менее 6 символов">
+        </label>
+        <button id="authSubmit" class="primary wide" type="submit">Войти</button>
+        <p id="authMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div id="appView" class="app-shell hidden">
+    <header class="topbar">
+      <button id="menuToggle" class="icon-button menu-toggle" aria-label="Открыть меню">☰</button>
+      <button class="brand-button" data-view="home">
+        <span class="brand-mark small">M</span>
+        <span><b>MGC Languages</b><small>Automotive language lab</small></span>
+      </button>
+
+      <nav class="quick-nav" aria-label="Быстрые инструменты">
+        <button data-view="assistant"><span>✦</span> ИИ-помощник</button>
+        <button data-view="knowledge"><span>▤</span> База знаний</button>
+      </nav>
+
+      <div class="language-switch" role="group" aria-label="Изучаемый язык">
+        <button data-language="english">English</button>
+        <button data-language="chinese">中文 · Путунхуа</button>
+      </div>
+      <button id="pinyinToggle" class="pinyin-toggle hidden" type="button" title="Показать или скрыть Pinyin">拼 Pinyin: вкл</button>
+      <button id="xpPill" class="xp-pill" data-view="xp" title="XP и помощь">0 XP</button>
+      <button id="notificationButton" class="icon-button" data-view="notifications" title="Напоминания" aria-label="Напоминания">◌</button>
+      <button id="logoutButton" class="icon-button" title="Выйти" aria-label="Выйти">↪</button>
+    </header>
+
+    <div class="workspace">
+      <aside id="sidebar" class="sidebar">
+        <div class="nav-group">
+          <div class="nav-caption">Обучение</div>
+          <button class="nav-item active" data-view="home"><span>⌂</span>Главная</button>
+          <button id="chineseBasicsNav" class="nav-item hidden" data-view="chinese-basics"><span>普</span>Информация о китайском</button>
+          <button class="nav-item" data-view="topics"><span>▦</span>Темы</button>
+          <button class="nav-item" data-view="quiz"><span>✓</span>Тест по теме</button>
+          <button class="nav-item" data-view="games"><span>◇</span>Игры · 3–5 мин</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-caption">Практика</div>
+          <button class="nav-item" data-view="roleplay"><span>◉</span>Сценарии</button>
+          <button class="nav-item" data-view="xp"><span>XP</span>Опыт и помощь</button>
+          <button class="nav-item" data-view="notifications"><span>◌</span>Напоминания</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-caption">Программа</div>
+          <button class="nav-item" data-view="course30"><span>30</span>Курс 30 дней</button>
+          <button class="nav-item" data-view="exam"><span>★</span>Финальный экзамен</button>
+        </div>
+        <div id="managerNav" class="nav-group hidden">
+          <div class="nav-caption">Команда</div>
+          <button class="nav-item" data-view="manager"><span>▤</span>Моя команда</button>
+        </div>
+        <div id="adminNav" class="nav-group hidden">
+          <div class="nav-caption">Управление</div>
+          <button class="nav-item" data-view="admin"><span>⚙</span>Admin / Analytics</button>
+        </div>
+      </aside>
+      <div id="backdrop" class="backdrop hidden"></div>
+
+      <main id="main" class="main">
+        <div class="loading-card"><span class="spinner"></span><p>Загрузка платформы</p></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

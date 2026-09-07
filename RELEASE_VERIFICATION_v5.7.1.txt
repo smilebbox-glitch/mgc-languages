@@ -1,0 +1,57 @@
+MGC Languages v5.7.1 — Release Verification
+Generated: 2026-09-07 UTC
+
+Scope
+- Compatible patch on v5.7; Alembic head remains c57d0a31f570.
+- Privacy-safe DB timing telemetry and PostgreSQL pool saturation metrics.
+- Backup age, restore rehearsal evidence and RPO/RTO operational visibility.
+- Recovery evidence does not gate application readiness by default.
+- Existing v5.7 RLS/content governance/audit-chain/adaptive SRS retained.
+
+Regression shards
+- base: 4/4 PASS
+- pronunciation: 4/4 PASS
+- putonghua/privacy/schema: 4/4 PASS
+- reliability: 2/2 PASS
+- operations/governance: 2/2 PASS
+- v5.7 security/data integrity: 2/2 PASS
+- v5.7.1 observability/recovery: 1/1 PASS
+TOTAL: 19/19 PASS
+- Authorization matrix inside v5.7 suite: 56 role/endpoint/department checks PASS.
+
+Runtime acceptance (real Uvicorn HTTP process)
+- 27 PASS / 0 FAIL / 0 SKIP
+- /health/live: PASS, version 5.7.1
+- /health/ready: PASS, recovery healthy
+- Alembic schema head: c57d0a31f570 PASS
+- Protected Prometheus metrics: PASS
+- Admin DB telemetry: PASS
+- Recovery evidence endpoint/dashboard: PASS
+- Audit hash chain: PASS
+- Putonghua scope / dialect reference-only contract: PASS
+- Mandarin server WAV playback: PASS (RIFF/WAV)
+
+Concurrent runtime smoke
+- 240 requests / 240 success / 0 failed
+- 16 workers
+- throughput: 201.7 req/s
+- mean: 76.3 ms
+- p50: 72.9 ms
+- p95: 159.6 ms
+- p99: 202.1 ms
+- max: 270.8 ms
+Note: release smoke only; not a production capacity/SLA claim.
+
+Privacy/observability verification
+- DB telemetry stores timing metadata and hashed normalized fingerprints only.
+- SQL text and SQL parameters are not retained in application DB query telemetry.
+- SQLite runtime correctly reports PostgreSQL pool saturation as unavailable/not applicable.
+- Backup/restore evidence may be unavailable in local runtime without mounted backup/WAL paths; this produces operational unknown/warning state rather than false readiness outage.
+
+Source/static checks
+- Python source compile: PASS
+- static/app.js syntax: PASS
+- shell script syntax: PASS
+
+IT sign-off boundary
+The local release gate cannot prove corporate OIDC/TLS, real PostgreSQL FORCE RLS, production DB-role restrictions, PostgreSQL pool behavior under production load, off-host encrypted backup/WAL, PITR timestamp recovery, central OTLP/Prometheus/Grafana/SIEM integration, or corporate security review. These remain required acceptance items on MGC infrastructure.

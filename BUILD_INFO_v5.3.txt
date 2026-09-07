@@ -1,0 +1,6 @@
+MGC Languages v5.3.0
+Release profile: Putonghua / dialect education + TTS resilience + IT pilot hardening
+Schema: unchanged from v5.2 (Alembic head c8f1a52e1a20)
+Voice capture: disabled / no microphone permission
+Pronunciation transport: POST primary, GET legacy deprecated
+TTS: offline local engine + browser fallback + bounded concurrency + circuit breaker + hashed disk cache

@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite*
+.env
+.env.*
+!.env.example
+!.env.pilot.example
+.git/
+.idea/
+.vscode/
+runtime/
+backups/
+*.zip

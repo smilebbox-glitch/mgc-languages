@@ -1,0 +1,14 @@
+MGC Languages v5.7
+Profile: Security & Data Integrity / Adaptive Learning
+Base: v5.6 Pilot Governance
+Alembic head: c57d0a31f570
+Primary Chinese learning standard: Putonghua (普通话)
+Voice recording: disabled
+PostgreSQL RLS: required in pilot by default; application DB role must not bypass RLS
+Terminology approval: required in pilot by default
+Audit: tamper-evident SHA-256 chain + retention anchor
+Authorization matrix: 56 role/endpoint/department checks
+Adaptive learning: persistent SRS + question-quality telemetry
+OpenTelemetry: optional, fail-open
+PITR: pilot rehearsal-ready; off-host storage required for production
+CI: static/schema gate + six independent regression matrix shards

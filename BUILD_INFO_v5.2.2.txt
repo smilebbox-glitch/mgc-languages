@@ -1,0 +1,14 @@
+Product: MGC Languages
+Version: 5.2.2
+Release focus: Chinese Beginner Foundations + Tone Lab + Resilient Pronunciation + IT Pilot Acceptance
+Backend: FastAPI / SQLAlchemy / Alembic
+Pilot DB: PostgreSQL
+Frontend: static HTML/CSS/JavaScript
+Primary offline TTS: eSpeak NG in Docker image, verified by real synthesis probe
+Fallback TTS: Browser SpeechSynthesis with automatic timeout fallback
+Languages: English + Chinese
+Chinese beginner UX: Pinyin, tones, context, initials/finals with real Hanzi audio examples, progressive hint removal, Tone Lab
+English pronunciation: IPA where available + Russian reading aid + technical acronym spelling aid
+Gamification: Lifetime XP + spendable XP + weekly XP + 100 levels; Tone Lab uses idempotent practice XP
+Security baseline: CSRF, HttpOnly sessions, Trusted Hosts, CORS allowlist, CSP/security headers, RBAC, audit, rate limiting
+Pilot topology: Nginx -> FastAPI -> PostgreSQL, internal backend network

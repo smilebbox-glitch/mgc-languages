@@ -1,0 +1,43 @@
+MGC Languages v5.2.1 — Release Verification
+Date: 2026-09-06
+
+STATIC / INTEGRATION
+PASS  Python compile
+PASS  JavaScript syntax
+PASS  bilingual learning/content regression
+PASS  XP/gamification/admin regression
+PASS  security headers / CSRF / audit / metrics / rate-limit regression
+PASS  Chinese foundations / Pinyin preferences / department RBAC
+PASS  frontend pronunciation fallback contract
+PASS  v5.2.1 pronunciation quality test
+PASS  pilot Compose structural policy
+PASS  Alembic fresh migration to head c8f1a52e1a20
+
+PRONUNCIATION
+PASS  actual local Mandarin synthesis probe (voice=zh)
+PASS  actual local English synthesis probe (voice=en-us)
+PASS  Chinese endpoint returned RIFF/WAV
+PASS  English endpoint returned RIFF/WAV
+PASS  per-language TTS health checks
+PASS  frontend bounded server timeout + browser fallback
+PASS  technical acronym reading aid (PPAP/CMM)
+
+LIVE HTTP PROCESS
+PASS  /health/live
+PASS  IT acceptance v5.2.1
+PASS  non-destructive concurrent load smoke with authenticated TTS
+      requests=160, success=160, failed=0
+      observed throughput≈515.5 req/s
+      latency p50≈21.8 ms, p95≈38.8 ms, p99≈49.8 ms
+
+OIDC
+PASS  OIDC configuration-shape checker with representative values
+PENDING  real corporate IdP login/logout/group/department mapping (must be executed by IT against the chosen IdP)
+
+POSTGRESQL / DOCKER
+PASS  Alembic migration logic validated on clean test DB
+PASS  Compose topology checked structurally: only Nginx host-published; app/db internal
+PENDING  real docker compose build/up on target IT host (Docker daemon unavailable in this build environment)
+PENDING  real PostgreSQL backup + isolated restore rehearsal on target pilot stack
+
+Release conclusion: suitable as a controlled IT pilot candidate, subject to the PENDING environment-specific acceptance items above.

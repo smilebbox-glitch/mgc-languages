@@ -1,0 +1,9 @@
+MGC Languages v5.5 — Pilot Operations / SLO / IT Alerts
+Packaged: 2026-09-07
+Alembic head: a55c0b91d550
+Application: FastAPI + SQLAlchemy + PostgreSQL-first pilot
+Frontend: static HTML/CSS/JS
+Pronunciation: playback only; POST local TTS + browser fallback; no microphone
+Operations: rolling process-local SLO, recovery state, persistent Admin alerts, aggregated learning-error telemetry
+Dialect content: Putonghua-first comparison examples; no synthetic regional audio with Mandarin TTS
+Pilot image: mgc-languages:5.5-it

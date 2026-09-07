@@ -1,0 +1,58 @@
+groups:
+  - name: mgc-languages-pilot
+    rules:
+      - alert: MGCLanguagesHigh5xx
+        expr: mgc_slo_error_rate_percent > 2
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages 5xx rate above pilot threshold"}
+      - alert: MGCLanguagesHighP95
+        expr: mgc_slo_p95_ms > 3000
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages p95 latency above pilot threshold"}
+      - alert: MGCLanguagesUnavailable
+        expr: mgc_recovery_state == 3
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: "MGC Languages unavailable"}
+      - alert: MGCLanguagesTTSFallbackHighRisk
+        expr: mgc_tts_circuit_open == 1
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "Server TTS circuit breaker is open; browser fallback should be active"}
+      - alert: MGCLanguagesDatabaseMetricsUnavailable
+        expr: mgc_database_metrics_available == 0
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "Database-backed service metrics unavailable; investigate PostgreSQL/read path"}
+      - alert: MGCLanguagesDBPoolSaturation
+        expr: mgc_db_pool_saturation_percent > 80
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages PostgreSQL pool saturation above 80%"}
+      - alert: MGCLanguagesSlowQueries
+        expr: mgc_db_slow_queries_window >= 5
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages slow-query volume above pilot threshold"}
+      - alert: MGCLanguagesBackupEvidenceMissing
+        expr: mgc_recovery_backup_evidence_available == 0
+        for: 30m
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages backup evidence is not visible"}
+      - alert: MGCLanguagesBackupStale
+        expr: mgc_recovery_backup_age_minutes > 1560
+        for: 15m
+        labels: {severity: critical}
+        annotations: {summary: "MGC Languages latest backup evidence is older than 26 hours"}
+      - alert: MGCLanguagesRestoreEvidenceMissing
+        expr: mgc_recovery_restore_evidence_available == 0
+        for: 6h
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages restore rehearsal evidence is missing"}
+      - alert: MGCLanguagesRestoreEvidenceStale
+        expr: mgc_recovery_restore_evidence_age_days > 30
+        for: 6h
+        labels: {severity: warning}
+        annotations: {summary: "MGC Languages restore rehearsal is older than 30 days"}

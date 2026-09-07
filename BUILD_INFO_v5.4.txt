@@ -1,0 +1,9 @@
+MGC Languages v5.4
+Release focus: Pilot Reliability / IT Operations + Chinese foundations rename
+Packaged Alembic head: f54c0a91b723
+Chinese foundations UI title: Информация о китайском
+Voice recording: disabled
+Pronunciation transport: POST, offline server TTS + browser fallback
+Pilot DB: PostgreSQL
+Operational telemetry: persistent events + process-local DB outage counters
+Maintenance: expired sessions + bounded retention cleanup

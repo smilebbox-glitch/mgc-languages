@@ -1,0 +1,55 @@
+MGC Languages v5.5 — Release Verification
+==========================================
+Release profile: Pilot Operations / SLO / IT Alerts / Dialect Orientation
+Expected Alembic head: a55c0b91d550
+
+1. Static regression gate
+   PASS — scripts/static_preflight.sh
+   Includes bilingual learning, XP/gamification, security, Chinese/Pinyin/Tone Lab,
+   audio/privacy, department RBAC, schema/readiness, reliability and v5.5 operations tests.
+
+2. Clean schema migration
+   PASS — alembic upgrade head on clean SQLite validation DB
+   Observed head: a55c0b91d550
+   Production pilot remains PostgreSQL-first; SQLite is only a local validation target.
+
+3. Runtime HTTP acceptance (real Uvicorn process)
+   PASS — 15 PASS / 0 FAIL / 0 SKIP
+   Checks: liveness, readiness, schema head, meta/version, no voice recording,
+   protected metrics, Admin login, "Информация о китайском", 10 major dialect groups,
+   dialect comparison cards, IT dashboard, learning-error telemetry, alerts,
+   maintenance dry-run and real Mandarin RIFF/WAV playback.
+   Full local report: docs/IT_ACCEPTANCE_REPORT_v5.5_LOCAL.md
+
+4. Concurrent non-destructive load smoke
+   PASS — 240/240 successful; 0 failed; 16 workers
+   Throughput: ~544.6 req/s
+   Latency: mean 28.0 ms; p50 28.6 ms; p95 47.6 ms; p99 60.6 ms; max 79.1 ms
+   Includes audio endpoint traffic.
+   This is a pilot release gate, not an enterprise capacity benchmark.
+
+5. Pilot configuration preflight
+   PASS with explicit strong POSTGRES_PASSWORD.
+   Expected sandbox warnings: AUTH_MODE=local and COOKIE_SECURE=false when TLS is terminated externally.
+   Controlled corporate pilot should validate OIDC and secure-cookie policy on the real ingress.
+
+6. Dialect-content safety
+   PASS — Putonghua is the learning standard; regional examples are orientation-only.
+   Regional dialect audio is not synthesized with the Mandarin TTS voice.
+   Romanization systems are named and tone digits are described as notation labels.
+
+7. Packaging/security boundary
+   Voice recording: disabled.
+   Microphone permission: disabled.
+   Legacy GET TTS: disabled in pilot profile.
+   TTS phrase transport: POST.
+   Pilot TTS cache: ephemeral.
+   Metrics: bearer-token protection available/required by readiness policy.
+   Self-registration: disabled by pilot policy.
+
+8. Infrastructure checks not executable in this build environment
+   Docker CLI/daemon: unavailable here.
+   Therefore real docker compose build/up, corporate OIDC, TLS, PostgreSQL backup/restore,
+   SIEM/Prometheus aggregation and infrastructure failure drills remain IT-host acceptance items.
+
+Result: PASS for packaged controlled-pilot candidate, subject to real IT-environment checks above.

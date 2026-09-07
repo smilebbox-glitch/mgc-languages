@@ -1,0 +1,12 @@
+Product: MGC Languages
+Version: 5.2
+Release focus: Chinese Foundations + Stable Pronunciation + Department RBAC + IT Pilot Acceptance
+Backend: FastAPI / SQLAlchemy / Alembic
+Pilot DB: PostgreSQL
+Frontend: static HTML/CSS/JavaScript
+Primary offline TTS: eSpeak NG in Docker image
+Fallback TTS: Browser SpeechSynthesis
+Languages: English + Chinese
+Gamification: Lifetime XP + spendable XP + weekly XP + 100 levels
+Security baseline: CSRF, HttpOnly sessions, Trusted Hosts, CORS allowlist, CSP/security headers, RBAC, audit, rate limiting
+Pilot topology: Nginx -> FastAPI -> PostgreSQL, internal backend network

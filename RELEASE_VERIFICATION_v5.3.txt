@@ -1,0 +1,34 @@
+MGC Languages v5.3.0 — Release Verification
+
+Static regression gate: PASS
+- Python compile: PASS
+- JavaScript syntax: PASS
+- bilingual/content smoke: PASS
+- gamification/100 levels/admin: PASS
+- CSRF/audit/rate-limit/security headers: PASS
+- Pinyin/preferences/department RBAC: PASS
+- pronunciation quality and WAV checks: PASS
+- Tone Lab idempotency: PASS
+- Putonghua / 10 major groups content contract: PASS
+- microphone disabled contract: PASS
+- POST TTS privacy contract: PASS
+- TTS disk cache / circuit telemetry: PASS
+- pilot Compose policy: PASS
+- clean Alembic upgrade: PASS (head c8f1a52e1a20)
+
+Real HTTP/Uvicorn release gate: PASS
+- it_acceptance_v53.py: PASS
+- non-destructive load smoke: 180/180 successful
+- workers: 12
+- p50: 22.9 ms
+- p95: 44.3 ms
+- p99: 60.8 ms
+- max: 87.6 ms
+
+Not executed in this environment:
+- docker compose build/up against a real Docker daemon
+- corporate OIDC against MGC IdP
+- PostgreSQL backup/restore rehearsal on target infrastructure
+- corporate TLS/ingress/SIEM integration
+
+These remain target-environment acceptance items, not hidden assumptions.

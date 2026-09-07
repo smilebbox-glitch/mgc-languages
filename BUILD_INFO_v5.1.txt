@@ -1,0 +1,4 @@
+MGC Languages v5.1 Pilot / IT Hardening
+Base: MGC Languages v5.0 Gamification Pilot
+Architecture: FastAPI + SQLAlchemy + PostgreSQL + Alembic + Nginx + optional OIDC
+Primary goal: controlled technical pilot and IT/security review

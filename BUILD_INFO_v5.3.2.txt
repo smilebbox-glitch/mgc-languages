@@ -1,0 +1,7 @@
+MGC Languages v5.3.2
+Build purpose: Putonghua / dialect learning + privacy-first pronunciation + IT pilot readiness hardening
+Packaged Alembic head: c8f1a52e1a20
+Voice recording: disabled / no microphone capture
+Pronunciation transport: POST body -> local TTS WAV, browser SpeechSynthesis fallback
+Pilot TTS cache: ephemeral /tmp tmpfs
+Pilot database: PostgreSQL-first; Alembic migration required before readiness

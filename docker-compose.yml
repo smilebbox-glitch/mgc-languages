@@ -1,0 +1,26 @@
+name: mgc-languages-dev
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mgc-languages:5.7.1-dev
+    ports:
+      - "${MGC_PORT:-8080}:8000"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: sqlite:////data/mgc.db
+      AUTO_CREATE_SCHEMA: "true"
+      AUTH_MODE: local
+      REGISTRATION_ENABLED: "true"
+      COOKIE_SECURE: "false"
+      TRUSTED_HOSTS: localhost,127.0.0.1
+      OIDC_STATE_SECRET: dev-only-change-me
+      MGC_ADMIN_USERNAME: "${MGC_ADMIN_USERNAME:-admin}"
+      MGC_ADMIN_PASSWORD: "${MGC_ADMIN_PASSWORD:?Set MGC_ADMIN_PASSWORD in .env}"
+      MGC_ADMIN_DISPLAY_NAME: "${MGC_ADMIN_DISPLAY_NAME:-MGC Admin}"
+    volumes:
+      - mgc_data:/data
+    restart: unless-stopped
+volumes:
+  mgc_data: {}

@@ -1,0 +1,45 @@
+MGC Languages v5.3.2 — Release Verification
+Date: 2026-09-06
+
+Static / regression gate:
+- Python compile: PASS
+- JavaScript syntax: PASS
+- bilingual English/Chinese learning: PASS
+- XP / spendable XP / 100 levels / nudges: PASS
+- Admin content management + analytics: PASS
+- CSRF / audit / rate limiting / metrics: PASS
+- Pinyin / tones / initials-finals / child-friendly Chinese foundations: PASS
+- Tone Lab XP idempotency: PASS
+- Putonghua + 10 major dialect-group overview: PASS
+- no microphone capture / voice recording: PASS
+- English + standard-Mandarin playback: PASS
+- POST-only pronunciation in pilot: PASS
+- ephemeral TTS cache / circuit / fallback: PASS
+- department-scoped Manager RBAC: PASS
+- Alembic clean upgrade to c8f1a52e1a20: PASS
+- stale Alembic schema -> readiness HTTP 503: PASS
+- self-registration / metrics / Trusted Hosts / CORS readiness policy: PASS
+- serialized PostgreSQL startup migration contract: PASS
+
+Real HTTP-process acceptance:
+- scripts/it_acceptance_v532.py: PASS
+- Admin login + Putonghua content + real RIFF/WAV POST audio: PASS
+- pilot telemetry + system summary: PASS
+- protected metrics: PASS
+
+Concurrent local functional load smoke with audio:
+- requests: 240
+- workers: 16
+- success: 240 / 240
+- failures: 0
+- throughput: 490.2 requests/s
+- mean latency: 31.2 ms
+- p50: 22.5 ms
+- p95: 114.8 ms
+- p99: 170.3 ms
+- max: 264.5 ms
+
+Important limits:
+- Local smoke numbers are not an enterprise capacity benchmark.
+- Docker daemon, real corporate PostgreSQL, corporate IdP, TLS ingress and SIEM are not available in the build environment.
+- Target-environment acceptance must still test real OIDC claims/groups/department mapping, PostgreSQL backup/restore, TLS/Secure cookies, monitoring/SIEM, container/SCA policy and security review.

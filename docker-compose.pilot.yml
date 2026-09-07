@@ -1,0 +1,246 @@
+name: mgc-languages-pilot
+
+services:
+  db:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mgc_languages}
+      POSTGRES_USER: ${POSTGRES_USER:-mgc_languages}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.pilot}
+    command: ["postgres", "-c", "wal_level=replica", "-c", "archive_mode=on", "-c", "archive_command=test ! -f /wal_archive/%f && cp %p /wal_archive/%f", "-c", "archive_timeout=300"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - wal_archive:/wal_archive
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mgc_languages} -d ${POSTGRES_DB:-mgc_languages}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mgc-languages:5.7.1-it
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: pilot
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mgc_languages}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-mgc_languages}
+      DB_CONNECT_TIMEOUT_SECONDS: ${DB_CONNECT_TIMEOUT_SECONDS:-5}
+      DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
+      DB_READY_MAX_LATENCY_MS: ${DB_READY_MAX_LATENCY_MS:-1500}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-5}
+      DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-10}
+      DB_POOL_ALERT_PERCENT: ${DB_POOL_ALERT_PERCENT:-80}
+      DB_QUERY_WINDOW_MINUTES: ${DB_QUERY_WINDOW_MINUTES:-15}
+      DB_SLOW_QUERY_THRESHOLD_MS: ${DB_SLOW_QUERY_THRESHOLD_MS:-500}
+      DB_SLOW_QUERY_ALERT_COUNT: ${DB_SLOW_QUERY_ALERT_COUNT:-5}
+      AUTO_CREATE_SCHEMA: "false"
+      READY_REQUIRE_POSTGRES: "true"
+      READY_REQUIRE_SCHEMA_HEAD: "true"
+      READY_REQUIRE_REGISTRATION_DISABLED: "true"
+      READY_REQUIRE_METRICS_TOKEN: "true"
+      READY_REQUIRE_OIDC: ${READY_REQUIRE_OIDC:-false}
+      READY_REQUIRE_SECURE_COOKIE: ${READY_REQUIRE_SECURE_COOKIE:-false}
+      READY_REQUIRE_RLS: ${READY_REQUIRE_RLS:-true}
+      READY_REQUIRE_TERM_APPROVAL: ${READY_REQUIRE_TERM_APPROVAL:-true}
+      EXPECTED_ALEMBIC_HEAD: c57d0a31f570
+      MIGRATION_LOCK_TIMEOUT_SECONDS: ${MIGRATION_LOCK_TIMEOUT_SECONDS:-120}
+      MIGRATION_ADVISORY_LOCK_ID: ${MIGRATION_ADVISORY_LOCK_ID:-5322026}
+      AUTH_MODE: ${AUTH_MODE:-local}
+      REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-168}
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-localhost,127.0.0.1}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      OIDC_STATE_SECRET: ${OIDC_STATE_SECRET:?Set OIDC_STATE_SECRET in .env.pilot}
+      OIDC_DISCOVERY_URL: ${OIDC_DISCOVERY_URL:-}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_SCOPE: ${OIDC_SCOPE:-openid profile email groups}
+      OIDC_USERNAME_CLAIM: ${OIDC_USERNAME_CLAIM:-preferred_username}
+      OIDC_DISPLAY_NAME_CLAIM: ${OIDC_DISPLAY_NAME_CLAIM:-name}
+      OIDC_GROUPS_CLAIM: ${OIDC_GROUPS_CLAIM:-groups}
+      OIDC_DEPARTMENT_CLAIM: ${OIDC_DEPARTMENT_CLAIM:-department}
+      OIDC_ADMIN_GROUP: ${OIDC_ADMIN_GROUP:-}
+      OIDC_EDITOR_GROUP: ${OIDC_EDITOR_GROUP:-}
+      OIDC_MANAGER_GROUP: ${OIDC_MANAGER_GROUP:-}
+      MGC_ADMIN_USERNAME: ${MGC_ADMIN_USERNAME:-}
+      MGC_ADMIN_PASSWORD: ${MGC_ADMIN_PASSWORD:-}
+      MGC_ADMIN_DISPLAY_NAME: ${MGC_ADMIN_DISPLAY_NAME:-MGC Admin}
+      METRICS_ENABLED: "true"
+      METRICS_TOKEN: ${METRICS_TOKEN:?Set METRICS_TOKEN in .env.pilot}
+      MAX_IMPORT_ROWS: ${MAX_IMPORT_ROWS:-5000}
+      MAX_XLSX_UNCOMPRESSED_BYTES: ${MAX_XLSX_UNCOMPRESSED_BYTES:-26214400}
+      MAX_IMPORT_BYTES: ${MAX_IMPORT_BYTES:-5242880}
+      TTS_ENABLED: ${TTS_ENABLED:-true}
+      TTS_VOICE_CHINESE: ${TTS_VOICE_CHINESE:-zh}
+      TTS_VOICE_ENGLISH: ${TTS_VOICE_ENGLISH:-en-us}
+      TTS_MAX_CHARS: ${TTS_MAX_CHARS:-300}
+      TTS_TIMEOUT_SECONDS: ${TTS_TIMEOUT_SECONDS:-8}
+      TTS_CONCURRENCY: ${TTS_CONCURRENCY:-2}
+      TTS_FAILURE_THRESHOLD: ${TTS_FAILURE_THRESHOLD:-3}
+      TTS_CIRCUIT_COOLDOWN_SECONDS: ${TTS_CIRCUIT_COOLDOWN_SECONDS:-30}
+      TTS_HEALTH_TTL_SECONDS: ${TTS_HEALTH_TTL_SECONDS:-30}
+      TTS_DISK_CACHE_ENABLED: ${TTS_DISK_CACHE_ENABLED:-true}
+      TTS_CACHE_DIR: /tmp/mgc-tts-cache
+      TTS_CACHE_PERSISTENCE: ${TTS_CACHE_PERSISTENCE:-ephemeral}
+      TTS_LEGACY_GET_ENABLED: ${TTS_LEGACY_GET_ENABLED:-false}
+      TTS_DISK_CACHE_MAX_MB: ${TTS_DISK_CACHE_MAX_MB:-64}
+      TTS_DISK_CACHE_TTL_HOURS: ${TTS_DISK_CACHE_TTL_HOURS:-24}
+      AUDIT_RETENTION_DAYS: ${AUDIT_RETENTION_DAYS:-180}
+      OPERATIONAL_EVENT_RETENTION_DAYS: ${OPERATIONAL_EVENT_RETENTION_DAYS:-30}
+      NUDGE_RETENTION_DAYS: ${NUDGE_RETENTION_DAYS:-60}
+      MAINTENANCE_INTERVAL_SECONDS: ${MAINTENANCE_INTERVAL_SECONDS:-21600}
+      PILOT_SERVICE_WINDOW: ${PILOT_SERVICE_WINDOW:-business-hours}
+      PILOT_SLA_MODE: ${PILOT_SLA_MODE:-internal-non-contractual}
+      SLO_WINDOW_MINUTES: ${SLO_WINDOW_MINUTES:-60}
+      SLO_AVAILABILITY_TARGET_PERCENT: ${SLO_AVAILABILITY_TARGET_PERCENT:-99.0}
+      SLO_ERROR_RATE_TARGET_PERCENT: ${SLO_ERROR_RATE_TARGET_PERCENT:-1.0}
+      SLO_P95_TARGET_MS: ${SLO_P95_TARGET_MS:-2000}
+      ALERT_ERROR_RATE_PERCENT: ${ALERT_ERROR_RATE_PERCENT:-2.0}
+      ALERT_P95_MS: ${ALERT_P95_MS:-3000}
+      ALERT_DB_LATENCY_MS: ${ALERT_DB_LATENCY_MS:-1000}
+      ALERT_CLEANUP_BACKLOG: ${ALERT_CLEANUP_BACKLOG:-1000}
+      RECOVERY_STABLE_SECONDS: ${RECOVERY_STABLE_SECONDS:-60}
+      ALERT_RETENTION_DAYS: ${ALERT_RETENTION_DAYS:-90}
+      PILOT_DAILY_XP_CAP: ${PILOT_DAILY_XP_CAP:-2500}
+      PILOT_DAILY_GAME_START_CAP: ${PILOT_DAILY_GAME_START_CAP:-150}
+      PILOT_DAILY_TTS_CAP: ${PILOT_DAILY_TTS_CAP:-500}
+      PILOT_DAILY_PRACTICE_CAP: ${PILOT_DAILY_PRACTICE_CAP:-300}
+      PILOT_EXPORT_MAX_USERS: ${PILOT_EXPORT_MAX_USERS:-10000}
+      PILOT_USAGE_RETENTION_DAYS: ${PILOT_USAGE_RETENTION_DAYS:-90}
+      RLS_ENABLED: ${RLS_ENABLED:-true}
+      TERM_APPROVAL_REQUIRED: ${TERM_APPROVAL_REQUIRED:-true}
+      SRS_DAILY_REVIEW_LIMIT: ${SRS_DAILY_REVIEW_LIMIT:-30}
+      QUESTION_QUALITY_MIN_ATTEMPTS: ${QUESTION_QUALITY_MIN_ATTEMPTS:-20}
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-mgc-languages}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      BACKUP_EVIDENCE_DIR: /backups
+      WAL_ARCHIVE_DIR: /wal_archive
+      BACKUP_MAX_AGE_MINUTES: ${BACKUP_MAX_AGE_MINUTES:-1560}
+      RESTORE_EVIDENCE_MAX_AGE_DAYS: ${RESTORE_EVIDENCE_MAX_AGE_DAYS:-30}
+      RPO_TARGET_MINUTES: ${RPO_TARGET_MINUTES:-1440}
+      RTO_TARGET_MINUTES: ${RTO_TARGET_MINUTES:-60}
+      RECOVERY_EVIDENCE_REQUIRED: ${RECOVERY_EVIDENCE_REQUIRED:-true}
+    volumes:
+      - ./backups:/backups:ro
+      - wal_archive:/wal_archive:ro
+    command: ["/app/scripts/entrypoint.sh"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks: [backend]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    restart: unless-stopped
+
+  backup:
+    image: postgres:16.4-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB:-mgc_languages}
+      PGUSER: ${POSTGRES_USER:-mgc_languages}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.pilot}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+    command:
+      - sh
+      - -lc
+      - |
+        set -eu
+        while true; do
+          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
+          out="/backups/mgc_languages_$${stamp}.dump"
+          pg_dump -Fc -f "$${out}"
+          sha256sum "$${out}" > "$${out}.sha256"
+          find /backups -type f \( -name 'mgc_languages_*.dump' -o -name 'mgc_languages_*.dump.sha256' \) -mtime "+$${BACKUP_RETENTION_DAYS}" -delete
+          sleep "$${BACKUP_INTERVAL_SECONDS}"
+        done
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks: [backend]
+    restart: unless-stopped
+
+  maintenance:
+    image: mgc-languages:5.7.1-it
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    environment:
+      APP_ENV: pilot
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mgc_languages}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-mgc_languages}
+      AUTO_CREATE_SCHEMA: "false"
+      EXPECTED_ALEMBIC_HEAD: c57d0a31f570
+      DB_CONNECT_TIMEOUT_SECONDS: ${DB_CONNECT_TIMEOUT_SECONDS:-5}
+      DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
+      AUDIT_RETENTION_DAYS: ${AUDIT_RETENTION_DAYS:-180}
+      OPERATIONAL_EVENT_RETENTION_DAYS: ${OPERATIONAL_EVENT_RETENTION_DAYS:-30}
+      NUDGE_RETENTION_DAYS: ${NUDGE_RETENTION_DAYS:-60}
+      MAINTENANCE_INTERVAL_SECONDS: ${MAINTENANCE_INTERVAL_SECONDS:-21600}
+      ALERT_RETENTION_DAYS: ${ALERT_RETENTION_DAYS:-90}
+      PILOT_USAGE_RETENTION_DAYS: ${PILOT_USAGE_RETENTION_DAYS:-90}
+      RLS_ENABLED: ${RLS_ENABLED:-true}
+      AUTH_MODE: local
+      REGISTRATION_ENABLED: "false"
+      OIDC_STATE_SECRET: ${OIDC_STATE_SECRET:?Set OIDC_STATE_SECRET in .env.pilot}
+    command: ["python", "/app/scripts/maintenance_cleanup.py", "--loop"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks: [backend]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "${MGC_PORT:-8080}:8080"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks: [edge, backend]
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+networks:
+  edge: {}
+  backend:
+    internal: true
+
+volumes:
+  pgdata: {}
+  wal_archive: {}

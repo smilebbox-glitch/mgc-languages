@@ -1,0 +1,8 @@
+MGC Languages v5.3.1
+Release profile: Putonghua / dialect education + privacy-first TTS + IT pilot hardening
+Schema: unchanged from v5.2 (Alembic head c8f1a52e1a20)
+Voice capture: disabled / microphone denied by Permissions-Policy
+Pronunciation transport: POST-only in pilot; optional legacy GET only for explicit dev compatibility
+TTS: offline local engine + browser fallback + bounded concurrency + circuit breaker
+TTS cache: bounded ephemeral tmpfs in pilot; no persistent speech cache volume
+Pilot privacy gate: readiness fails if legacy GET is enabled in pilot/production

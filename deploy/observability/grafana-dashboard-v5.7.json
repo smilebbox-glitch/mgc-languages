@@ -1,0 +1,257 @@
+{
+  "title": "MGC Languages — Pilot v5.7.1 Observability & Recovery",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "30s",
+  "tags": [
+    "mgc",
+    "languages",
+    "pilot"
+  ],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Availability %",
+      "targets": [
+        {
+          "expr": "mgc_slo_availability_percent"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "5xx %",
+      "targets": [
+        {
+          "expr": "mgc_slo_error_rate_percent"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p95 ms",
+      "targets": [
+        {
+          "expr": "mgc_slo_p95_ms"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Recovery state",
+      "targets": [
+        {
+          "expr": "mgc_recovery_state"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP requests",
+      "targets": [
+        {
+          "expr": "sum by (status) (rate(mgc_http_requests_total[5m]))"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "TTS success / failure",
+      "targets": [
+        {
+          "expr": "rate(mgc_tts_success_total[5m])",
+          "legendFormat": "success"
+        },
+        {
+          "expr": "rate(mgc_tts_failure_total[5m])",
+          "legendFormat": "failure"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      }
+    },
+    {
+      "type": "stat",
+      "title": "SRS cards due",
+      "targets": [
+        {
+          "expr": "mgc_srs_cards_due"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 13
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Question attempts",
+      "targets": [
+        {
+          "expr": "mgc_question_attempts_total"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 8,
+        "y": 13
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Open pilot alerts",
+      "targets": [
+        {
+          "expr": "mgc_pilot_alerts_open"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 13
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "DB query p95 / slow volume",
+      "targets": [
+        {
+          "expr": "mgc_db_query_p95_ms",
+          "legendFormat": "query p95 ms"
+        },
+        {
+          "expr": "mgc_db_slow_queries_window",
+          "legendFormat": "slow queries / window"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PostgreSQL pool",
+      "targets": [
+        {
+          "expr": "mgc_db_pool_saturation_percent",
+          "legendFormat": "saturation %"
+        },
+        {
+          "expr": "mgc_db_pool_checked_out",
+          "legendFormat": "checked out"
+        },
+        {
+          "expr": "mgc_db_pool_capacity",
+          "legendFormat": "capacity"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Backup age (minutes)",
+      "targets": [
+        {
+          "expr": "mgc_recovery_backup_age_minutes"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 26
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Restore evidence age (days)",
+      "targets": [
+        {
+          "expr": "mgc_recovery_restore_evidence_age_days"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 26
+      }
+    },
+    {
+      "type": "stat",
+      "title": "RPO target (minutes)",
+      "targets": [
+        {
+          "expr": "mgc_recovery_rpo_target_minutes"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 26
+      }
+    },
+    {
+      "type": "stat",
+      "title": "RTO target (minutes)",
+      "targets": [
+        {
+          "expr": "mgc_recovery_rto_target_minutes"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 26
+      }
+    }
+  ]
+}

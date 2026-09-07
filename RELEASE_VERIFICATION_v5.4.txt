@@ -1,0 +1,23 @@
+MGC Languages v5.4 — Release Verification
+
+PASS  Full static/regression preflight
+PASS  Chinese foundations title: «Информация о китайском»
+PASS  Pinyin / tones / Tone Lab / Putonghua 10-group overview retained
+PASS  Voice recording remains disabled; microphone policy retained
+PASS  TTS controlled 503 + browser fallback contract
+PASS  SQLAlchemy DB failure handler returns retryable 503 without DB internals
+PASS  DB outage path avoids retrying telemetry writes into unavailable DB
+PASS  Alembic clean migration to f54c0a91b723
+PASS  Schema drift readiness gate
+PASS  DB latency readiness signal
+PASS  Operational events + Prometheus reliability counters
+PASS  Admin IT dashboard + maintenance dry-run/run API
+PASS  Expired session / audit / event / nudge retention cleanup tests
+PASS  Pilot Compose internal maintenance sidecar contract
+PASS  Runtime Uvicorn acceptance: health/readiness/Admin/Chinese/IT dashboard/WAV/metrics
+PASS  Safe reliability drill in ready state
+PASS  Concurrent smoke: 240/240 successful, 0 failed, 16 workers, ~443.4 req/s, p95 ~67.1 ms
+PASS  Pilot configuration preflight with offline zh/en-us TTS probes
+
+Environment limitation:
+- Docker daemon is not available in the build environment, so real docker compose build/up must be executed on the IT pilot host. Structural Compose policy, runtime application acceptance, Alembic, TTS and HTTP checks passed locally.

@@ -1,0 +1,35 @@
+MGC Languages v5.3.1 — Release Verification
+Date: 2026-09-06
+
+Static / regression gate:
+- Python compile: PASS
+- JavaScript syntax: PASS
+- bilingual learning: PASS
+- XP / spendable XP / 100 levels: PASS
+- Admin content + analytics: PASS
+- CSRF / audit / rate limiting: PASS
+- Pinyin / Chinese foundations: PASS
+- English + Chinese WAV pronunciation: PASS
+- department-scoped Manager RBAC: PASS
+- Tone Lab: PASS
+- v5.3 Putonghua/dialect content: PASS
+- no microphone capture: PASS
+- POST pronunciation privacy: PASS
+- TTS bounded concurrency / circuit / cache telemetry: PASS
+- v5.3.1 POST-only pilot OpenAPI: PASS
+- v5.3.1 ephemeral TTS cache/readiness gate: PASS
+- Alembic clean upgrade to c8f1a52e1a20: PASS
+
+HTTP-process acceptance:
+- it_acceptance_v531.py: PASS
+- load smoke: 180/180 success
+- measured smoke throughput: 553.2 requests/s
+- mean latency: 20.8 ms
+- p50: 21.6 ms
+- p95: 37.0 ms
+- p99: 58.6 ms
+- max: 67.0 ms
+
+Notes:
+- This is a small local non-destructive smoke test, not an enterprise capacity benchmark.
+- Docker daemon / real corporate PostgreSQL / real IdP are not available in this build environment; those remain target-environment acceptance items.

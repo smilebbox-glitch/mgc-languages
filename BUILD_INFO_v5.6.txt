@@ -1,0 +1,9 @@
+MGC Languages v5.6 — Pilot Governance & Rollout
+Build date: 2026-09-07
+Schema head: b56f0c21e560
+Primary Chinese learning track: Putonghua (普通话), standard Chinese
+Dialect content: reference-only, no course XP/progress
+Governance: pilot groups, rollout waves, deny-wins feature flags, track assignments, daily anti-abuse quotas, UTF-8 CSV export
+Admin rollout: edit status/dates, add/remove members, assign/remove tracks with audit
+Regression strategy: isolated test shards with per-test timeout
+Voice recording: disabled

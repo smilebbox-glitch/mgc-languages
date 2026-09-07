@@ -1,0 +1,54 @@
+MGC Languages v5.7 — Release Verification
+Profile: Security & Data Integrity / Adaptive Learning
+Expected Alembic head: c57d0a31f570
+
+LOCAL / BUILD-ENVIRONMENT EVIDENCE
+- Python compile: PASS
+- JavaScript syntax: PASS
+- Chinese foundations / Putonghua primary-scope contract: PASS
+- Grafana dashboard JSON: PASS
+- Operational shell syntax: PASS
+- Clean Alembic migration from empty SQLite DB -> c57d0a31f570: PASS
+- Regression shards: 18/18 PASS
+  * base: 4/4
+  * pronunciation: 4/4
+  * putonghua/schema/privacy: 4/4
+  * reliability: 2/2
+  * operations/governance: 2/2
+  * v5.7 security/data-integrity: 2/2
+- Authorization matrix: 56 explicit role/endpoint/department checks PASS
+- Runtime IT acceptance through real Uvicorn HTTP process: 23 PASS / 0 FAIL / 0 SKIP
+- Mandarin pronunciation runtime check: real RIFF/WAV PASS
+- Non-destructive concurrent load smoke: 240/240 success, 0 failed, 16 workers
+  * throughput: 227.1 req/s
+  * mean: 67.6 ms
+  * p50: 62.7 ms
+  * p95: 145.5 ms
+  * p99: 228.8 ms
+  * max: 241.7 ms
+
+DEFECT FOUND AND CLOSED DURING RELEASE GATE
+- Timezone-aware AuditLog rows could trigger SQLAlchemy in-session Python datetime comparison during retention DELETE.
+- Cleanup now uses SQL-side delete synchronization (synchronize_session=False); v5.4 reliability regression passes after the fix.
+
+SECURITY / DATA-INTEGRITY CONTROLS INCLUDED
+- FastAPI RBAC plus PostgreSQL FORCE RLS migration for user-owned learning tables.
+- Real-PostgreSQL checker rejects superuser/BYPASSRLS application DB roles and validates RLS policies.
+- Tamper-evident SHA-256 Audit Log chain with retention anchor (not a substitute for SIEM/WORM).
+- Governed terminology provenance, immutable revisions, review, Admin approval/reject/rollback.
+- Adaptive SRS independent of XP.
+- Question-quality telemetry stores selected-answer hash rather than raw selected-answer text.
+- Optional OpenTelemetry FastAPI/SQLAlchemy instrumentation; fail-open if collector/export is unavailable.
+- Grafana dashboard and Prometheus alert templates.
+- Logical backup/restore plus WAL/PITR rehearsal configuration and physical base-backup helper.
+
+NOT VERIFIED IN THIS BUILD ENVIRONMENT — REQUIRED ON CORPORATE IT INFRASTRUCTURE
+- Real PostgreSQL FORCE RLS enforcement and cross-department access using the actual application DB role.
+- Corporate OIDC/SSO group/department claim mapping.
+- Corporate TLS/secure-cookie/ingress policy.
+- Docker Compose bring-up on the target host (Docker daemon unavailable in this build environment).
+- Real OTLP collector/backend trace ingestion.
+- Off-host encrypted WAL/base-backup durability and timestamp-targeted PITR rehearsal.
+- SIEM/WORM audit export/retention, SCA/container policy and security review/pentest.
+
+Acceptance boundary: controlled pilot candidate; not unconditional production sign-off.

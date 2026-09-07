@@ -1,0 +1,74 @@
+MGC Languages v5.6 — Release Verification
+Date: 2026-09-07
+
+RESULT: PASS for local pilot release gates available in this environment.
+
+Regression shards
+- base: 4/4 PASS
+- pronunciation: 4/4 PASS
+- Putonghua/schema: 4/4 PASS
+- reliability: 2/2 PASS
+- operations/governance: 2/2 PASS
+- total: 16/16 PASS
+
+Build/static checks
+- Python compile: PASS
+- JavaScript syntax: PASS
+- Chinese foundations contract: PASS (5 tone entries, Pinyin formula/context, 10 major dialect groups)
+
+Database
+- clean Alembic upgrade from empty SQLite test DB: PASS
+- current/head: b56f0c21e560
+- schema readiness/drift blocking: PASS
+- serialized PostgreSQL migration-lock contract: PASS
+
+Runtime acceptance (real Uvicorn HTTP process)
+- 20 PASS / 0 FAIL
+- liveness/readiness: PASS
+- Admin local pilot login: PASS
+- Putonghua primary-learning scope: PASS
+- dialect content reference-only: PASS
+- Pilot Governance endpoints/feature catalog: PASS
+- IT dashboard/alerts/learning-error telemetry: PASS
+- protected metrics: PASS
+- maintenance dry-run: PASS
+- Mandarin server TTS produced RIFF/WAV: PASS
+
+Concurrent smoke
+- requests: 240
+- workers: 16
+- success: 240
+- failed: 0
+- throughput: 255.6 req/s
+- latency mean: 60.3 ms
+- p50: 53.3 ms
+- p95: 138.4 ms
+- p99: 169.7 ms
+- max: 247.0 ms
+- audio included: yes
+
+Governance behavior verified
+- pilot groups / waves: PASS
+- start/end scheduling: PASS
+- overlapping feature overrides use deny-wins: PASS
+- add/remove member: PASS
+- assign track with topic/level/deadline: PASS
+- remove assignment + Audit Log: PASS
+- daily quota enforcement: PASS
+- UTF-8 pilot CSV export with Putonghua-specific fields: PASS
+
+User clarity verified
+- primary Chinese track explicitly labeled Putonghua (普通话): PASS
+- banner appears in Chinese learning views: PASS
+- dialect area labeled reference-only and excluded from XP/course progress: PASS
+- Chinese language selector says 中文 · Путунхуа: PASS
+
+Not verified locally because they require corporate infrastructure
+- real Docker Compose start on target host
+- corporate PostgreSQL backup/isolated restore rehearsal
+- real corporate OIDC claims/group/department mapping
+- corporate TLS/secure-cookie termination
+- SIEM/central monitoring ingestion
+- corporate container/vulnerability scan and security sign-off
+
+The load smoke is a release gate, not a production capacity benchmark or SLA claim.
