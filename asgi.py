@@ -1,10 +1,9 @@
 """Stable ASGI entrypoint for deployment.
 
-v5.7.3 introduced the boundary so Docker/uvicorn no longer target the legacy
-monolithic module directly. v5.7.4-v5.7.8 progressively bind security, auth,
-governance, user/terminology and learning services. v5.7.9 moves practice/game
-orchestration behind endpoint-compatible workflow services while preserving the
-registered FastAPI dependency and OpenAPI contracts.
+v5.7.3-v5.7.9 established modular runtime, security, governance, learning,
+service and workflow boundaries. v5.8.0 moves the historical implementation to
+``mgc.legacy_app``, keeps ``app.py`` as a compatibility facade and transfers the
+first active system endpoints to a real APIRouter module.
 """
 
 from mgc_core.runtime import (
@@ -12,6 +11,7 @@ from mgc_core.runtime import (
     CONTRACT_REPORT,
     GOVERNANCE_BINDING_REPORT,
     LEARNING_BINDING_REPORT,
+    ROUTER_BINDING_REPORT,
     SECURITY_BINDING_REPORT,
     SERVICE_BINDING_REPORT,
     WORKFLOW_BINDING_REPORT,
@@ -25,6 +25,7 @@ __all__ = [
     "GOVERNANCE_BINDING_REPORT",
     "LEARNING_BINDING_REPORT",
     "SERVICE_BINDING_REPORT",
+    "ROUTER_BINDING_REPORT",
     "WORKFLOW_BINDING_REPORT",
     "AUTH_BINDING_REPORT",
 ]

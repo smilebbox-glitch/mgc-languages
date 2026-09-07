@@ -1,0 +1,10 @@
+MGC Languages v5.8.0
+Technical increment: Router Extraction
+Runtime entrypoint: asgi:app
+Compatibility facade: app.py
+Historical implementation: mgc/legacy_app.py
+Extracted APIRouter: mgc/routers/system.py
+Extracted active routes: GET /health, GET /health/live, GET /ready, GET /health/ready, GET /api/meta
+Database schema: unchanged
+Alembic head: c57d0a31f570
+Chinese learning standard: Путунхуа (普通话)
