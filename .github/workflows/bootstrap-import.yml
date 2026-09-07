@@ -1,44 +1,50 @@
-name: Verify canonical repaired MGC Languages v5.7.1 archive
+name: Bootstrap import v5.7.1
 
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/bootstrap-import.yml'
+      - '.bootstrap/import.ready'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  verify:
+  import:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Repair only independently proven transport defect and verify archive
+      - name: Verify and extract release archive
         shell: bash
         run: |
           set -euo pipefail
-          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
-
-          python3 -c "import pathlib; norm=lambda p: bytes(c for c in pathlib.Path(p).read_bytes() if c in b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='); ps=[f'.bootstrap/p.part{i:03d}' for i in range(6)]; qs=[f'.bootstrap/q.part{i:03d}' for i in range(5)]; P=b''.join(norm(p) for p in ps); Q=b''.join(norm(q) for q in qs); assert P[:18000]==Q[:18000], 'prefix mismatch before proven defect'; assert P[18001:40001]==Q[18000:40000], 'streams do not realign after one-byte defect'; assert P[18000:18001]==b'V', 'unexpected defect byte'; repaired=P[:18000]+P[18001:]; pathlib.Path('/tmp/mgc-v571.b64').write_bytes(repaired); print('ORIGINAL_P_CHARS='+str(len(P))); print('REPAIRED_B64_CHARS='+str(len(repaired))); print('Q_CROSSCHECK_OK=1')"
-
-          base64 --decode /tmp/mgc-v571.b64 > /tmp/mgc-v571.tar.xz
-          actual="$(sha256sum /tmp/mgc-v571.tar.xz | awk '{print $1}')"
-          echo "EXPECTED_SHA256=$expected"
-          echo "ACTUAL_SHA256=$actual"
-          test "$actual" = "$expected"
-
-          xz -t /tmp/mgc-v571.tar.xz
-          echo 'XZ_OK=1'
-
-          rm -rf /tmp/mgc-v571-source
-          mkdir -p /tmp/mgc-v571-source
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571-source
-          echo 'TAR_OK=1'
-          echo "FILE_COUNT=$(find /tmp/mgc-v571-source -type f | wc -l)"
-          echo '--- SOURCE TREE ---'
-          find /tmp/mgc-v571-source -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,450p'
-          echo 'CANONICAL_V571_VERIFIED=1'
+          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  .bootstrap/v571.tar.xz" | sha256sum -c -
+          xz -t .bootstrap/v571.tar.xz
+          mkdir -p /tmp/mgc-v571
+          tar -xJf .bootstrap/v571.tar.xz -C /tmp/mgc-v571
+      - name: Import repository contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.bootstrap/' \
+            --exclude='.github/workflows/bootstrap-import.yml' \
+            /tmp/mgc-v571/ ./
+          rm -rf .bootstrap
+          rm -f .github/workflows/bootstrap-import.yml
+      - name: Commit imported baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+            exit 0
+          fi
+          git commit -m 'chore: import MGC Languages v5.7.1 baseline'
+          git push origin HEAD:main
