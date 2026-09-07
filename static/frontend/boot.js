@@ -1,4 +1,4 @@
-/* v6.0.5: validate modular frontend core and publish readiness. */
+/* v6.0.6: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -15,6 +15,7 @@
       'learning',
       'practice-games',
       'support-notifications',
+      'assistant-knowledge',
       'navigation',
       'session-lifecycle',
       'auth-department'

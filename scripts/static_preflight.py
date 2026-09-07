@@ -58,13 +58,16 @@ def main()->int:
     print('PASS: v6.0.4 practice/games module ownership contract')
     run([sys.executable,'tests/v605_frontend_support_notifications_test.py'],timeout=30)
     print('PASS: v6.0.5 support/notifications module ownership contract')
+    run([sys.executable,'tests/v606_frontend_assistant_knowledge_test.py'],timeout=30)
+    print('PASS: v6.0.6 assistant/knowledge module ownership contract')
     for rel in [
         'static/app.js','static/auth_department.js','static/frontend/runtime.js',
         'static/frontend/error_boundary.js','static/frontend/legacy_bridge.js',
         'static/frontend/service_status.js','static/frontend/api_client.js',
         'static/frontend/app_state.js','static/frontend/learning.js',
         'static/frontend/practice_games.js','static/frontend/support_notifications.js',
-        'static/frontend/navigation.js','static/frontend/session_lifecycle.js','static/frontend/boot.js'
+        'static/frontend/assistant_knowledge.js','static/frontend/navigation.js',
+        'static/frontend/session_lifecycle.js','static/frontend/boot.js'
     ]:
         run(['node','--check',rel],timeout=20)
     print('PASS: JavaScript syntax')
@@ -83,7 +86,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v6.0.5 frontend support/notifications module preflight')
+    print('PASS: v6.0.6 frontend assistant/knowledge module preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())

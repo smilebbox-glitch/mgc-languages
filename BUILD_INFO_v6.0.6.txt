@@ -1,0 +1,35 @@
+MGC Languages v6.0.6
+Scope: Frontend Assistant & Knowledge
+
+Active view ownership:
+- assistant
+- knowledge
+
+Assistant parity:
+- POST /api/assistant
+- language-aware example prompts
+- evidence term cards
+- term/example pronunciation actions
+- ai_assistant pilot feature gate
+
+Knowledge parity:
+- GET /api/knowledge?language={language}
+- cached knowledge items in shared app state
+- topic filtering
+- instruction detail view
+- avoid guidance
+- target phrase + pronunciation
+- direct handoff to roleplay with topic context
+
+Architecture:
+- assistant-knowledge module loaded after support-notifications and before navigation
+- navigation delegates assistant/knowledge to frontend.assistant-knowledge
+- capture-phase interception prevents duplicate legacy dispatch
+- modular API client and app-state own active AI/knowledge data flow
+- legacy assistant/knowledge functions remain staged fallback only
+
+Compatibility:
+- backend API/OpenAPI unchanged
+- ORM/Alembic unchanged (c57d0a31f570)
+- runtime APP_VERSION unchanged
+- Putonghua (普通话), learning content, XP/SRS scoring, games and notifications unchanged
