@@ -5,7 +5,8 @@ service and workflow boundaries. v5.8.0-v5.8.4 extracted system, observability,
 auth, learning and practice/game route ownership. v5.8.5 moves public
 terminology and corporate terminology administration behind a dedicated
 APIRouter. v5.8.6 moves pronunciation/TTS HTTP ownership behind a dedicated
-router while preserving the existing offline synthesis engine.
+router. v5.8.7 moves synthesis/cache/health/circuit-breaker state into a
+standalone TTS core while preserving observability and pronunciation contracts.
 """
 
 from mgc_core.runtime import (
@@ -22,6 +23,7 @@ from mgc_core.runtime import (
     SECURITY_BINDING_REPORT,
     SERVICE_BINDING_REPORT,
     TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT,
+    TTS_BINDING_REPORT,
     WORKFLOW_BINDING_REPORT,
     app,
 )
@@ -33,6 +35,7 @@ __all__ = [
     "GOVERNANCE_BINDING_REPORT",
     "LEARNING_BINDING_REPORT",
     "SERVICE_BINDING_REPORT",
+    "TTS_BINDING_REPORT",
     "ROUTER_BINDING_REPORT",
     "OBSERVABILITY_ROUTER_BINDING_REPORT",
     "WORKFLOW_BINDING_REPORT",

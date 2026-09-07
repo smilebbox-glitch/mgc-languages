@@ -28,6 +28,7 @@ from .terminology_admin_router_bridge import (
     TerminologyAdminRouterBindingReport,
     bind_terminology_admin_router,
 )
+from .tts_bridge import TTSBindingReport, bind_legacy_tts
 from .workflow_bridge import WorkflowBindingReport, bind_legacy_workflows
 
 
@@ -38,14 +39,15 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     """Load the historical implementation behind the stable modular boundary."""
     module = importlib.import_module(module_name)
     # Ordering is intentional: governance consumes the extracted client fingerprint;
-    # learning binds before user services; services bind before workflows. Active
-    # routers are replaced only after the FastAPI object exists. Auth core binds
-    # before auth/learning/practice-game/terminology/pronunciation routers.
-    # Terminology admin also requires extracted terminology and governance services.
+    # learning binds before user services; services bind before workflows. TTS binds
+    # before observability so Prometheus and pronunciation share one runtime state.
+    # Active routers are replaced only after the FastAPI object exists. Auth core
+    # binds before auth/learning/practice-game/terminology/pronunciation routers.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
     bind_legacy_services(module)
+    bind_legacy_tts(module)
     return module
 
 
@@ -80,6 +82,9 @@ LEARNING_BINDING_REPORT: LearningBindingReport = getattr(
 )
 SERVICE_BINDING_REPORT: ServiceBindingReport = getattr(
     _legacy_module, "MGC_SERVICE_BINDING_REPORT"
+)
+TTS_BINDING_REPORT: TTSBindingReport = getattr(
+    _legacy_module, "MGC_TTS_BINDING_REPORT"
 )
 ROUTER_BINDING_REPORT: RouterBindingReport = getattr(
     _legacy_module, "MGC_ROUTER_BINDING_REPORT"
@@ -116,6 +121,7 @@ __all__ = [
     "GOVERNANCE_BINDING_REPORT",
     "LEARNING_BINDING_REPORT",
     "SERVICE_BINDING_REPORT",
+    "TTS_BINDING_REPORT",
     "ROUTER_BINDING_REPORT",
     "OBSERVABILITY_ROUTER_BINDING_REPORT",
     "WORKFLOW_BINDING_REPORT",
