@@ -1,4 +1,4 @@
-/* v6.0.0: isolate the historical app.js globals behind one compatibility adapter. */
+/* v6.0.1: isolate the historical app.js globals behind one compatibility adapter. */
 (function () {
   'use strict';
 
@@ -17,6 +17,9 @@
   if (!frontend.has('legacy-app')) {
     frontend.register('legacy-app', {
       getState: function () { return state; },
+      boot: requireFunction('boot', boot),
+      bindStaticEvents: requireFunction('bindStaticEvents', bindStaticEvents),
+      configureAuthUi: requireFunction('configureAuthUi', configureAuthUi),
       setView: requireFunction('setView', setView),
       loadLanguage: requireFunction('loadLanguage', loadLanguage),
       showApp: requireFunction('showApp', showApp),
