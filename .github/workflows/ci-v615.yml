@@ -1,0 +1,53 @@
+name: mgc-languages-v615-practice-extraction-frontend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v615-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-practice-extraction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v604 --timeout 45
+          python scripts/run_release_tests.py --shard v613 --timeout 45
+          python scripts/run_release_tests.py --shard v614 --timeout 45
+          python scripts/run_release_tests.py --shard v615 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/practice_games.js
+          node --check static/frontend/legacy_bridge.js
+          node --check static/frontend/legacy_retirement.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+      - name: Practice extraction parity guard
+        run: |
+          grep -q "frontend.register('practice-games'" static/frontend/practice_games.js
+          grep -q "/roleplays" static/frontend/practice_games.js
+          grep -q "/api/games/" static/frontend/practice_games.js
+          grep -q "/api/gamification/me" static/frontend/practice_games.js
+          grep -q "/api/gamification/rewards" static/frontend/practice_games.js
+          grep -q "/api/gamification/spend" static/frontend/practice_games.js
+          grep -q "legacy().submitPractice" static/frontend/practice_games.js
+          grep -q "legacy().playPronunciation" static/frontend/practice_games.js
+          ! grep -q "renderPracticeRoleplay" static/frontend/practice_games.js
+          ! grep -q "renderPracticeRoleplay:" static/frontend/legacy_bridge.js
+          ! grep -q "renderPracticeGames:" static/frontend/legacy_bridge.js
+          ! grep -q "renderPracticeXP:" static/frontend/legacy_bridge.js
+          grep -q "'practice-games'" static/frontend/legacy_retirement.js
+          grep -q "'renderRoleplay'" static/frontend/legacy_retirement.js
+          grep -q "'renderGames'" static/frontend/legacy_retirement.js
+          grep -q "'renderXP'" static/frontend/legacy_retirement.js

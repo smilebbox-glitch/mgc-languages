@@ -1,4 +1,4 @@
-/* v6.0.14: retire app.js globals whose active views are fully modular. */
+/* v6.0.15: retire app.js globals whose active views are fully modular. */
 (function (root) {
   'use strict';
 
@@ -8,6 +8,7 @@
 
   const REQUIRED_OWNERS = Object.freeze([
     'learning',
+    'practice-games',
     'support-notifications',
     'assistant-knowledge',
     'final-assessment',
@@ -30,6 +31,18 @@
     'answerPair',
     'renderDayQuiz',
     'answerDayQuiz',
+    'scenarioProgressKey',
+    'getScenarioProgress',
+    'saveScenarioProgress',
+    'renderRoleplay',
+    'answerScenario',
+    'renderGames',
+    'startGame',
+    'renderXP',
+    'renderXpPack',
+    'buyReward',
+    'xpPanelHTML',
+    'refreshGamification',
     'renderNotifications',
     'saveNudgeSettings',
     'renderAssistant',
