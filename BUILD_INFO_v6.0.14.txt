@@ -1,0 +1,46 @@
+MGC Languages v6.0.14
+Release line: Core Learning Extraction
+Branch: refactor/v6.0.14-core-learning-extraction
+Base: refactor/v6.0.13-legacy-frontend-cleanup
+
+Frontend ownership
+- learning.js owns: home, topics, quiz, course30
+- learning.js also owns language-switch interception and Pinyin preference rerender
+- practice_games.js still owns navigation for roleplay, games, xp while using legacy renderers
+
+Core learning API parity
+- GET /api/language/{language}/terms?topic=...&limit=500
+- GET /api/language/{language}/quiz?topic=...&level=...&count=10
+- POST /api/gamification/spend
+- GET /api/language/{language}/course30
+- POST /api/course-day/result
+- POST /api/practice/result via shared submitPractice compatibility primitive
+- POST /api/me/language
+- PUT /api/learning/preferences
+- pronunciation playback through shared playPronunciation primitive
+
+Legacy contraction
+- renderLearningHome/renderLearningTopics/renderLearningQuiz/renderLearningCourse30 removed from bridge surface
+- core learning globals retired at runtime after learning module availability is verified
+- practice renderer compatibility remains intentionally
+
+Data / backend
+- no backend route changes
+- no ORM changes
+- no Alembic migration changes
+- Alembic head remains c57d0a31f570
+- no changes to data/chinese_foundations.json
+- Putonghua remains the Chinese learning standard
+- no XP/SRS rule changes
+- runtime APP_VERSION unchanged
+
+Verification contracts
+- tests/v603_frontend_learning_module_test.py upgraded to full-renderer ownership assertions
+- tests/v613_frontend_legacy_cleanup_test.py advanced for post-learning contraction
+- tests/v614_frontend_core_learning_test.py added
+- release shard: v614
+- static_preflight includes v614
+- dedicated workflow: .github/workflows/ci-v614.yml
+
+Hosted CI note
+GitHub Actions has recently been failing repository workflows before executing steps (steps=[]). A red hosted check with no steps is not a code-test result; inspect job steps before interpreting it.
