@@ -6,6 +6,11 @@ $ErrorActionPreference = "Stop"
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $Root
 
+function Write-Utf8NoBom([string]$Path, [string]$Text) {
+    $encoding = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($Path, $Text, $encoding)
+}
+
 function New-Secret([int]$Bytes = 24) {
     $buffer = New-Object byte[] $Bytes
     $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
@@ -50,7 +55,7 @@ function Set-EnvValue([string]$Path, [string]$Key, [string]$Value) {
         if ($text.Length -gt 0 -and -not $text.EndsWith("`n")) { $text += "`r`n" }
         $text += "$line`r`n"
     }
-    Set-Content -LiteralPath $Path -Value $text -Encoding UTF8
+    Write-Utf8NoBom $Path $text
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -80,7 +85,7 @@ if ($NewConfig) {
     $metricsToken = New-Secret 32
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
 
-    @"
+    $initialEnv = @"
 MGC_BIND_ADDRESS=0.0.0.0
 MGC_PORT=8080
 MGC_TRUSTED_HOSTS=$trusted
@@ -100,7 +105,8 @@ DB_MAX_OVERFLOW=5
 TTS_ENABLED=true
 TTS_CONCURRENCY=2
 CORS_ORIGINS=
-"@ | Set-Content -LiteralPath $EnvFile -Encoding UTF8
+"@
+    Write-Utf8NoBom $EnvFile $initialEnv
 } else {
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
     Set-EnvValue $EnvFile "MGC_BIND_ADDRESS" "0.0.0.0"
