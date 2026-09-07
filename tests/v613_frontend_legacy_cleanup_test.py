@@ -25,6 +25,7 @@ assert positions == sorted(positions), positions
 assert INDEX.count('/frontend/legacy_retirement.js') == 1
 
 for owner in (
+    'learning',
     'support-notifications',
     'assistant-knowledge',
     'final-assessment',
@@ -36,7 +37,7 @@ for owner in (
 ):
     assert repr(owner) in RETIRE, owner
 
-retired = (
+previously_retired = (
     'renderNotifications', 'saveNudgeSettings',
     'renderAssistant', 'askAssistant', 'renderKnowledge',
     'renderExam', 'startExam', 'answerExam',
@@ -46,16 +47,23 @@ retired = (
     'adminTermCard', 'adminContentHTML', 'bindAdminContent', 'openAdminUser',
     'toneLabStart', 'renderToneLabRound', 'renderChineseBasics',
 )
-for name in retired:
+for name in previously_retired:
     assert repr(name) in RETIRE, name
-    assert f"root[name] = undefined" in RETIRE
 
-# Remaining active legacy renderers are deliberately not retired yet.
-for name in ('renderHome', 'renderTopics', 'renderQuiz', 'renderCourse30', 'renderRoleplay', 'renderGames', 'renderXP'):
+# Core learning is now also fully modular and retired from runtime exposure.
+core_learning_retired = (
+    'renderHome', 'renderTopics', 'renderQuiz', 'startQuiz', 'answerQuiz', 'buyQuizHelp',
+    'renderCourse30', 'makePairOptions', 'answerPair', 'renderDayQuiz', 'answerDayQuiz',
+)
+for name in core_learning_retired:
+    assert repr(name) in RETIRE, name
+    assert f"requireFunction('{name}'" not in BRIDGE, name
+
+# Practice remains the only feature renderer family still exposed by the bridge.
+for name in ('renderRoleplay', 'renderGames', 'renderXP'):
     assert repr(name) not in RETIRE, name
     assert f"requireFunction('{name}'" in BRIDGE, name
 
-# Admin/manager are no longer part of the allowed bridge surface.
 assert "renderManager:" not in BRIDGE
 assert "renderAdmin:" not in BRIDGE
 assert "bridge.surface = Object.freeze(Object.keys(bridge))" in BRIDGE
@@ -63,18 +71,20 @@ assert "'legacy-retirement'" in BOOT
 assert "frontend.register('legacy-retirement'" in RETIRE
 assert "remainingBridgeSurface: frontend.get('legacy-app').surface" in RETIRE
 
-# Historical declarations remain physically present for now; runtime exposure is what v6.0.13 retires.
-for legacy_name in ('renderAdmin', 'renderManager', 'renderChineseBasics', 'renderExam', 'renderAssistant', 'renderNotifications'):
+# Historical declarations remain physically present for controlled rollback.
+for legacy_name in (
+    'renderHome', 'renderTopics', 'renderQuiz', 'renderCourse30',
+    'renderAdmin', 'renderManager', 'renderChineseBasics', 'renderExam',
+):
     assert f'function {legacy_name}' in APP
 
-# Keep the monolith bounded while subsequent releases migrate learning/practice renderers.
 assert len(APP.encode('utf-8')) < 150_000
 
-# The bridge surface should be materially smaller than the pre-cleanup compatibility object.
+# The compatibility object contracts further after core learning extraction.
 bridge_keys = re.findall(r'^\s{6}([A-Za-z][A-Za-z0-9]*):', BRIDGE, flags=re.MULTILINE)
-assert len(bridge_keys) <= 24, bridge_keys
+assert len(bridge_keys) <= 21, bridge_keys
 
-for script in ('legacy_bridge.js', 'legacy_retirement.js', 'boot.js'):
+for script in ('legacy_bridge.js', 'legacy_retirement.js', 'learning.js', 'boot.js'):
     subprocess.run(['node', '--check', str(ROOT / 'static/frontend' / script)], check=True, cwd=ROOT)
 
-print('PASS: v6.0.13 retires superseded legacy globals while preserving only learning/practice compatibility')
+print('PASS: legacy cleanup now retires core learning while preserving practice compatibility')

@@ -1,4 +1,4 @@
-/* v6.0.13: retire app.js globals whose active views are fully modular. */
+/* v6.0.14: retire app.js globals whose active views are fully modular. */
 (function (root) {
   'use strict';
 
@@ -7,6 +7,7 @@
   if (frontend.has('legacy-retirement')) return;
 
   const REQUIRED_OWNERS = Object.freeze([
+    'learning',
     'support-notifications',
     'assistant-knowledge',
     'final-assessment',
@@ -18,6 +19,17 @@
   ]);
 
   const RETIRED_GLOBALS = Object.freeze([
+    'renderHome',
+    'renderTopics',
+    'renderQuiz',
+    'startQuiz',
+    'answerQuiz',
+    'buyQuizHelp',
+    'renderCourse30',
+    'makePairOptions',
+    'answerPair',
+    'renderDayQuiz',
+    'answerDayQuiz',
     'renderNotifications',
     'saveNudgeSettings',
     'renderAssistant',

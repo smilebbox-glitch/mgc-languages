@@ -22,26 +22,30 @@ for token in (
     "event.stopImmediatePropagation()",
     "legacy().ensureChineseStandardBanner()",
     "state().set('view', target)",
-    "renderLearningHome",
-    "renderLearningTopics",
-    "renderLearningQuiz",
-    "renderLearningCourse30",
+    "api().request('/api/language/'",
+    "'/terms?topic='",
+    "'/quiz?topic='",
+    "'/course30'",
+    "'/api/course-day/result'",
+    "legacy().submitPractice",
 ):
     assert token in LEARNING, token
 
+# v6.0.14 upgrades learning from navigation ownership to full renderer ownership.
 for token in (
-    "renderLearningHome: requireFunction('renderHome', renderHome)",
-    "renderLearningTopics: requireFunction('renderTopics', renderTopics)",
-    "renderLearningQuiz: requireFunction('renderQuiz', renderQuiz)",
-    "renderLearningCourse30: requireFunction('renderCourse30', renderCourse30)",
+    'renderLearningHome',
+    'renderLearningTopics',
+    'renderLearningQuiz',
+    'renderLearningCourse30',
 ):
-    assert token in BRIDGE, token
+    assert token not in LEARNING, token
+    assert token not in BRIDGE, token
 
 assert "frontend.get('learning').owns(view)" in NAV
 assert "frontend.get('learning').navigate(view)" in NAV
 assert "'learning'" in BOOT
 
-# Historical renderers remain fallback-only during staged extraction.
+# Historical declarations remain physically present for rollback while runtime ownership is modular.
 for name in ('renderHome', 'renderTopics', 'renderQuiz', 'renderCourse30'):
     assert f'function {name}' in APP
 assert len(APP.encode('utf-8')) < 150_000
@@ -50,4 +54,4 @@ subprocess.run(['node', '--check', str(ROOT / 'static/frontend/learning.js')], c
 subprocess.run(['node', '--check', str(ROOT / 'static/frontend/navigation.js')], check=True, cwd=ROOT)
 subprocess.run(['node', '--check', str(ROOT / 'static/frontend/legacy_bridge.js')], check=True, cwd=ROOT)
 
-print('PASS: v6.0.3 learning module owns home/topics/quiz/course30 navigation with legacy renderers as staged fallback')
+print('PASS: learning owns home/topics/quiz/course30 rendering without legacy renderer dependencies')
