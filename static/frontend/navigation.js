@@ -1,4 +1,4 @@
-/* v6.0.4: canonical navigation/session-view facade. */
+/* v6.0.5: canonical navigation/session-view facade. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -13,6 +13,9 @@
     }
     if (frontend.has('practice-games') && frontend.get('practice-games').owns(view)) {
       return frontend.get('practice-games').navigate(view);
+    }
+    if (frontend.has('support-notifications') && frontend.get('support-notifications').owns(view)) {
+      return frontend.get('support-notifications').navigate(view);
     }
     return legacy().setView(view);
   }
