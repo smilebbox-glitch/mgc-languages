@@ -76,6 +76,8 @@ def main()->int:
     print('PASS: v6.0.13 legacy frontend retirement contract')
     run([sys.executable,'tests/v614_frontend_core_learning_test.py'],timeout=30)
     print('PASS: v6.0.14 core learning extraction contract')
+    run([sys.executable,'tests/v615_frontend_practice_extraction_test.py'],timeout=30)
+    print('PASS: v6.0.15 practice games and XP extraction contract')
     for rel in [
         'static/app.js','static/auth_department.js','static/frontend/runtime.js',
         'static/frontend/error_boundary.js','static/frontend/legacy_bridge.js',
@@ -105,7 +107,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v6.0.14 frontend core learning extraction preflight')
+    print('PASS: v6.0.15 frontend practice/games/XP extraction preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
