@@ -1,0 +1,11 @@
+MGC Languages v5.7.7
+Technical increment: Service Layer
+Runtime: asgi:app
+Binding order: security -> governance -> services -> auth -> route contracts
+User service: mgc.services.users
+Terminology service: mgc.services.terminology
+Service bridge: mgc_core.service_bridge
+API/schema/UI behavior: preserved
+Alembic head: c57d0a31f570
+Chinese learning standard: Путунхуа (普通话)
+Regression shard: v577
