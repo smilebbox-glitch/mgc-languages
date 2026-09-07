@@ -5,7 +5,8 @@ service and workflow boundaries. v5.8.0-v5.8.4 extracted system, observability,
 auth, learning and practice/game route ownership. v5.8.5-v5.8.9 continue
 terminology, pronunciation/TTS, user/manager and pilot-administration boundaries.
 v5.9.0 moves admin operations, recovery, SLO and telemetry HTTP ownership behind
-a dedicated admin-only router without changing the underlying operations logic.
+a dedicated admin-only router. v5.9.1 moves notification settings and learning-
+nudge HTTP ownership behind a dedicated authenticated router.
 """
 
 from mgc_core.runtime import (
@@ -16,6 +17,7 @@ from mgc_core.runtime import (
     GOVERNANCE_BINDING_REPORT,
     LEARNING_BINDING_REPORT,
     LEARNING_ROUTER_BINDING_REPORT,
+    NOTIFICATIONS_ROUTER_BINDING_REPORT,
     OBSERVABILITY_ROUTER_BINDING_REPORT,
     PILOT_ADMIN_ROUTER_BINDING_REPORT,
     PRACTICE_GAMES_ROUTER_BINDING_REPORT,
@@ -50,4 +52,5 @@ __all__ = [
     "USER_MANAGER_ROUTER_BINDING_REPORT",
     "PILOT_ADMIN_ROUTER_BINDING_REPORT",
     "ADMIN_OPS_ROUTER_BINDING_REPORT",
+    "NOTIFICATIONS_ROUTER_BINDING_REPORT",
 ]
