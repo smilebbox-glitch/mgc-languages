@@ -31,13 +31,7 @@ for token in (
 ):
     assert token in LEARNING, token
 
-# v6.0.14 upgrades learning from navigation ownership to full renderer ownership.
-for token in (
-    'renderLearningHome',
-    'renderLearningTopics',
-    'renderLearningQuiz',
-    'renderLearningCourse30',
-):
+for token in ('renderLearningHome','renderLearningTopics','renderLearningQuiz','renderLearningCourse30'):
     assert token not in LEARNING, token
     assert token not in BRIDGE, token
 
@@ -45,13 +39,12 @@ assert "frontend.get('learning').owns(view)" in NAV
 assert "frontend.get('learning').navigate(view)" in NAV
 assert "'learning'" in BOOT
 
-# Historical declarations remain physically present for rollback while runtime ownership is modular.
+# v6.0.16 physically removes superseded learning renderers from the shell.
 for name in ('renderHome', 'renderTopics', 'renderQuiz', 'renderCourse30'):
-    assert f'function {name}' in APP
-assert len(APP.encode('utf-8')) < 150_000
+    assert f'function {name}' not in APP, name
+assert len(APP.encode('utf-8')) < 30_000
 
-subprocess.run(['node', '--check', str(ROOT / 'static/frontend/learning.js')], check=True, cwd=ROOT)
-subprocess.run(['node', '--check', str(ROOT / 'static/frontend/navigation.js')], check=True, cwd=ROOT)
-subprocess.run(['node', '--check', str(ROOT / 'static/frontend/legacy_bridge.js')], check=True, cwd=ROOT)
+for script in ('learning.js','navigation.js','legacy_bridge.js'):
+    subprocess.run(['node','--check',str(ROOT / 'static/frontend' / script)], check=True, cwd=ROOT)
 
-print('PASS: learning owns home/topics/quiz/course30 rendering without legacy renderer dependencies')
+print('PASS: learning owns home/topics/quiz/course30 and physical shell contains no learning renderers')
