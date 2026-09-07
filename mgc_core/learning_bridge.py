@@ -3,7 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from types import ModuleType
 
-from mgc.services.learning import LearningServiceBindings, build_learning_service
+from mgc.services.learning import (
+    LearningServiceBindings,
+    build_learning_service,
+    build_pilot_daily_usage_accessor,
+)
 
 
 @dataclass(frozen=True)
@@ -14,6 +18,8 @@ class LearningBindingReport:
     xp_spend_bound: bool
     srs_card_bound: bool
     srs_schedule_bound: bool
+    pilot_usage_bound: bool
+    concurrent_write_safe: bool
     model_contract_preserved: bool
     reward_contract_preserved: bool
 
@@ -46,6 +52,7 @@ def bind_legacy_learning(module: ModuleType) -> LearningBindingReport:
         "get_or_create_srs_card",
         "schedule_srs",
         "pilot_daily_usage",
+        "_pilot_day_key",
     )
     if not all(callable(getattr(module, name, None)) for name in required_functions):
         raise RuntimeError("legacy learning/gamification helpers are incomplete")
@@ -53,7 +60,8 @@ def bind_legacy_learning(module: ModuleType) -> LearningBindingReport:
     profile_model = getattr(module, "GamificationProfile", None)
     xp_event_model = getattr(module, "XPEvent", None)
     srs_card_model = getattr(module, "SRSCard", None)
-    if any(model is None for model in (profile_model, xp_event_model, srs_card_model)):
+    pilot_usage_model = getattr(module, "PilotDailyUsage", None)
+    if any(model is None for model in (profile_model, xp_event_model, srs_card_model, pilot_usage_model)):
         raise RuntimeError("legacy learning models are incomplete")
 
     model_contract_ok = all(
@@ -103,6 +111,18 @@ def bind_legacy_learning(module: ModuleType) -> LearningBindingReport:
                     "updated_at",
                 },
             ),
+            _has_columns(
+                pilot_usage_model,
+                {
+                    "user_id",
+                    "day_key",
+                    "xp_awarded",
+                    "game_starts",
+                    "tts_requests",
+                    "practice_submissions",
+                    "updated_at",
+                },
+            ),
         )
     )
     if not model_contract_ok:
@@ -118,11 +138,17 @@ def bind_legacy_learning(module: ModuleType) -> LearningBindingReport:
     if not reward_contract_ok:
         raise RuntimeError("legacy XP reward catalog contract drifted")
 
+    pilot_usage = build_pilot_daily_usage_accessor(
+        usage_model=pilot_usage_model,
+        day_key=getattr(module, "_pilot_day_key"),
+    )
+    module.pilot_daily_usage = pilot_usage
+
     bindings: LearningServiceBindings = build_learning_service(
         gamification_profile_model=profile_model,
         xp_event_model=xp_event_model,
         srs_card_model=srs_card_model,
-        pilot_daily_usage=getattr(module, "pilot_daily_usage"),
+        pilot_daily_usage=pilot_usage,
         daily_xp_cap=int(getattr(module, "PILOT_DAILY_XP_CAP")),
         reward_catalog=reward_catalog,
         level_titles=tuple(getattr(module, "LEVEL_TITLES")),
@@ -150,6 +176,11 @@ def bind_legacy_learning(module: ModuleType) -> LearningBindingReport:
         xp_spend_bound=module.spend_xp is bindings.spend_xp,
         srs_card_bound=module.get_or_create_srs_card is bindings.get_or_create_srs_card,
         srs_schedule_bound=module.schedule_srs is bindings.schedule_srs,
+        pilot_usage_bound=module.pilot_daily_usage is pilot_usage,
+        concurrent_write_safe=(
+            module.pilot_daily_usage.__module__ == "mgc.services.learning"
+            and module.award_xp.__module__ == "mgc.services.learning"
+        ),
         model_contract_preserved=model_contract_ok,
         reward_contract_preserved=reward_contract_ok,
     )
