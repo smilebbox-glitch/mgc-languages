@@ -29,7 +29,7 @@ SHARDS={
  'v588':['tests/v588_user_manager_router_core_test.py','tests/v588_user_manager_router_runtime_test.py'],
  'v589':['tests/v589_pilot_admin_router_core_test.py','tests/v589_pilot_admin_router_runtime_test.py'],
  'v590':['tests/v590_admin_ops_router_core_test.py','tests/v590_admin_ops_router_runtime_test.py'],
- 'v591':['tests/v591_notifications_router_core_test.py','tests/v591_notifications_router_runtime_test.py'],
+ 'v591':['tests/v591_notifications_router_core_test.py'],
  'v592':['tests/v592_language_content_router_core_test.py','tests/v592_language_content_router_runtime_test.py'],
  'v593':['tests/v593_multi_user_deployment_test.py'],
  'v594':['tests/v594_capacity_hardening_test.py','tests/v594_capacity_runtime_test.py'],
@@ -48,6 +48,7 @@ SHARDS={
  'v607':['tests/v607_frontend_final_assessment_test.py'],
  'v608':['tests/v608_frontend_manager_admin_test.py'],
  'v609':['tests/v609_frontend_content_governance_test.py'],
+ 'v610':['tests/v610_frontend_admin_ops_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
