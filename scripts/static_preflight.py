@@ -44,8 +44,10 @@ def main()->int:
     print('PASS: v5.9.7 department-aware user/admin login contract')
     run([sys.executable,'tests/v598_session_user_isolation_test.py'],timeout=45)
     print('PASS: v5.9.8 per-user session/practice isolation contract')
-    run(['node','--check','static/app.js'],timeout=20)
-    run(['node','--check','static/auth_department.js'],timeout=20)
+    run([sys.executable,'tests/v599_frontend_shell_test.py'],timeout=20)
+    print('PASS: v5.9.9 frontend shell/module-registry contract')
+    for rel in ['static/app.js','static/auth_department.js','static/frontend/runtime.js','static/frontend/boot.js']:
+        run(['node','--check',rel],timeout=20)
     print('PASS: JavaScript syntax')
     json.loads((ROOT/'deploy/observability/grafana-dashboard-v5.7.json').read_text(encoding='utf-8'))
     print('PASS: Grafana dashboard JSON')
@@ -62,7 +64,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.9.8 multi-user session + practice isolation preflight')
+    print('PASS: v5.9.9 frontend shell preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
