@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FACADE_PATH = ROOT / "app.py"
 LEGACY_APP_PATH = ROOT / "mgc" / "legacy_app.py"
 SYSTEM_ROUTER_PATH = ROOT / "mgc" / "routers" / "system.py"
+OBSERVABILITY_ROUTER_PATH = ROOT / "mgc" / "routers" / "observability.py"
 FRONTEND_PATH = ROOT / "static" / "app.js"
 STYLES_PATH = ROOT / "static" / "styles.css"
 
@@ -22,8 +23,9 @@ EXTRACTED_SYSTEM_ROUTES = {
     ("GET", "/health/ready"),
     ("GET", "/api/meta"),
 }
-CRITICAL_ROUTES = EXTRACTED_SYSTEM_ROUTES | {
-    ("GET", "/metrics"),
+EXTRACTED_OBSERVABILITY_ROUTES = {("GET", "/metrics")}
+EXTRACTED_ROUTES = EXTRACTED_SYSTEM_ROUTES | EXTRACTED_OBSERVABILITY_ROUTES
+CRITICAL_ROUTES = EXTRACTED_ROUTES | {
     ("POST", "/api/login"),
     ("POST", "/api/logout"),
     ("GET", "/api/me"),
@@ -107,13 +109,28 @@ def _root_static_mount_line(tree: ast.AST) -> int | None:
     return None
 
 
+def _router_contract(
+    *,
+    source: str,
+    path: Path,
+    expected: set[tuple[str, str]],
+    errors: list[str],
+) -> list[dict[str, Any]]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    rows = _route_records(tree, "router", source)
+    keys = {(row["method"], row["path"]) for row in rows}
+    if keys != expected:
+        errors.append(
+            f"{source} contract drifted; missing/extra=" + str(sorted(keys ^ expected))
+        )
+    return rows
+
+
 def audit() -> dict[str, Any]:
     facade_source = FACADE_PATH.read_text(encoding="utf-8")
     legacy_source = LEGACY_APP_PATH.read_text(encoding="utf-8")
-    router_source = SYSTEM_ROUTER_PATH.read_text(encoding="utf-8")
     facade_tree = ast.parse(facade_source, filename=str(FACADE_PATH))
     legacy_tree = ast.parse(legacy_source, filename=str(LEGACY_APP_PATH))
-    router_tree = ast.parse(router_source, filename=str(SYSTEM_ROUTER_PATH))
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -122,18 +139,24 @@ def audit() -> dict[str, Any]:
         errors.append("compatibility facade must not own FastAPI routes")
 
     legacy_routes = _route_records(legacy_tree, "app", "mgc/legacy_app.py")
-    router_routes = _route_records(router_tree, "router", "mgc/routers/system.py")
-    router_keys = {(r["method"], r["path"]) for r in router_routes}
-    if router_keys != EXTRACTED_SYSTEM_ROUTES:
-        errors.append(
-            "system router contract drifted; missing/extra="
-            + str(sorted(router_keys ^ EXTRACTED_SYSTEM_ROUTES))
-        )
+    system_router_routes = _router_contract(
+        source="mgc/routers/system.py",
+        path=SYSTEM_ROUTER_PATH,
+        expected=EXTRACTED_SYSTEM_ROUTES,
+        errors=errors,
+    )
+    observability_router_routes = _router_contract(
+        source="mgc/routers/observability.py",
+        path=OBSERVABILITY_ROUTER_PATH,
+        expected=EXTRACTED_OBSERVABILITY_ROUTES,
+        errors=errors,
+    )
+    router_routes = system_router_routes + observability_router_routes
 
-    # Runtime replaces these legacy APIRoutes in-place; count only their router-owned versions.
+    # Runtime replaces extracted legacy APIRoutes in-place; count only router-owned versions.
     routes = [
         row for row in legacy_routes
-        if (row["method"], row["path"]) not in EXTRACTED_SYSTEM_ROUTES
+        if (row["method"], row["path"]) not in EXTRACTED_ROUTES
     ] + router_routes
 
     by_key: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
@@ -197,6 +220,8 @@ def audit() -> dict[str, Any]:
             "route_count": len(routes),
             "admin_route_count": sum(1 for r in routes if r["path"].startswith("/api/admin/")),
             "router_route_count": len(router_routes),
+            "system_router_route_count": len(system_router_routes),
+            "observability_router_route_count": len(observability_router_routes),
             "sizes": sizes,
             "root_static_mount_line": mount_line,
         },
