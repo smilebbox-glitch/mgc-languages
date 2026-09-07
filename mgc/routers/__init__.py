@@ -2,6 +2,7 @@
 
 from .admin_ops import build_admin_ops_router
 from .auth import build_auth_router
+from .language_content import build_language_content_router
 from .learning import build_learning_router
 from .notifications import build_notifications_router
 from .observability import build_observability_router
@@ -15,6 +16,7 @@ from .users_manager import build_user_manager_router
 __all__ = [
     "build_admin_ops_router",
     "build_auth_router",
+    "build_language_content_router",
     "build_learning_router",
     "build_notifications_router",
     "build_observability_router",
