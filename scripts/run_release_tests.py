@@ -10,17 +10,18 @@ SHARDS={
  'ops':['tests/v55_operations_test.py','tests/v56_governance_putonghua_clarity_test.py'],
  'v57':['tests/v57_security_data_integrity_test.py','tests/v57_authorization_matrix_test.py'],
  'v571':['tests/v571_observability_recovery_test.py'],
+ 'v572':['tests/v572_architecture_contract_test.py','tests/v572_content_integrity_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
  except Exception:return ''
 def main()->int:
- ap=argparse.ArgumentParser(description='Isolated v5.7.1 release regression runner')
+ ap=argparse.ArgumentParser(description='Isolated MGC Languages release regression runner')
  ap.add_argument('--timeout',type=int,default=45); ap.add_argument('--shard',choices=SHARDS,required=True); a=ap.parse_args()
  tests=SHARDS[a.shard]; started=time.monotonic(); passed=0
  for rel in tests:
   t0=time.monotonic()
-  with tempfile.TemporaryDirectory(prefix='mgc-v571-test-') as td:
+  with tempfile.TemporaryDirectory(prefix='mgc-release-test-') as td:
    outp=Path(td)/'stdout.txt'; errp=Path(td)/'stderr.txt'
    with outp.open('wb') as out,errp.open('wb') as err:
     proc=subprocess.Popen([sys.executable,rel],cwd=ROOT,stdout=out,stderr=err,start_new_session=True)

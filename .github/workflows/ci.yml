@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571]
+        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571, v572]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,6 +37,6 @@ jobs:
     needs: [static, regression]
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t mgc-languages:ci-v571 .
+      - run: docker build -t mgc-languages:ci .
       - name: Verify offline TTS exists in image
-        run: docker run --rm --entrypoint python mgc-languages:ci-v571 -c "import shutil; assert shutil.which('espeak-ng')"
+        run: docker run --rm --entrypoint python mgc-languages:ci -c "import shutil; assert shutil.which('espeak-ng')"
