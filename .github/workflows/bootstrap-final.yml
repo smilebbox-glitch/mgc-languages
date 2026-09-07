@@ -19,86 +19,51 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reconstruct verified chunks from repository history
+      - name: Locate verified v5.7.1 tree in repository history
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/p.expected <<'EOF'
-          000 f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879
-          001 7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b
-          002 70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41
-          003 98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a
-          004 a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b
-          005 3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a
-          006 3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160
-          007 8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec
-          008 870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7
-          009 40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8
-          010 fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3
-          011 ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124
-          012 0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88
-          013 1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47
-          014 2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7
-          015 0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78
-          016 34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb
-          017 a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d
-          018 de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f
-          019 6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16
-          020 5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8
-          021 5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8
-          022 2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff
-          023 5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4
-          EOF
+          expected_app='693adc9a53314e798e05a44b33be1470c7f6d2cf55d1f6fd98307309e4f27dc4'
+          expected_js='3487bb75b547f473c29d35a329aae7a033df8e5062343b0031822702d411de7f'
+          expected_html='a79fc452a435d6427015e9a06129e999244acf9dca90f2975988ab119d656444'
+          expected_cn='1b1e23fa79676bb1017d746d45d0638498bc96a5e1bcba26167590de36c4d221'
+          expected_req='74b3380fe50afc6d21d3fea8ade4ab442c6fa19050e5b9949c86e185645ec2b9'
 
-          mkdir -p .bootstrap
-          mapfile -t refs < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin | sort)
-          while read -r idx expected; do
-            path=".bootstrap/p.part${idx}"
-            found=0
+          verified_commit=''
+          while read -r commit; do
+            git cat-file -e "${commit}:app.py" 2>/dev/null || continue
+            git cat-file -e "${commit}:static/app.js" 2>/dev/null || continue
+            git cat-file -e "${commit}:static/index.html" 2>/dev/null || continue
+            git cat-file -e "${commit}:data/chinese.json" 2>/dev/null || continue
+            git cat-file -e "${commit}:requirements.txt" 2>/dev/null || continue
+            git cat-file -e "${commit}:RELEASE_VERIFICATION_v5.7.1.txt" 2>/dev/null || continue
 
-            if [[ -f "$path" ]]; then
-              tr -d '[:space:]' < "$path" > /tmp/candidate
-              actual="$(sha256sum /tmp/candidate | awk '{print $1}')"
-              if [[ "$actual" == "$expected" ]]; then
-                mv /tmp/candidate "$path"
-                printf 'verified current %s\n' "$path"
-                found=1
-              fi
-            fi
+            app_hash="$(git show "${commit}:app.py" | sha256sum | awk '{print $1}')"
+            [[ "$app_hash" == "$expected_app" ]] || continue
+            js_hash="$(git show "${commit}:static/app.js" | sha256sum | awk '{print $1}')"
+            [[ "$js_hash" == "$expected_js" ]] || continue
+            html_hash="$(git show "${commit}:static/index.html" | sha256sum | awk '{print $1}')"
+            [[ "$html_hash" == "$expected_html" ]] || continue
+            cn_hash="$(git show "${commit}:data/chinese.json" | sha256sum | awk '{print $1}')"
+            [[ "$cn_hash" == "$expected_cn" ]] || continue
+            req_hash="$(git show "${commit}:requirements.txt" | sha256sum | awk '{print $1}')"
+            [[ "$req_hash" == "$expected_req" ]] || continue
+            git show "${commit}:RELEASE_VERIFICATION_v5.7.1.txt" | grep -q 'MGC Languages v5.7.1' || continue
+            git show "${commit}:RELEASE_VERIFICATION_v5.7.1.txt" | grep -q 'c57d0a31f570' || continue
 
-            if [[ "$found" == "0" ]]; then
-              for ref in "${refs[@]}"; do
-                git cat-file -e "${ref}:${path}" 2>/dev/null || continue
-                git show "${ref}:${path}" | tr -d '[:space:]' > /tmp/candidate
-                actual="$(sha256sum /tmp/candidate | awk '{print $1}')"
-                if [[ "$actual" == "$expected" ]]; then
-                  mv /tmp/candidate "$path"
-                  printf 'restored %s from %s\n' "$path" "$ref"
-                  found=1
-                  break
-                fi
-              done
-            fi
+            verified_commit="$commit"
+            break
+          done < <(git rev-list --all --date-order)
 
-            if [[ "$found" == "0" ]]; then
-              echo "ERROR: no repository branch contains verified $path ($expected)" >&2
-              exit 1
-            fi
-          done < /tmp/p.expected
+          if [[ -z "$verified_commit" ]]; then
+            echo 'ERROR: no Git commit contains the fully verified MGC Languages v5.7.1 tree.' >&2
+            exit 1
+          fi
 
-          awk '{print $2 "  .bootstrap/p.part" $1}' /tmp/p.expected > /tmp/p.sha256
-          sha256sum -c /tmp/p.sha256
-
-          : > /tmp/payload.b64
-          for i in $(seq 0 23); do
-            printf -v idx '%03d' "$i"
-            cat ".bootstrap/p.part${idx}" >> /tmp/payload.b64
-          done
-          base64 --decode /tmp/payload.b64 > /tmp/mgc-v571.tar.xz
-          echo '8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz' | sha256sum -c -
-          xz -t /tmp/mgc-v571.tar.xz
+          echo "Verified source commit: $verified_commit"
+          rm -rf /tmp/mgc-v571
           mkdir -p /tmp/mgc-v571
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
+          git archive "$verified_commit" | tar -x -C /tmp/mgc-v571
 
       - name: Verify extracted critical files
         shell: bash
