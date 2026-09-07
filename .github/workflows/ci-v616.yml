@@ -1,0 +1,55 @@
+name: mgc-languages-v616-physical-shell-cleanup
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v616-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-physical-shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v603 --timeout 45
+          python scripts/run_release_tests.py --shard v604 --timeout 45
+          python scripts/run_release_tests.py --shard v608 --timeout 45
+          python scripts/run_release_tests.py --shard v613 --timeout 45
+          python scripts/run_release_tests.py --shard v614 --timeout 45
+          python scripts/run_release_tests.py --shard v615 --timeout 45
+          python scripts/run_release_tests.py --shard v616 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/app.js
+          node --check static/frontend/legacy_bridge.js
+          node --check static/frontend/legacy_retirement.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/session_lifecycle.js
+          node --check static/frontend/boot.js
+      - name: Physical shell guard
+        run: |
+          test $(wc -c < static/app.js) -lt 30000
+          grep -q "v6.0.16: physical frontend compatibility shell" static/app.js
+          grep -q "function loadLanguage" static/app.js
+          grep -q "function submitPractice" static/app.js
+          grep -q "function playPronunciation" static/app.js
+          grep -q "function modularOwner" static/app.js
+          ! grep -q "function renderHome" static/app.js
+          ! grep -q "function renderRoleplay" static/app.js
+          ! grep -q "function renderAdmin" static/app.js
+          ! grep -q "function renderChineseBasics" static/app.js
+          ! grep -q "function renderExam" static/app.js
+          ! grep -q "renderPracticeRoleplay:" static/frontend/legacy_bridge.js
+          ! grep -q "renderLearningHome:" static/frontend/legacy_bridge.js
+          grep -q "bridge.surface = Object.freeze(Object.keys(bridge))" static/frontend/legacy_bridge.js
