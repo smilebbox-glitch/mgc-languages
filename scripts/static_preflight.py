@@ -25,10 +25,12 @@ def main()->int:
     assert data.get('context',{}).get('clues')
     assert len(data.get('putonghua',{}).get('groups',[]))==10
     assert (data.get('learning_standard') or {}).get('name')=='Путунхуа (普通话)'
-    print('PASS: Python compile + modular system/observability/auth/learning/practice-game/terminology-admin/pronunciation/user-manager/pilot-admin/admin-ops/notifications/language-content routers + security/governance/learning/services/workflows/auth/TTS core + Putonghua scope')
+    print('PASS: Python compile + modular routers/cores + Putonghua scope')
     run([sys.executable,'scripts/api_contract_guard.py'],timeout=30)
     run([sys.executable,'scripts/content_integrity_guard.py'],timeout=60)
     print('PASS: API architecture + language content integrity guards')
+    run([sys.executable,'tests/v593_multi_user_deployment_test.py'],timeout=20)
+    print('PASS: multi-user LAN deployment contract')
     run(['node','--check','static/app.js'],timeout=20)
     print('PASS: JavaScript syntax')
     json.loads((ROOT/'deploy/observability/grafana-dashboard-v5.7.json').read_text(encoding='utf-8'))
@@ -46,7 +48,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.9.2 language-content-router extraction preflight')
+    print('PASS: v5.9.3 multi-user LAN readiness preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
