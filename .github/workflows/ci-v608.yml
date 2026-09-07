@@ -26,6 +26,7 @@ jobs:
           python scripts/run_release_tests.py --shard v608 --timeout 45
       - name: JavaScript syntax
         run: |
+          node --check static/app.js
           node --check static/frontend/manager_admin.js
           node --check static/frontend/legacy_bridge.js
           node --check static/frontend/navigation.js
@@ -34,6 +35,9 @@ jobs:
         run: |
           grep -q "frontend.register('manager-admin'" static/frontend/manager_admin.js
           grep -q "/api/manager/team" static/frontend/manager_admin.js
-          grep -q "return legacy().renderAdmin()" static/frontend/manager_admin.js
-          grep -q "renderAdmin: requireFunction('renderAdmin', renderAdmin)" static/frontend/legacy_bridge.js
+          grep -q "frontend.get('admin-analytics').renderAdmin()" static/frontend/manager_admin.js
+          grep -q "frontend.get('content-governance').renderEditor()" static/frontend/manager_admin.js
+          ! grep -q "renderAdmin:" static/frontend/legacy_bridge.js
+          ! grep -q "function renderAdmin" static/app.js
+          ! grep -q "function renderManager" static/app.js
           grep -q "frontend.get('manager-admin').navigate(view)" static/frontend/navigation.js

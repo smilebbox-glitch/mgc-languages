@@ -1,4 +1,4 @@
-/* v6.0.15: isolate only the remaining shared shell app.js compatibility surface. */
+/* v6.0.16: expose only the 18 shared primitives retained by the physical app.js shell. */
 (function () {
   'use strict';
 

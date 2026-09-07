@@ -1,0 +1,53 @@
+MGC Languages v6.0.16
+Release focus: Physical Frontend Shell Cleanup
+
+Branch:
+  refactor/v6.0.16-physical-shell-cleanup
+Base:
+  refactor/v6.0.15-practice-games-xp-extraction
+
+Frontend architecture result:
+- static/app.js is a shared compatibility shell, not a feature bundle.
+- target shell size: < 30 KB; current authored shell is ~19 KB.
+- legacy bridge surface: 18 shared entries.
+- feature renderer adapters in legacy bridge: 0.
+- active feature views are owned by frontend modules.
+
+Retained shell responsibilities:
+- shared state object
+- auth/session fallback primitives
+- language bootstrap/loading
+- feature visibility/navigation handoff
+- Putonghua learning banner
+- practice result / XP submission
+- pronunciation/audio fallback
+- service status, toast, DOM helpers
+
+Physically removed from app.js:
+- learning renderers
+- roleplay/games/XP renderers
+- notifications
+- assistant/knowledge
+- final exam
+- Chinese reference/Tone Lab
+- manager/admin
+- content governance
+- pilot/IT admin UI
+- admin analytics
+
+Compatibility intentionally unchanged:
+- backend API/OpenAPI
+- Alembic head c57d0a31f570
+- ORM/schema
+- Putonghua learning content
+- XP/SRS semantics
+- deployment topology
+- runtime APP_VERSION
+
+Verification:
+- app.js authored shell independently passes `node --check` before repository commit.
+- v616 regression/CI contracts added.
+- hosted GitHub Actions may still fail before executing workflow steps; such `steps=[]` failures are infrastructure status, not code-test results.
+
+Next gate:
+  v6.0.17 Pilot Readiness Gate
