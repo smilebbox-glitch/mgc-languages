@@ -8,6 +8,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from fastapi import HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 
@@ -21,6 +22,44 @@ class LearningServiceBindings:
     spend_xp: Callable[..., dict[str, Any]]
     get_or_create_srs_card: Callable[..., Any]
     schedule_srs: Callable[..., Any]
+
+
+def build_pilot_daily_usage_accessor(
+    *,
+    usage_model: Any,
+    day_key: Callable[[], str],
+) -> Callable[[Session, int], Any]:
+    """Create a race-safe per-user/day usage accessor.
+
+    Existing rows are selected FOR UPDATE so quota increments from concurrent
+    requests for the same user cannot overwrite each other. First-row creation
+    is protected by a nested transaction; a unique-key loser re-fetches the
+    row without rolling back the caller's outer transaction.
+    """
+
+    def pilot_daily_usage(db: Session, user_id: int) -> Any:
+        key = day_key()
+        stmt = select(usage_model).where(
+            usage_model.user_id == user_id,
+            usage_model.day_key == key,
+        ).with_for_update()
+        row = db.scalar(stmt)
+        if row is not None:
+            return row
+        try:
+            with db.begin_nested():
+                row = usage_model(user_id=user_id, day_key=key)
+                db.add(row)
+                db.flush()
+        except IntegrityError:
+            row = db.scalar(stmt)
+            if row is None:
+                raise
+        return row
+
+    pilot_daily_usage.__name__ = "pilot_daily_usage"
+    pilot_daily_usage.__qualname__ = "pilot_daily_usage"
+    return pilot_daily_usage
 
 
 def build_learning_service(
@@ -66,17 +105,34 @@ def build_learning_service(
             "next_level_xp": next_xp,
         }
 
-    def get_profile(db: Session, user_id: int) -> Any:
-        profile = db.get(gamification_profile_model, user_id)
-        if not profile:
-            profile = gamification_profile_model(user_id=user_id, week_key=current_week_key())
-            db.add(profile)
-            db.flush()
+    def _profile(db: Session, user_id: int, *, for_update: bool) -> Any:
+        stmt = select(gamification_profile_model).where(
+            gamification_profile_model.user_id == user_id
+        )
+        if for_update:
+            stmt = stmt.with_for_update()
+        profile = db.scalar(stmt)
+        if profile is None:
+            try:
+                with db.begin_nested():
+                    profile = gamification_profile_model(
+                        user_id=user_id,
+                        week_key=current_week_key(),
+                    )
+                    db.add(profile)
+                    db.flush()
+            except IntegrityError:
+                profile = db.scalar(stmt)
+                if profile is None:
+                    raise
         week = current_week_key()
         if profile.week_key != week:
             profile.week_key = week
             profile.weekly_xp = 0
         return profile
+
+    def get_profile(db: Session, user_id: int) -> Any:
+        return _profile(db, user_id, for_update=False)
 
     def gamification_view(db: Session, user_id: int) -> dict[str, Any]:
         profile = get_profile(db, user_id)
@@ -133,7 +189,9 @@ def build_learning_service(
         usage.xp_awarded = int(usage.xp_awarded or 0) + awarded
         usage.updated_at = datetime.now(timezone.utc)
 
-        profile = get_profile(db, user_id)
+        # Serialize XP mutations for one user while allowing different users to
+        # update in parallel. This prevents lost increments under multi-worker load.
+        profile = _profile(db, user_id, for_update=True)
         profile.lifetime_xp += awarded
         profile.spendable_xp += awarded
         profile.weekly_xp += awarded
@@ -173,7 +231,7 @@ def build_learning_service(
         reward = reward_catalog.get(reward_id)
         if not reward:
             raise HTTPException(404, "Неизвестная помощь")
-        profile = get_profile(db, user_id)
+        profile = _profile(db, user_id, for_update=True)
         price = int(reward["price"])
         if profile.spendable_xp < price:
             raise HTTPException(
@@ -279,4 +337,8 @@ def build_learning_service(
     )
 
 
-__all__ = ["LearningServiceBindings", "build_learning_service"]
+__all__ = [
+    "LearningServiceBindings",
+    "build_learning_service",
+    "build_pilot_daily_usage_accessor",
+]
