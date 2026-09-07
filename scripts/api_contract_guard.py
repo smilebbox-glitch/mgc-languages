@@ -14,6 +14,7 @@ OBSERVABILITY_ROUTER_PATH = ROOT / "mgc" / "routers" / "observability.py"
 AUTH_ROUTER_PATH = ROOT / "mgc" / "routers" / "auth.py"
 LEARNING_ROUTER_PATH = ROOT / "mgc" / "routers" / "learning.py"
 PRACTICE_GAMES_ROUTER_PATH = ROOT / "mgc" / "routers" / "practice_games.py"
+TERMINOLOGY_ADMIN_ROUTER_PATH = ROOT / "mgc" / "routers" / "terminology_admin.py"
 FRONTEND_PATH = ROOT / "static" / "app.js"
 STYLES_PATH = ROOT / "static" / "styles.css"
 
@@ -55,18 +56,35 @@ EXTRACTED_PRACTICE_GAME_ROUTES = {
     ("POST", "/api/games/{session_id}/finish"),
     ("POST", "/api/learning/question-attempt"),
 }
+EXTRACTED_TERMINOLOGY_ADMIN_ROUTES = {
+    ("GET", "/api/language/{language}/topics"),
+    ("GET", "/api/language/{language}/terms"),
+    ("GET", "/api/admin/terms"),
+    ("POST", "/api/admin/terms"),
+    ("PATCH", "/api/admin/terms/{term_id}"),
+    ("DELETE", "/api/admin/terms/{term_id}"),
+    ("GET", "/api/admin/terms/{term_id}/revisions"),
+    ("POST", "/api/admin/terms/{term_id}/submit-review"),
+    ("POST", "/api/admin/terms/{term_id}/approve"),
+    ("POST", "/api/admin/terms/{term_id}/reject"),
+    ("POST", "/api/admin/terms/{term_id}/rollback/{revision_no}"),
+    ("POST", "/api/admin/terms/import"),
+    ("GET", "/api/admin/taxonomy"),
+}
 EXTRACTED_ROUTES = (
     EXTRACTED_SYSTEM_ROUTES
     | EXTRACTED_OBSERVABILITY_ROUTES
     | EXTRACTED_AUTH_ROUTES
     | EXTRACTED_LEARNING_ROUTES
     | EXTRACTED_PRACTICE_GAME_ROUTES
+    | EXTRACTED_TERMINOLOGY_ADMIN_ROUTES
 )
 CRITICAL_ROUTES = (
     EXTRACTED_SYSTEM_ROUTES
     | EXTRACTED_OBSERVABILITY_ROUTES
     | EXTRACTED_LEARNING_ROUTES
     | EXTRACTED_PRACTICE_GAME_ROUTES
+    | EXTRACTED_TERMINOLOGY_ADMIN_ROUTES
     | {
         ("POST", "/api/login"),
         ("POST", "/api/logout"),
@@ -194,12 +212,17 @@ def audit() -> dict[str, Any]:
         source="mgc/routers/practice_games.py", path=PRACTICE_GAMES_ROUTER_PATH,
         expected=EXTRACTED_PRACTICE_GAME_ROUTES, errors=errors,
     )
+    terminology_admin_router_routes = _router_contract(
+        source="mgc/routers/terminology_admin.py", path=TERMINOLOGY_ADMIN_ROUTER_PATH,
+        expected=EXTRACTED_TERMINOLOGY_ADMIN_ROUTES, errors=errors,
+    )
     router_routes = (
         system_router_routes
         + observability_router_routes
         + auth_router_routes
         + learning_router_routes
         + practice_game_router_routes
+        + terminology_admin_router_routes
     )
 
     routes = [
@@ -273,6 +296,7 @@ def audit() -> dict[str, Any]:
             "auth_router_route_count": len(auth_router_routes),
             "learning_router_route_count": len(learning_router_routes),
             "practice_game_router_route_count": len(practice_game_router_routes),
+            "terminology_admin_router_route_count": len(terminology_admin_router_routes),
             "sizes": sizes,
             "root_static_mount_line": mount_line,
         },
