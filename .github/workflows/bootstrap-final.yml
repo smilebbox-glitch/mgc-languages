@@ -1,6 +1,7 @@
 name: Final verified v5.7.1 import
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -12,54 +13,82 @@ permissions:
 jobs:
   import:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Restore known chunks and verify payload
+      - name: Reconstruct verified chunks from repository history
         shell: bash
         run: |
           set -euo pipefail
-          git show 'origin/backup/bootstrap-v5.7.1-2026-09-07:.bootstrap/p.part000' | tr -d '[:space:]' > .bootstrap/p.part000
-          for i in 002 003 004; do
-            git show "origin/import-products-2026-09-07:.bootstrap/p.part${i}" | tr -d '[:space:]' > ".bootstrap/p.part${i}"
-          done
-          for i in 005 017 018 019 021; do
-            git show "origin/diag-artifact:.bootstrap/p.part${i}" | tr -d '[:space:]' > ".bootstrap/p.part${i}"
-          done
-          for i in $(seq 0 23); do
-            printf -v idx '%03d' "$i"
-            tr -d '[:space:]' < ".bootstrap/p.part${idx}" > "/tmp/p.${idx}"
-            mv "/tmp/p.${idx}" ".bootstrap/p.part${idx}"
-          done
-          cat > /tmp/p.sha256 <<'EOF'
-          f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879  .bootstrap/p.part000
-          7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b  .bootstrap/p.part001
-          70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41  .bootstrap/p.part002
-          98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a  .bootstrap/p.part003
-          a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b  .bootstrap/p.part004
-          3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a  .bootstrap/p.part005
-          3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160  .bootstrap/p.part006
-          8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec  .bootstrap/p.part007
-          870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7  .bootstrap/p.part008
-          40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8  .bootstrap/p.part009
-          fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3  .bootstrap/p.part010
-          ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124  .bootstrap/p.part011
-          0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88  .bootstrap/p.part012
-          1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47  .bootstrap/p.part013
-          2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7  .bootstrap/p.part014
-          0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78  .bootstrap/p.part015
-          34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb  .bootstrap/p.part016
-          a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d  .bootstrap/p.part017
-          de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f  .bootstrap/p.part018
-          6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16  .bootstrap/p.part019
-          5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8  .bootstrap/p.part020
-          5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8  .bootstrap/p.part021
-          2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff  .bootstrap/p.part022
-          5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4  .bootstrap/p.part023
+          cat > /tmp/p.expected <<'EOF'
+          000 f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879
+          001 7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b
+          002 70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41
+          003 98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a
+          004 a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b
+          005 3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a
+          006 3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160
+          007 8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec
+          008 870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7
+          009 40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8
+          010 fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3
+          011 ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124
+          012 0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88
+          013 1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47
+          014 2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7
+          015 0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78
+          016 34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb
+          017 a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d
+          018 de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f
+          019 6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16
+          020 5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8
+          021 5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8
+          022 2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff
+          023 5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4
           EOF
+
+          mkdir -p .bootstrap
+          mapfile -t refs < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin | sort)
+          while read -r idx expected; do
+            path=".bootstrap/p.part${idx}"
+            found=0
+
+            if [[ -f "$path" ]]; then
+              tr -d '[:space:]' < "$path" > /tmp/candidate
+              actual="$(sha256sum /tmp/candidate | awk '{print $1}')"
+              if [[ "$actual" == "$expected" ]]; then
+                mv /tmp/candidate "$path"
+                printf 'verified current %s\n' "$path"
+                found=1
+              fi
+            fi
+
+            if [[ "$found" == "0" ]]; then
+              for ref in "${refs[@]}"; do
+                git cat-file -e "${ref}:${path}" 2>/dev/null || continue
+                git show "${ref}:${path}" | tr -d '[:space:]' > /tmp/candidate
+                actual="$(sha256sum /tmp/candidate | awk '{print $1}')"
+                if [[ "$actual" == "$expected" ]]; then
+                  mv /tmp/candidate "$path"
+                  printf 'restored %s from %s\n' "$path" "$ref"
+                  found=1
+                  break
+                fi
+              done
+            fi
+
+            if [[ "$found" == "0" ]]; then
+              echo "ERROR: no repository branch contains verified $path ($expected)" >&2
+              exit 1
+            fi
+          done < /tmp/p.expected
+
+          awk '{print $2 "  .bootstrap/p.part" $1}' /tmp/p.expected > /tmp/p.sha256
           sha256sum -c /tmp/p.sha256
+
           : > /tmp/payload.b64
           for i in $(seq 0 23); do
             printf -v idx '%03d' "$i"
