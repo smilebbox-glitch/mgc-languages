@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import os
 import subprocess
@@ -19,10 +20,23 @@ config_source = CONFIG_PATH.read_text(encoding="utf-8")
 database_source = DATABASE_PATH.read_text(encoding="utf-8")
 app_source = APP_PATH.read_text(encoding="utf-8")
 
+
+def imported_roots(source: str) -> set[str]:
+    roots: set[str] = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            roots.update(alias.name.split(".", 1)[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            roots.add(node.module.split(".", 1)[0])
+    return roots
+
+
 # Configuration must remain dependency-light: importing settings must not create the API or DB engine.
+config_imports = imported_roots(config_source)
 for forbidden in ("fastapi", "sqlalchemy", "uvicorn", "alembic"):
-    assert forbidden not in config_source.lower(), f"mgc.config unexpectedly depends on {forbidden}"
-assert "fastapi" not in database_source.lower(), "database bootstrap must not depend on FastAPI"
+    assert forbidden not in config_imports, f"mgc.config unexpectedly imports {forbidden}"
+database_imports = imported_roots(database_source)
+assert "fastapi" not in database_imports, "database bootstrap must not depend on FastAPI"
 assert "from mgc.config import *" in app_source, "app.py no longer re-exports extracted settings"
 assert "from mgc.database import DATABASE_URL, SessionLocal, engine" in app_source, "app.py no longer consumes extracted DB bootstrap"
 assert "ROOT = Path(__file__).resolve().parent" not in app_source, "legacy inline config block returned to app.py"
