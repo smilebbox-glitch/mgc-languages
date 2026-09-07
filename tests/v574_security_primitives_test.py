@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 import hashlib
+import sys
+from pathlib import Path
 
-from mgc.security import (
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from mgc.security import (  # noqa: E402
     CSRF_EXEMPT_PATHS,
     PASSWORD_PBKDF2_ITERATIONS,
     client_fingerprint,
