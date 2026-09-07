@@ -1,0 +1,42 @@
+MGC Languages technical increment: v5.8.5
+Area: Terminology & Admin Router Extraction
+Runtime entrypoint: asgi:app
+
+New router:
+- mgc/routers/terminology_admin.py
+
+Runtime bridge:
+- mgc_core/terminology_admin_router_bridge.py
+
+Active routes moved: 13
+- public terminology: 2
+- corporate term administration: 10
+- taxonomy: 1
+
+Router-owned route total after v5.8.5: 41
+
+Required bindings before router:
+- Security Core
+- Governance / Audit Core
+- Learning Core
+- User / Terminology Services
+- Auth Core
+
+Compatibility:
+- API/OpenAPI preserved
+- RBAC preserved
+- term approval/revision/import semantics preserved
+- DB schema unchanged
+- Alembic head: c57d0a31f570
+- runtime APP_VERSION fallback unchanged
+- UI/content unchanged
+- Chinese learning standard: Путунхуа (普通话)
+
+Release shard:
+- v585
+
+Production gate:
+- Docker build
+- terminology/admin router binding report
+- runtime container start
+- external runtime smoke
