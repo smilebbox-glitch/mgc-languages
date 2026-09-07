@@ -24,11 +24,31 @@
         <button class="auth-tab" data-auth-mode="register">Регистрация</button>
       </div>
       <form id="authForm">
-        <label id="displayNameWrap" class="hidden">Имя
-          <input id="displayName" autocomplete="name" placeholder="Как к вам обращаться">
+        <label id="displayNameWrap" class="hidden">Имя и фамилия
+          <input id="displayName" autocomplete="name" placeholder="Например: Иван Иванов">
         </label>
         <label>Логин
-          <input id="username" autocomplete="username" required minlength="3" placeholder="Латинские буквы и цифры">
+          <input id="username" autocomplete="username" required minlength="3" placeholder="Например: ivan.ivanov">
+        </label>
+        <label>Отдел
+          <select id="department" required autocomplete="organization-title">
+            <option value="" selected disabled>Выберите отдел</option>
+            <option value="R&D">R&D</option>
+            <option value="Производство">Производство</option>
+            <option value="Сборка">Сборка</option>
+            <option value="Сварка">Сварка</option>
+            <option value="Окраска">Окраска</option>
+            <option value="Штамповка">Штамповка</option>
+            <option value="Компоненты">Компоненты</option>
+            <option value="Качество">Качество</option>
+            <option value="Логистика">Логистика</option>
+            <option value="Закупки">Закупки</option>
+            <option value="Финансы">Финансы</option>
+            <option value="IT">IT</option>
+            <option value="HR">HR</option>
+            <option value="Администрация">Администрация</option>
+            <option value="Другое">Другое</option>
+          </select>
         </label>
         <label>Пароль
           <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Не менее 6 символов">
@@ -36,6 +56,7 @@
         <button id="authSubmit" class="primary wide" type="submit">Войти</button>
         <p id="authMessage" class="form-message" aria-live="polite"></p>
       </form>
+      <p class="muted auth-help">Для теста каждый сотрудник использует свой аккаунт. При регистрации отдел сохраняется в профиле.</p>
     </div>
   </section>
 
@@ -102,5 +123,6 @@
 
   <div id="toast" class="toast hidden" role="status"></div>
   <script src="/app.js" defer></script>
+  <script src="/auth_department.js" defer></script>
 </body>
 </html>
