@@ -1,4 +1,4 @@
-name: Diagnose complete MGC Languages v5.7.1 P transport
+name: Verify repaired MGC Languages v5.7.1 baseline
 
 on:
   push:
@@ -10,23 +10,45 @@ permissions:
   contents: read
 
 jobs:
-  diagnose:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Inspect exact Base64 transport boundaries
+      - name: Verify repaired canonical P archive
         shell: bash
         run: |
           set -euo pipefail
+          expected='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
+          encoded='/tmp/mgc-v571-p.b64'
+          archive='/tmp/mgc-v571-p.tar.xz'
+
           shopt -s nullglob
           parts=(.bootstrap/p.part*)
           echo "PART_COUNT=${#parts[@]}"
-          for part in "${parts[@]}"; do
-            echo "--- $part ---"
-            python3 -c "import pathlib,sys; d=pathlib.Path(sys.argv[1]).read_bytes(); b=bytes(c for c in d if c in b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='); eq=[i for i,c in enumerate(b) if c==61]; print('RAW='+str(len(d))); print('B64_CHARS='+str(len(b))); print('MOD4='+str(len(b)%4)); print('NEWLINES='+str(d.count(b'\\n'))); print('CR='+str(d.count(b'\\r'))); print('EQ_COUNT='+str(len(eq))); print('EQ_POS_HEAD='+repr(eq[:8])); print('HEAD='+repr(b[:32])); print('TAIL='+repr(b[-64:]))" "$part"
-          done
+          test "${#parts[@]}" -eq 6
+          printf 'PART=%s\n' "${parts[@]}"
 
-          python3 -c "import pathlib,glob; ps=sorted(glob.glob('.bootstrap/p.part*')); d=b''.join(pathlib.Path(p).read_bytes() for p in ps); b=bytes(c for c in d if c in b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='); eq=[i for i,c in enumerate(b) if c==61]; print('TOTAL_RAW='+str(len(d))); print('TOTAL_B64_CHARS='+str(len(b))); print('TOTAL_MOD4='+str(len(b)%4)); print('TOTAL_EQ_COUNT='+str(len(eq))); print('TOTAL_EQ_POS_TAIL='+repr(eq[-12:])); print('FINAL_TAIL='+repr(b[-100:]))"
+          cat "${parts[@]}" > "$encoded"
+          base64 --decode "$encoded" > "$archive"
+
+          actual="$(sha256sum "$archive" | awk '{print $1}')"
+          echo "EXPECTED_SHA256=$expected"
+          echo "ACTUAL_SHA256=$actual"
+          test "$actual" = "$expected"
+
+          xz -t "$archive"
+          echo 'XZ_OK=1'
+
+          rm -rf /tmp/mgc-v571-verified
+          mkdir -p /tmp/mgc-v571-verified
+          tar -xJf "$archive" -C /tmp/mgc-v571-verified
+          echo 'TAR_OK=1'
+          echo "FILE_COUNT=$(find /tmp/mgc-v571-verified -type f | wc -l)"
+
+          echo '--- SOURCE TREE ---'
+          find /tmp/mgc-v571-verified -maxdepth 5 -type f -printf '%P\n' | sort | sed -n '1,400p'
+
+          echo 'P_BASELINE_VERIFIED=1'
