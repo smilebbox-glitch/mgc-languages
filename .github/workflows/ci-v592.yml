@@ -1,0 +1,27 @@
+name: mgc-languages-v592-gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-languages-v592-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  language-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Run v5.9.2 language-content regression shard
+        run: python scripts/run_release_tests.py --shard v592 --timeout 75
+      - name: Build Docker image
+        run: docker build -t mgc-languages:v592 .
+      - name: Verify language-content router binding in image
+        run: |
+          docker run --rm --entrypoint python mgc-languages:v592 -c "import asgi; r=asgi.LANGUAGE_CONTENT_ROUTER_BINDING_REPORT; assert r.ok; assert r.route_count==5; assert r.summary_route_count==1; assert r.quiz_route_count==1; assert r.scenario_route_count==3; assert r.route_names_preserved; assert r.response_classes_preserved; assert r.root_mount_order_preserved; assert r.router_module_owned; assert r.auth_core_bound; assert r.terminology_service_bound"
