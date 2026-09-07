@@ -73,18 +73,15 @@ jobs:
           for idx, wanted in expected.items():
               recovered = None
               path = f'.bootstrap/p.part{idx}'
-              # First search the full reachable commit history for an exact historical file.
               for commit in commits:
                   try: data = norm(subprocess.check_output(['git','show',f'{commit}:{path}'], stderr=subprocess.DEVNULL))
                   except subprocess.CalledProcessError: continue
-                  if len(data) == 18000 and hashlib.sha256(data).hexdigest() == wanted:
+                  if data and hashlib.sha256(data).hexdigest() == wanted:
                       recovered = data; print('history', idx, commit[:12]); break
-              # Then search exact branch-head blobs/combined streams.
               if recovered is None:
                   for label, data in sources:
-                      if len(data) == 18000 and hashlib.sha256(data).hexdigest() == wanted:
+                      if data and hashlib.sha256(data).hexdigest() == wanted:
                           recovered = data; print('source', idx, label); break
-              # Finally reconstruct historically damaged chunks from a verified prefix.
               if recovered is None and idx in targets:
                   _sha, prefix = targets[idx]
                   for label, data in sources:
