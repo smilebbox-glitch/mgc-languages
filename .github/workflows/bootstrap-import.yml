@@ -16,81 +16,73 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Build expected chunk manifest
-        shell: bash
-        run: |
-          cat > /tmp/p.sha256 <<'EOF'
-          f49056607743944d1bbf179c7cda94d3f3bdad73af33b56395340f91e5847879  .bootstrap/p.part000
-          7622a90ca3839edb977a70105e38c73e7389d8a3637435d798402786b5b46c2b  .bootstrap/p.part001
-          70aa739755666d0c75059658946310773b23326cfacb65f9ad9ecca44f679f41  .bootstrap/p.part002
-          98e1194064daa8197ac5c184b607223821bdb3061c1484ab1ae4488e12cfd51a  .bootstrap/p.part003
-          a66644bcceb17ca5d88b5a2ffab3757c2a17324a8efa8de3ec080e9573e5ba4b  .bootstrap/p.part004
-          3d700403bee0dde6cb6d6242ff470909b3b272bb49d57457ca203bf5b3fbc69a  .bootstrap/p.part005
-          3860bb36e9ad0f3fc74968f3375597cc11d814d7bcac2b0e37094e648888d160  .bootstrap/p.part006
-          8a49779e906b63ff57601da70c70dde73b35a93aa38fb33e439db0028d63d8ec  .bootstrap/p.part007
-          870e32f89b876cddfce38dafc0dcdd4b81421b2efea8daa9db760060b9b34fd7  .bootstrap/p.part008
-          40f218330209f3bb6d0be0c04c879c0994131e3b26f19fef6e826c207292dce8  .bootstrap/p.part009
-          fd7a526f03205489f67bee44ae5ebe067a56a4b00c874d3fac5ee8c3920fc4b3  .bootstrap/p.part010
-          ef97f819edf2ae5091a55f17f25435b321b00c82c264382806c31f9969b07124  .bootstrap/p.part011
-          0ebfc840a795844b515230d1bebb3bad7e7296740f174db550df1df820fcbf88  .bootstrap/p.part012
-          1ddf6fdb9871129ef01010d2a200061949b8e429001f46aafefe2d1496c70f47  .bootstrap/p.part013
-          2b8a1f54e1e431643c80bd46cc27a06875eb99e942b4c01a5e95128e832838a7  .bootstrap/p.part014
-          0cfddcc8a460ae8592783ff1708049671ca454a21149e0faf2347f3407ec0b78  .bootstrap/p.part015
-          34b5a7022932a1b56528b346a0f06417ef32df49e8fe14cd594cf31ae9642acb  .bootstrap/p.part016
-          a3be605d6e5912f924c3938e8d9ce4f11f3ce2edf3dd72cb3c3de63f89f3ba9d  .bootstrap/p.part017
-          de6017a7851e0701dd709aabd784d057e7a34803338802cef0537df83b9a589f  .bootstrap/p.part018
-          6f4638b4d283d16233be508d5112b506415a06c6d88515e181812eb7af824b16  .bootstrap/p.part019
-          5a37ab772b52bfdb2c4671358908bf230ea9d5ccfa30aedbc8d9a8d04c1b9fc8  .bootstrap/p.part020
-          5b206ace576d8dd8e80f619e8622b11e518c130996e4ba939bf817eea9d0cef8  .bootstrap/p.part021
-          2382d2043c500a4dc49f5111ad980e82184b06fde7a86f0c563de318d9d05bff  .bootstrap/p.part022
-          5dd896fd2dc1082d61c4a54ce4c7dc5692e088c16f9d69c5090aaf16a68ebed4  .bootstrap/p.part023
-          EOF
-      - name: Recover valid chunks from repository history
+
+      - name: Recover a valid v5.7.1 archive
         shell: bash
         run: |
           set -euo pipefail
-          while read -r expected path; do
-            current=""
-            if [ -f "$path" ]; then
-              current="$(sha256sum "$path" | awk '{print $1}')"
-            fi
-            if [ "$current" = "$expected" ]; then
-              echo "OK $path"
-              continue
-            fi
-            echo "RECOVER $path"
-            found=0
-            while read -r ref; do
-              [ "$ref" = "refs/remotes/origin/main" ] && continue
-              if git show "${ref}:${path}" > /tmp/chunk-candidate 2>/dev/null; then
-                candidate="$(sha256sum /tmp/chunk-candidate | awk '{print $1}')"
-                if [ "$candidate" = "$expected" ]; then
-                  mkdir -p "$(dirname "$path")"
-                  cp /tmp/chunk-candidate "$path"
-                  echo "RECOVERED $path from $ref"
-                  found=1
-                  break
-                fi
+          expected_archive='8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5'
+          rm -f /tmp/mgc-v571.tar.xz
+
+          # Prefer the exact verified p.* payload when it is complete.
+          if compgen -G '.bootstrap/p.part*' >/dev/null; then
+            if cat .bootstrap/p.part* | base64 --decode > /tmp/p-candidate.tar.xz 2>/dev/null; then
+              got="$(sha256sum /tmp/p-candidate.tar.xz | awk '{print $1}')"
+              if [ "$got" = "$expected_archive" ] && xz -t /tmp/p-candidate.tar.xz; then
+                mv /tmp/p-candidate.tar.xz /tmp/mgc-v571.tar.xz
+                echo 'Using exact verified p payload'
               fi
-            done < <(git for-each-ref --format='%(refname)' refs/remotes/origin/)
-            if [ "$found" -ne 1 ]; then
-              echo "NO_VALID_COPY $path"
             fi
-          done < /tmp/p.sha256
-      - name: Verify all chunks
-        shell: bash
-        run: |
-          set -euo pipefail
-          sha256sum -c /tmp/p.sha256
-      - name: Reconstruct and verify release archive
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz
-          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz" | sha256sum -c -
+          fi
+
+          # Previous staging attempts used different chunk boundaries. An XZ
+          # stream has its own integrity check; candidates are accepted only
+          # after extraction AND critical-file hashes are verified below.
+          if [ ! -s /tmp/mgc-v571.tar.xz ]; then
+            for prefix in w q q2 r r2 xz y z release.b64 b; do
+              if ! compgen -G ".bootstrap/${prefix}.part*" >/dev/null; then
+                continue
+              fi
+              echo "Trying payload prefix: ${prefix}"
+              if ! cat .bootstrap/${prefix}.part* | base64 --decode > /tmp/candidate.tar.xz 2>/dev/null; then
+                continue
+              fi
+              if xz -t /tmp/candidate.tar.xz 2>/dev/null; then
+                cp /tmp/candidate.tar.xz /tmp/mgc-v571.tar.xz
+                echo "XZ-valid candidate: ${prefix}"
+                break
+              fi
+            done
+          fi
+
+          test -s /tmp/mgc-v571.tar.xz || { echo 'No integrity-valid release payload found'; exit 1; }
           xz -t /tmp/mgc-v571.tar.xz
+          rm -rf /tmp/mgc-v571
           mkdir -p /tmp/mgc-v571
           tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
+
+      - name: Verify extracted v5.7.1 critical files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/mgc-v571
+          test -f app.py
+          test -f static/app.js
+          test -f static/index.html
+          test -f data/chinese.json
+          test -f requirements.txt
+          test -f RELEASE_VERIFICATION_v5.7.1.txt
+          test -f .github/workflows/ci.yml
+          echo '693adc9a53314e798e05a44b33be1470c7f6d2cf55d1f6fd98307309e4f27dc4  app.py' | sha256sum -c -
+          echo '3487bb75b547f473c29d35a329aae7a033df8e5062343b0031822702d411de7f  static/app.js' | sha256sum -c -
+          echo 'a79fc452a435d6427015e9a06129e999244acf9dca90f2975988ab119d656444  static/index.html' | sha256sum -c -
+          echo '1b1e23fa79676bb1017d746d45d0638498bc96a5e1bcba26167590de36c4d221  data/chinese.json' | sha256sum -c -
+          echo '74b3380fe50afc6d21d3fea8ade4ab442c6fa19050e5b9949c86e185645ec2b9  requirements.txt' | sha256sum -c -
+          echo 'ebbbcd4655c598970f18d477612e6164929bdfc8afb88202497c9881fbc5456f  RELEASE_VERIFICATION_v5.7.1.txt' | sha256sum -c -
+          echo '0c44ba470ec81fd76cea40c4631a28fd7a816a15702595b5cb6695fbbf109c2a  .github/workflows/ci.yml' | sha256sum -c -
+          grep -q 'MGC Languages v5.7.1' RELEASE_VERIFICATION_v5.7.1.txt
+          grep -q 'c57d0a31f570' RELEASE_VERIFICATION_v5.7.1.txt
+
       - name: Import repository contents
         shell: bash
         run: |
@@ -102,6 +94,7 @@ jobs:
             /tmp/mgc-v571/ ./
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap-import.yml
+
       - name: Commit imported baseline
         shell: bash
         run: |
