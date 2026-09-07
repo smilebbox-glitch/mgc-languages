@@ -1,51 +1,58 @@
-name: Bootstrap import v5.7.1
+name: Audit MGC Languages v5.7.1 archive
 
 on:
   push:
     branches: [main]
     paths:
-      - '.bootstrap/p.complete'
+      - '.github/workflows/bootstrap-import.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  import:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Reconstruct and verify release archive
+
+      - name: Audit archived baseline
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz
-          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz" | sha256sum -c -
-          xz -t /tmp/mgc-v571.tar.xz
-          mkdir -p /tmp/mgc-v571
-          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
-      - name: Import repository contents
-        shell: bash
-        run: |
-          set -euo pipefail
-          rsync -a --delete \
-            --exclude='.git/' \
-            --exclude='.bootstrap/' \
-            --exclude='.github/workflows/bootstrap-import.yml' \
-            /tmp/mgc-v571/ ./
-          rm -rf .bootstrap
-          rm -f .github/workflows/bootstrap-import.yml
-      - name: Commit imported baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          if git diff --cached --quiet; then
-            echo 'No changes to commit'
-            exit 0
+          archive='.bootstrap/v571.tar.xz'
+          checksum_file='.bootstrap/v571.complete'
+
+          test -s "$archive"
+          test -s "$checksum_file"
+
+          expected="$(tr -d '\r\n ' < "$checksum_file")"
+          actual="$(sha256sum "$archive" | awk '{print $1}')"
+          echo "EXPECTED_SHA256=$expected"
+          echo "ACTUAL_SHA256=$actual"
+
+          echo '--- XZ TEST ---'
+          xz -t "$archive"
+          echo 'XZ_OK=1'
+
+          echo '--- ARCHIVE LIST ---'
+          tar -tJf "$archive" | sed -n '1,250p'
+
+          echo '--- EXTRACTED STRUCTURE ---'
+          rm -rf /tmp/mgc-v571-audit
+          mkdir -p /tmp/mgc-v571-audit
+          tar -xJf "$archive" -C /tmp/mgc-v571-audit
+          find /tmp/mgc-v571-audit -maxdepth 4 -type f -printf '%P\n' | sort | sed -n '1,300p'
+
+          echo '--- VERSION HINTS ---'
+          grep -RInE 'v?5\.7\.1|version|MGC Languages|mgc-languages' /tmp/mgc-v571-audit \
+            --include='README*' --include='package.json' --include='pyproject.toml' \
+            --include='docker-compose*.yml' --include='docker-compose*.yaml' \
+            --include='*.md' 2>/dev/null | sed -n '1,200p' || true
+
+          if [ "$actual" = "$expected" ]; then
+            echo 'CHECKSUM_MATCH=1'
+          else
+            echo 'CHECKSUM_MATCH=0'
           fi
-          git commit -m 'chore: import MGC Languages v5.7.1 baseline'
-          git push origin HEAD:main
