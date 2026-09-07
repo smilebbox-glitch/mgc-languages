@@ -1,4 +1,4 @@
-/* v6.0.11: validate modular frontend core and publish readiness. */
+/* v6.0.12: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -17,6 +17,7 @@
       'support-notifications',
       'assistant-knowledge',
       'final-assessment',
+      'chinese-reference',
       'content-governance',
       'admin-ops',
       'admin-analytics',
