@@ -1,4 +1,4 @@
-/* v6.0.4: isolate historical app.js globals behind one compatibility adapter. */
+/* v6.0.7: isolate historical app.js globals behind one compatibility adapter. */
 (function () {
   'use strict';
 
@@ -33,6 +33,8 @@
       renderPracticeRoleplay: requireFunction('renderRoleplay', renderRoleplay),
       renderPracticeGames: requireFunction('renderGames', renderGames),
       renderPracticeXP: requireFunction('renderXP', renderXP),
+      newSessionId: requireFunction('newSessionId', newSessionId),
+      submitPractice: requireFunction('submitPractice', submitPractice),
       setServiceStatus: requireFunction('setServiceStatus', setServiceStatus),
       toast: requireFunction('toast', toast),
       escapeHtml: requireFunction('esc', esc),
