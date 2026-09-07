@@ -17,6 +17,7 @@ SHARDS={
  'v576':['tests/v576_governance_core_test.py','tests/v576_governance_runtime_test.py'],
  'v577':['tests/v577_service_core_test.py','tests/v577_service_runtime_test.py'],
  'v578':['tests/v578_learning_core_test.py','tests/v578_learning_runtime_test.py'],
+ 'v579':['tests/v579_workflow_core_test.py','tests/v579_workflow_runtime_test.py'],
 }
 def tail(path:Path,limit:int=5000)->str:
  try:return path.read_text(encoding='utf-8',errors='replace')[-limit:]
