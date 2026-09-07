@@ -1,0 +1,80 @@
+name: Import engineering and China portal releases
+
+on:
+  push:
+    branches:
+      - import-products-2026-09-07
+    paths:
+      - '.github/workflows/import-products.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download verified transport snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENG_URL='https://29400895-0c18-43bb-98fc-e5b201364164.sandbox.floot.app/_cdn/static/aae13133-8e81-40ae-adae-e9728bca4e11-engineering-v6.3.34.tar.xz'
+          OKNO_URL='https://29400895-0c18-43bb-98fc-e5b201364164.sandbox.floot.app/_cdn/static/d3f0176d-094e-4a30-87fa-fbbbd5d84d0d-okno-v1.6.1.tar.xz'
+          curl --fail --location --retry 3 --output /tmp/engineering.tar.xz "$ENG_URL"
+          curl --fail --location --retry 3 --output /tmp/okno.tar.xz "$OKNO_URL"
+
+          echo 'b41146c7873293a9243065983dceb264b4572a7e2dc024d6da0fb4795bdf6e6f  /tmp/engineering.tar.xz' | sha256sum -c -
+          echo '10494b166306be8099263699fcc427358dbbaf861dff4883fa7141efcb195461  /tmp/okno.tar.xz' | sha256sum -c -
+          xz -t /tmp/engineering.tar.xz
+          xz -t /tmp/okno.tar.xz
+
+      - name: Expand releases into isolated product directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf products/mgc-engineering-ai-local products/okno-v-kitai
+          mkdir -p products/mgc-engineering-ai-local products/okno-v-kitai
+          tar -xJf /tmp/engineering.tar.xz -C products/mgc-engineering-ai-local
+          tar -xJf /tmp/okno.tar.xz -C products/okno-v-kitai --strip-components=2
+
+          cat > products/mgc-engineering-ai-local/IMPORTED_RELEASE.md <<'EOF'
+          # Imported release
+
+          - Product: MGC Engineering AI Local
+          - Version: 6.3.34
+          - Original release archive SHA-256: `3fc52e87897882bce822b30c37e2f738472c949d73d9decaa0a0496cba824a8c`
+          - Transport snapshot SHA-256: `b41146c7873293a9243065983dceb264b4572a7e2dc024d6da0fb4795bdf6e6f`
+          - Imported: 2026-09-07
+          EOF
+
+          cat > products/okno-v-kitai/IMPORTED_RELEASE.md <<'EOF'
+          # Imported release
+
+          - Product: Окно в Китай
+          - Version: 1.6.1-pilot
+          - Original release archive SHA-256: `7dbe9c93d1fc9b23daafc9f691ae2405ca1e72e171d260d7f96c04f9009411ec`
+          - Transport snapshot SHA-256: `10494b166306be8099263699fcc427358dbbaf861dff4883fa7141efcb195461`
+          - Imported: 2026-09-07
+          EOF
+
+          echo "ENGINEERING_FILES=$(find products/mgc-engineering-ai-local -type f | wc -l)"
+          echo "OKNO_FILES=$(find products/okno-v-kitai -type f | wc -l)"
+          git diff --check -- products || true
+
+      - name: Commit imported source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add products/mgc-engineering-ai-local products/okno-v-kitai
+          if git diff --cached --quiet; then
+            echo 'No product changes to commit.'
+            exit 0
+          fi
+          git commit -m 'feat: import engineering v6.3.34 and Okno v1.6.1'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
