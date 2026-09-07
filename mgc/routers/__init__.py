@@ -1,5 +1,6 @@
 """FastAPI router modules extracted from the historical monolith."""
 
+from .admin_ops import build_admin_ops_router
 from .auth import build_auth_router
 from .learning import build_learning_router
 from .observability import build_observability_router
@@ -11,6 +12,7 @@ from .terminology_admin import build_terminology_admin_router
 from .users_manager import build_user_manager_router
 
 __all__ = [
+    "build_admin_ops_router",
     "build_auth_router",
     "build_learning_router",
     "build_observability_router",
