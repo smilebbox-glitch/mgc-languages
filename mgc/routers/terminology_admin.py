@@ -51,13 +51,7 @@ def build_terminology_admin_router(
     require_roles: Callable[..., Callable[..., Any]],
     handlers: Mapping[str, Callable[..., Any]],
 ) -> APIRouter:
-    """Build public terminology and corporate terminology-admin HTTP routes.
-
-    Route ownership is extracted here while endpoint orchestration delegates to
-    the frozen legacy handlers. Those handlers resolve terminology helpers and
-    audit functions through globals already rebound to the v5.7.6-v5.7.7
-    governance/service cores before this router is built.
-    """
+    """Build public terminology and corporate terminology-admin HTTP routes."""
     missing = [name for name in TERMINOLOGY_ADMIN_HANDLER_NAMES if not callable(handlers.get(name))]
     if missing:
         raise RuntimeError(f"terminology/admin router handlers are incomplete: {missing}")
@@ -75,10 +69,6 @@ def build_terminology_admin_router(
     admin_term_rollback_handler = handlers["admin_term_rollback"]
     admin_import_terms_handler = handlers["admin_import_terms"]
     admin_taxonomy_handler = handlers["admin_taxonomy"]
-
-    admin_editor = require_roles("admin", "editor")
-    admin_only = require_roles("admin")
-    taxonomy_roles = require_roles("admin", "editor", "manager")
 
     router = APIRouter()
 
@@ -114,7 +104,7 @@ def build_terminology_admin_router(
     def admin_terms(
         language: str | None = Query(default=None),
         status: str | None = Query(default=None),
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
         return admin_terms_handler(language=language, status=status, user=user, db=db)
@@ -123,7 +113,7 @@ def build_terminology_admin_router(
     def admin_create_term(
         payload: CustomTermPayload,
         request: Request,
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
         return admin_create_term_handler(payload=payload, request=request, user=user, db=db)
@@ -133,22 +123,16 @@ def build_terminology_admin_router(
         term_id: int,
         payload: CustomTermPayload,
         request: Request,
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
-        return admin_update_term_handler(
-            term_id=term_id,
-            payload=payload,
-            request=request,
-            user=user,
-            db=db,
-        )
+        return admin_update_term_handler(term_id=term_id, payload=payload, request=request, user=user, db=db)
 
     @router.delete("/api/admin/terms/{term_id}")
     def admin_delete_term(
         term_id: int,
         request: Request,
-        user: Any = Depends(admin_only),
+        user: Any = Depends(require_roles("admin")),
         db: Session = Depends(db_session),
     ):
         return admin_delete_term_handler(term_id=term_id, request=request, user=user, db=db)
@@ -156,7 +140,7 @@ def build_terminology_admin_router(
     @router.get("/api/admin/terms/{term_id}/revisions")
     def admin_term_revisions(
         term_id: int,
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
         return admin_term_revisions_handler(term_id=term_id, user=user, db=db)
@@ -165,7 +149,7 @@ def build_terminology_admin_router(
     def admin_term_submit_review(
         term_id: int,
         request: Request,
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
         return admin_term_submit_review_handler(term_id=term_id, request=request, user=user, db=db)
@@ -175,39 +159,27 @@ def build_terminology_admin_router(
         term_id: int,
         payload: TermReviewPayload,
         request: Request,
-        user: Any = Depends(admin_only),
+        user: Any = Depends(require_roles("admin")),
         db: Session = Depends(db_session),
     ):
-        return admin_term_approve_handler(
-            term_id=term_id,
-            payload=payload,
-            request=request,
-            user=user,
-            db=db,
-        )
+        return admin_term_approve_handler(term_id=term_id, payload=payload, request=request, user=user, db=db)
 
     @router.post("/api/admin/terms/{term_id}/reject")
     def admin_term_reject(
         term_id: int,
         payload: TermReviewPayload,
         request: Request,
-        user: Any = Depends(admin_only),
+        user: Any = Depends(require_roles("admin")),
         db: Session = Depends(db_session),
     ):
-        return admin_term_reject_handler(
-            term_id=term_id,
-            payload=payload,
-            request=request,
-            user=user,
-            db=db,
-        )
+        return admin_term_reject_handler(term_id=term_id, payload=payload, request=request, user=user, db=db)
 
     @router.post("/api/admin/terms/{term_id}/rollback/{revision_no}")
     def admin_term_rollback(
         term_id: int,
         revision_no: int,
         request: Request,
-        user: Any = Depends(admin_only),
+        user: Any = Depends(require_roles("admin")),
         db: Session = Depends(db_session),
     ):
         return admin_term_rollback_handler(
@@ -223,7 +195,7 @@ def build_terminology_admin_router(
         request: Request,
         file: UploadFile = File(...),
         default_language: str = Query(default="chinese"),
-        user: Any = Depends(admin_editor),
+        user: Any = Depends(require_roles("admin", "editor")),
         db: Session = Depends(db_session),
     ):
         return admin_import_terms_handler(
@@ -236,7 +208,7 @@ def build_terminology_admin_router(
 
     @router.get("/api/admin/taxonomy")
     def admin_taxonomy(
-        user: Any = Depends(taxonomy_roles),
+        user: Any = Depends(require_roles("admin", "editor", "manager")),
         db: Session = Depends(db_session),
     ):
         return admin_taxonomy_handler(user=user, db=db)
