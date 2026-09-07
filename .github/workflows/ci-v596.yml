@@ -1,0 +1,114 @@
+name: mgc-languages-v596-concurrent-writes
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v596-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  concurrent-writes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Static concurrency contracts
+        run: python scripts/run_release_tests.py --shard v596 --timeout 75
+
+      - name: Start PostgreSQL + modular ASGI + nginx
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml up -d --build
+
+      - name: Wait for edge readiness
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/health/ready >/tmp/ready.json; then
+              cat /tmp/ready.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs
+          exit 1
+
+      - name: Seed isolated write-test sessions
+        run: |
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T \
+            -e LOAD_TEST_FIXTURES_ENABLED=true \
+            app python scripts/seed_authenticated_load.py --count 50 --prefix ci-write --session-minutes 30 \
+            > /tmp/mgc-write-sessions.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/mgc-write-sessions.json',encoding='utf-8'))
+          assert data['count']==50
+          print('PASS: 50 write-test sessions seeded')
+          PY
+
+      - name: Run concurrent authenticated writes
+        run: |
+          python scripts/concurrent_write_load.py \
+            --base-url http://127.0.0.1:8080 \
+            --sessions-file /tmp/mgc-write-sessions.json \
+            --users 50 \
+            --writes-per-user 5 \
+            --report-file /tmp/mgc-write-report.json
+
+      - name: Verify PostgreSQL write integrity
+        run: |
+          compose='docker compose --env-file .env.lan.example -f docker-compose.lan.yml'
+          practice=$($compose exec -T db psql -U mgc_languages -d mgc_languages -Atc \
+            "select count(*) from practice_results p join users u on u.id=p.user_id where u.username like 'ci-write-%';")
+          events=$($compose exec -T db psql -U mgc_languages -d mgc_languages -Atc \
+            "select count(*) from xp_events x join users u on u.id=x.user_id where u.username like 'ci-write-%' and x.event_type='quiz';")
+          profiles=$($compose exec -T db psql -U mgc_languages -d mgc_languages -Atc \
+            "select count(*) from gamification_profiles g join users u on u.id=g.user_id where u.username like 'ci-write-%' and g.lifetime_xp=200 and g.spendable_xp=200 and g.weekly_xp=200;")
+          usage=$($compose exec -T db psql -U mgc_languages -d mgc_languages -Atc \
+            "select count(*) from pilot_daily_usage d join users u on u.id=d.user_id where u.username like 'ci-write-%' and d.practice_submissions=5 and d.xp_awarded=200;")
+          echo "practice=$practice xp_events=$events profiles=$profiles usage=$usage"
+          test "$practice" = 250
+          test "$events" = 250
+          test "$profiles" = 50
+          test "$usage" = 50
+
+      - name: Verify race-safe runtime binding
+        run: |
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml exec -T app python -c \
+            "import asgi; r=asgi.LEARNING_BINDING_REPORT; assert r.ok; assert r.pilot_usage_bound; assert r.concurrent_write_safe"
+
+      - name: Verify sanitized report
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/mgc-write-report.json',encoding='utf-8'))
+          assert r['authenticated_users']==50
+          assert r['attempted_writes']==250
+          assert r['successful_unique_writes']==250
+          assert r['duplicate_replays_checked']==50
+          assert not r['write_failures'] and not r['duplicate_failures'] and not r['isolation_failures']
+          text=json.dumps(r)
+          assert 'session_token' not in text and 'mgc_session' not in text
+          print(json.dumps(r,indent=2,ensure_ascii=False))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v596-concurrent-write-report
+          path: /tmp/mgc-write-report.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Diagnostics
+        if: failure()
+        run: docker compose --env-file .env.lan.example -f docker-compose.lan.yml logs || true
+
+      - name: Stop LAN profile
+        if: always()
+        run: |
+          rm -f /tmp/mgc-write-sessions.json
+          docker compose --env-file .env.lan.example -f docker-compose.lan.yml down -v || true
