@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571, v572]
+        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571, v572, v573]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
