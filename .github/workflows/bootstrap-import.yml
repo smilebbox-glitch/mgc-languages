@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.bootstrap/import.ready'
+      - '.bootstrap/p.complete'
 
 permissions:
   contents: write
@@ -16,14 +16,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Verify and extract release archive
+      - name: Reconstruct and verify release archive
         shell: bash
         run: |
           set -euo pipefail
-          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  .bootstrap/v571.tar.xz" | sha256sum -c -
-          xz -t .bootstrap/v571.tar.xz
+          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz
+          echo "8241c96a42a71384a916db9237987db94de788ac2aeafdf26243fc889eaceef5  /tmp/mgc-v571.tar.xz" | sha256sum -c -
+          xz -t /tmp/mgc-v571.tar.xz
           mkdir -p /tmp/mgc-v571
-          tar -xJf .bootstrap/v571.tar.xz -C /tmp/mgc-v571
+          tar -xJf /tmp/mgc-v571.tar.xz -C /tmp/mgc-v571
       - name: Import repository contents
         shell: bash
         run: |
