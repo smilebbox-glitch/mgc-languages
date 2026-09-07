@@ -1,0 +1,37 @@
+MGC Languages v6.0.7
+Scope: Frontend Final Assessment
+
+Branch
+- refactor/v6.0.7-frontend-final-assessment
+- base: refactor/v6.0.6-frontend-assistant-knowledge
+
+Canonical frontend ownership
+- view: exam
+- module: static/frontend/final_assessment.js
+
+Preserved behavior
+- 50 questions across A1, A2, B1, B2 and C1
+- pass threshold: 35/50
+- GET /api/language/{language}/final-exam
+- POST /api/final-exam/result
+- answer feedback and explanations
+- final score and retry flow
+- practice/XP submission
+- summary refresh after completion
+
+Compatibility
+- legacy bridge exposes newSessionId + submitPractice only as compatibility helpers
+- historical renderExam/startExam/answerExam remain in static/app.js as staged fallback
+- no backend API changes
+- no ORM/Alembic changes
+- no content/Putonghua changes
+- no XP rule changes
+- no runtime APP_VERSION changes
+
+Verification
+- tests/v607_frontend_final_assessment_test.py
+- scripts/run_release_tests.py --shard v607
+- scripts/static_preflight.py includes v607 and JS syntax checks
+- .github/workflows/ci-v607.yml
+
+Alembic head remains: c57d0a31f570
