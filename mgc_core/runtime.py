@@ -12,6 +12,7 @@ from .governance_bridge import GovernanceBindingReport, bind_legacy_governance
 from .learning_bridge import LearningBindingReport, bind_legacy_learning
 from .security_bridge import SecurityBindingReport, bind_legacy_security
 from .service_bridge import ServiceBindingReport, bind_legacy_services
+from .workflow_bridge import WorkflowBindingReport, bind_legacy_workflows
 
 
 LEGACY_APP_MODULE = os.getenv("MGC_LEGACY_APP_MODULE", "app").strip() or "app"
@@ -21,8 +22,9 @@ def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     """Load the current application module behind a stable modular boundary."""
     module = importlib.import_module(module_name)
     # Ordering is intentional: governance consumes the extracted client fingerprint;
-    # learning must bind before user services capture gamification_view; services then
-    # bind before auth so auth captures the extracted user_view and RLS hook.
+    # learning must bind before user services capture gamification_view; user/term
+    # services must bind before practice/game workflows capture terms_for; auth is
+    # rebound last so all downstream dependencies point at the modular runtime.
     bind_legacy_security(module)
     bind_legacy_governance(module)
     bind_legacy_learning(module)
@@ -35,6 +37,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     application = getattr(module, "app", None)
     if not isinstance(application, FastAPI):
         raise RuntimeError(f"{module_name!r} does not expose a FastAPI instance named 'app'")
+    bind_legacy_workflows(module, application)
     bind_legacy_auth(module, application)
     report = validate_route_contract(application)
     return application, report
@@ -54,6 +57,9 @@ LEARNING_BINDING_REPORT: LearningBindingReport = getattr(
 SERVICE_BINDING_REPORT: ServiceBindingReport = getattr(
     _legacy_module, "MGC_SERVICE_BINDING_REPORT"
 )
+WORKFLOW_BINDING_REPORT: WorkflowBindingReport = getattr(
+    _legacy_module, "MGC_WORKFLOW_BINDING_REPORT"
+)
 AUTH_BINDING_REPORT: AuthBindingReport = getattr(
     _legacy_module, "MGC_AUTH_BINDING_REPORT"
 )
@@ -65,6 +71,7 @@ __all__ = [
     "GOVERNANCE_BINDING_REPORT",
     "LEARNING_BINDING_REPORT",
     "SERVICE_BINDING_REPORT",
+    "WORKFLOW_BINDING_REPORT",
     "AUTH_BINDING_REPORT",
     "LEGACY_APP_MODULE",
     "load_application",
