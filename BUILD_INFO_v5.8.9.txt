@@ -1,0 +1,52 @@
+MGC Languages v5.8.9
+Technical increment: Pilot Administration Router Extraction
+
+Scope
+- 13 active admin-only pilot routes move to mgc.routers.pilot_admin.
+- Existing business handlers remain migration fallback in mgc/legacy_app.py.
+- Production asgi:app replaces active APIRoutes through mgc_core.pilot_admin_router_bridge.
+
+Route groups
+- pilot groups/waves/status/update
+- member add/remove
+- feature catalog/upsert/group override
+- track assignment create/delete
+- CSV export
+- governance summary
+
+Required extracted dependencies
+- mgc.auth_core require_roles
+- mgc.services.users user_admin_stats
+- mgc.governance_core audit_event
+
+Binding invariants
+- route_count = 13
+- group_route_count = 9
+- feature_route_count = 2
+- assignment_route_count = 2
+- export_route_count = 1
+- governance_route_count = 1
+- mutation_route_count = 9
+- exact six-payload schema parity
+- route names/response classes preserved
+- root StaticFiles ordering preserved
+- endpoint module = mgc.routers.pilot_admin
+- Auth Core bound
+- User Service bound
+- Governance Core bound
+
+Release shard
+v589:
+- tests/v589_pilot_admin_router_core_test.py
+- tests/v589_pilot_admin_router_runtime_test.py
+
+Compatibility
+- no database migration
+- Alembic head remains c57d0a31f570
+- runtime APP_VERSION fallback remains 5.7.1
+- no frontend/content change
+- Putonghua learning standard unchanged
+
+Stacking
+Base: refactor/v5.8.8-user-manager-router (PR #23)
+Merge only after v5.8.5-v5.8.8 are validated and merged in order, then re-run full v5.8.9 CI/Docker against main.
