@@ -33,6 +33,7 @@ class PracticeGamesRouterBindingReport:
     workflow_service_bound: bool
     learning_service_captured: bool
     terminology_service_captured: bool
+    user_scoped_practice_sessions: bool
 
 
 def _key(route: APIRoute) -> tuple[str, str]:
@@ -77,17 +78,28 @@ def bind_practice_games_router(
         name: getattr(workflow_bindings, name, None)
         for name in PRACTICE_GAME_HANDLER_NAMES
     }
+    expected_modules = {
+        "save_practice_result": "mgc.services.practice_isolation",
+        "start_game": "mgc.services.practice_games",
+        "finish_game": "mgc.services.practice_games",
+        "question_attempt": "mgc.services.practice_games",
+    }
     workflow_service_bound = all(
-        callable(handler) and getattr(handler, "__module__", "") == "mgc.services.practice_games"
-        for handler in handlers.values()
+        callable(handler) and getattr(handler, "__module__", "") == expected_modules[name]
+        for name, handler in handlers.items()
     )
     if not workflow_service_bound:
-        raise RuntimeError("practice/game router handlers are not owned by extracted workflow service")
+        raise RuntimeError("practice/game router handlers are not owned by expected extracted services")
 
     learning_service_captured = bool(getattr(workflow_report, "learning_service_captured", False))
     terminology_service_captured = bool(getattr(workflow_report, "terminology_service_captured", False))
+    user_scoped_practice_sessions = bool(
+        getattr(workflow_report, "user_scoped_practice_sessions", False)
+    )
     if not learning_service_captured or not terminology_service_captured:
         raise RuntimeError("practice/game workflow service dependencies drifted")
+    if not user_scoped_practice_sessions:
+        raise RuntimeError("practice/game router requires user-scoped practice sessions")
 
     extracted = build_practice_games_router(
         db_session=module.db_session,
@@ -157,6 +169,7 @@ def bind_practice_games_router(
             and workflow_service_bound
             and learning_service_captured
             and terminology_service_captured
+            and user_scoped_practice_sessions
         ),
         route_count=len(replaced),
         practice_route_count=practice_count,
@@ -170,6 +183,7 @@ def bind_practice_games_router(
         workflow_service_bound=workflow_service_bound,
         learning_service_captured=learning_service_captured,
         terminology_service_captured=terminology_service_captured,
+        user_scoped_practice_sessions=user_scoped_practice_sessions,
     )
     if not report.ok:
         raise RuntimeError("v5.8.4 practice/game router binding failed closed")
