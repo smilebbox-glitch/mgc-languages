@@ -1,0 +1,41 @@
+MGC Languages v5.9.0 — Admin Operations Router
+
+Scope: extract 13 admin operations/observability/recovery routes behind mgc.routers.admin_ops while preserving existing handler behavior.
+
+Runtime contracts:
+- Auth Core required for admin role dependencies.
+- User Service required for user_admin_stats.
+- Governance Core required for audit_event.
+- TTS Core required for shared health/circuit state.
+- Observability/recovery helpers remain single-source legacy runtime helpers for this increment.
+
+Routes:
+GET /api/admin/slo
+GET /api/admin/alerts
+PATCH /api/admin/alerts/{alert_id}/ack
+GET /api/admin/learning-error-telemetry
+GET /api/admin/pilot-telemetry
+GET /api/admin/analytics
+GET /api/admin/audit
+GET /api/admin/database/telemetry
+GET /api/admin/recovery/evidence
+GET /api/admin/it-dashboard
+POST /api/admin/maintenance/cleanup
+GET /api/admin/operational-events
+GET /api/admin/system/summary
+
+Verification:
+- tests/v590_admin_ops_router_core_test.py
+- tests/v590_admin_ops_router_runtime_test.py
+- release shard v590
+- static preflight compile/contracts
+- Docker ADMIN_OPS_ROUTER_BINDING_REPORT assertions
+
+Compatibility:
+- no DB/schema migration; Alembic head c57d0a31f570
+- no API URL/OpenAPI intent change
+- no runtime APP_VERSION bump
+- no frontend/content change
+- Putonghua (普通话) primary Chinese-learning scope unchanged
+
+Stacked on v5.8.9. Do not merge to main until preceding stacked PRs and full CI/Docker are green.

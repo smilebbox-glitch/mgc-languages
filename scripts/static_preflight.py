@@ -25,7 +25,7 @@ def main()->int:
     assert data.get('context',{}).get('clues')
     assert len(data.get('putonghua',{}).get('groups',[]))==10
     assert (data.get('learning_standard') or {}).get('name')=='Путунхуа (普通话)'
-    print('PASS: Python compile + modular system/observability/auth/learning/practice-game/terminology-admin/pronunciation/user-manager/pilot-admin routers + security/governance/learning/services/workflows/auth/TTS core + Putonghua scope')
+    print('PASS: Python compile + modular system/observability/auth/learning/practice-game/terminology-admin/pronunciation/user-manager/pilot-admin/admin-ops routers + security/governance/learning/services/workflows/auth/TTS core + Putonghua scope')
     run([sys.executable,'scripts/api_contract_guard.py'],timeout=30)
     run([sys.executable,'scripts/content_integrity_guard.py'],timeout=60)
     print('PASS: API architecture + language content integrity guards')
@@ -46,7 +46,7 @@ def main()->int:
     if p.returncode or 'c57d0a31f570' not in out:
         print(out,file=sys.stderr); raise SystemExit(p.returncode or 2)
     print('PASS: Alembic clean upgrade -> c57d0a31f570')
-    print('PASS: v5.8.9 pilot-admin-router extraction preflight')
+    print('PASS: v5.9.0 admin-operations-router extraction preflight')
     return 0
 
 if __name__=='__main__': raise SystemExit(main())
