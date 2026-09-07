@@ -1,0 +1,45 @@
+name: Patch bootstrap exact part list
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/patch-bootstrap.trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch payload reconstruction
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('.github/workflows/bootstrap-import.yml')
+          s = p.read_text()
+          old = "          cat .bootstrap/p.part* | base64 --decode > /tmp/mgc-v571.tar.xz\n"
+          new = """          : > /tmp/payload.b64
+          for i in $(seq 0 23); do
+            printf -v idx '%03d' \"$i\"
+            tr -d '[:space:]' < \".bootstrap/p.part${idx}\" >> /tmp/payload.b64
+          done
+          base64 --decode /tmp/payload.b64 > /tmp/mgc-v571.tar.xz
+"""
+          if old not in s:
+              raise SystemExit('target reconstruction line not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/bootstrap-import.yml
+          git commit -m 'fix: reconstruct only numbered payload chunks'
+          git push origin HEAD:main
