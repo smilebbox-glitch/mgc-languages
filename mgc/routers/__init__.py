@@ -4,6 +4,7 @@ from .auth import build_auth_router
 from .learning import build_learning_router
 from .observability import build_observability_router
 from .practice_games import build_practice_games_router
+from .pronunciation import build_pronunciation_router
 from .system import build_system_router
 from .terminology_admin import build_terminology_admin_router
 
@@ -12,6 +13,7 @@ __all__ = [
     "build_learning_router",
     "build_observability_router",
     "build_practice_games_router",
+    "build_pronunciation_router",
     "build_system_router",
     "build_terminology_admin_router",
 ]
