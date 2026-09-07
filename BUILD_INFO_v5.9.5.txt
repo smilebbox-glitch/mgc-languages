@@ -1,0 +1,33 @@
+MGC Languages v5.9.5 — Authenticated Multi-User Load
+
+Scope: authenticated concurrent capacity verification on top of v5.9.4 LAN hardening.
+
+Workload:
+- real mgc_session cookies;
+- /api/me;
+- gamification profile;
+- learning preferences;
+- SRS review queue;
+- Chinese summary;
+- English quiz.
+
+Verification:
+- tests/v595_authenticated_load_test.py
+- release shard v595
+- focused ci-v595 PostgreSQL + ASGI + nginx gate
+- 50 isolated sessions / 1000 mixed authenticated requests in team profile
+- sanitized aggregate JSON report
+- PostgreSQL connection-pressure check
+
+Safety:
+- explicit LOAD_TEST_FIXTURES_ENABLED=true required
+- fixture seeding blocked in APP_ENV=production
+- raw tokens never uploaded as artifacts
+
+Compatibility:
+- no DB/Alembic change; head c57d0a31f570
+- no runtime APP_VERSION bump
+- no frontend/content mutation
+- Putonghua (普通话) remains primary Chinese standard
+
+Stacked on v5.9.4; do not merge until previous stack and full CI/Docker are green.
