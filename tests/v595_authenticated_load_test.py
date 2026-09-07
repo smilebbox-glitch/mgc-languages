@@ -26,27 +26,30 @@ class AuthHandler(BaseHTTPRequestHandler):
         return
 
 
-def run_probe(port: int, sessions: dict[str, object]) -> subprocess.CompletedProcess[str]:
+def run_probe(port: int, sessions: dict[str, object], *, report_file: Path | None = None) -> subprocess.CompletedProcess[str]:
     with tempfile.TemporaryDirectory(prefix="mgc-v595-") as td:
         path = Path(td) / "sessions.json"
         path.write_text(json.dumps(sessions), encoding="utf-8")
+        cmd = [
+            sys.executable,
+            "scripts/authenticated_load.py",
+            "--base-url",
+            f"http://127.0.0.1:{port}",
+            "--sessions-file",
+            str(path),
+            "--profile",
+            "pilot",
+            "--users",
+            "4",
+            "--requests",
+            "48",
+            "--max-p95-ms",
+            "5000",
+        ]
+        if report_file is not None:
+            cmd.extend(["--report-file", str(report_file)])
         return subprocess.run(
-            [
-                sys.executable,
-                "scripts/authenticated_load.py",
-                "--base-url",
-                f"http://127.0.0.1:{port}",
-                "--sessions-file",
-                str(path),
-                "--profile",
-                "pilot",
-                "--users",
-                "4",
-                "--requests",
-                "48",
-                "--max-p95-ms",
-                "5000",
-            ],
+            cmd,
             cwd=ROOT,
             text=True,
             capture_output=True,
@@ -64,13 +67,22 @@ try:
             for i in range(1, 5)
         ]
     }
-    passed = run_probe(server.server_port, valid)
-    assert passed.returncode == 0, passed.stderr + passed.stdout
-    assert '"authenticated_users": 4' in passed.stdout
-    assert '"success": 48' in passed.stdout
-    assert '"failed": 0' in passed.stdout
-    assert '"p99"' in passed.stdout
-    assert "PASS: authenticated multi-user load" in passed.stdout
+    with tempfile.TemporaryDirectory(prefix="mgc-v595-report-") as td:
+        report_path = Path(td) / "report.json"
+        passed = run_probe(server.server_port, valid, report_file=report_path)
+        assert passed.returncode == 0, passed.stderr + passed.stdout
+        assert '"authenticated_users": 4' in passed.stdout
+        assert '"success": 48' in passed.stdout
+        assert '"failed": 0' in passed.stdout
+        assert '"p99"' in passed.stdout
+        assert "PASS: authenticated multi-user load" in passed.stdout
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        assert report["authenticated_users"] == 4
+        assert report["success"] == 48
+        serialized = json.dumps(report)
+        assert "session_token" not in serialized
+        for index in range(1, 5):
+            assert f"token-{index}" not in serialized
 
     invalid = {"sessions": [{"username": "bad", "session_token": "invalid"}]}
     failed = run_probe(server.server_port, invalid)
@@ -91,6 +103,7 @@ for endpoint in (
 ):
     assert endpoint in load_source
 assert '"pilot"' in load_source and '"team"' in load_source and '"burst"' in load_source
+assert "--report-file" in load_source
 
 seed_source = (ROOT / "scripts/seed_authenticated_load.py").read_text(encoding="utf-8")
 assert 'LOAD_TEST_FIXTURES_ENABLED' in seed_source
@@ -99,4 +112,4 @@ assert '== "production"' in seed_source
 assert "token_digest(raw_token)" in seed_source
 assert "LoginSession(" in seed_source
 
-print("PASS: v5.9.5 authenticated load probe and fixture safety contracts")
+print("PASS: v5.9.5 authenticated load probe, sanitized report and fixture safety contracts")
