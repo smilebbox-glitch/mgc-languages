@@ -1,4 +1,4 @@
-/* v6.0.9: validate modular frontend core and publish readiness. */
+/* v6.0.10: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -18,6 +18,7 @@
       'assistant-knowledge',
       'final-assessment',
       'content-governance',
+      'admin-ops',
       'manager-admin',
       'navigation',
       'session-lifecycle',
