@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from fastapi.routing import APIRoute  # noqa: E402
+from pydantic import ValidationError  # noqa: E402
 from mgc.routers.users_manager import (  # noqa: E402
     USER_MANAGER_HANDLER_NAMES,
     UserDepartmentPayload,
@@ -68,16 +69,16 @@ department_schema = UserDepartmentPayload.model_json_schema()["properties"]["dep
 assert department_schema["minLength"] == 1
 assert department_schema["maxLength"] == 160
 
-try:
-    UserRolePayload(role="owner")
-    raise AssertionError("invalid role unexpectedly accepted")
-except Exception:
-    pass
-try:
-    UserDepartmentPayload(department="")
-    raise AssertionError("empty department unexpectedly accepted")
-except Exception:
-    pass
+for payload_type, kwargs in (
+    (UserRolePayload, {"role": "owner"}),
+    (UserDepartmentPayload, {"department": ""}),
+):
+    try:
+        payload_type(**kwargs)
+    except ValidationError:
+        pass
+    else:
+        raise AssertionError(f"invalid payload unexpectedly accepted: {payload_type.__name__} {kwargs}")
 
 assert set(USER_MANAGER_HANDLER_NAMES) == {
     "admin_users",
