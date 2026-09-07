@@ -1,4 +1,4 @@
-/* v6.0.12: validate modular frontend core and publish readiness. */
+/* v6.0.13: validate modular frontend core and publish readiness. */
 (function () {
   'use strict';
 
@@ -22,6 +22,7 @@
       'admin-ops',
       'admin-analytics',
       'manager-admin',
+      'legacy-retirement',
       'navigation',
       'session-lifecycle',
       'auth-department'
