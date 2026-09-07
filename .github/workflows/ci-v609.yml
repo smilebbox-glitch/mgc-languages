@@ -1,0 +1,40 @@
+name: mgc-languages-v609-content-governance-frontend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v609-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-content-governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend regressions
+        run: |
+          python scripts/run_release_tests.py --shard v608 --timeout 45
+          python scripts/run_release_tests.py --shard v609 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/content_governance.js
+          node --check static/frontend/manager_admin.js
+          node --check static/frontend/boot.js
+      - name: Content governance parity guard
+        run: |
+          grep -q "frontend.register('content-governance'" static/frontend/content_governance.js
+          grep -q "/api/admin/terms/import?default_language=" static/frontend/content_governance.js
+          grep -q "/submit-review" static/frontend/content_governance.js
+          grep -q "/approve" static/frontend/content_governance.js
+          grep -q "/reject" static/frontend/content_governance.js
+          grep -q "/revisions" static/frontend/content_governance.js
+          grep -q "renderEditor" static/frontend/manager_admin.js
