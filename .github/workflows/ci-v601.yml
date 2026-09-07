@@ -1,0 +1,37 @@
+name: mgc-languages-v601-session-lifecycle
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v601-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  session-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend core regression
+        run: python scripts/run_release_tests.py --shard v600 --timeout 45
+      - name: Session lifecycle contract
+        run: python scripts/run_release_tests.py --shard v601 --timeout 45
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/session_lifecycle.js
+          node --check static/frontend/legacy_bridge.js
+          node --check static/frontend/boot.js
+      - name: Lifecycle ownership
+        run: |
+          grep -q "removeEventListener('DOMContentLoaded', legacy.boot)" static/frontend/session_lifecycle.js
+          grep -q "apiClient.request('/api/me')" static/frontend/session_lifecycle.js
+          grep -q "apiClient.request('/api/logout'" static/frontend/session_lifecycle.js
+          grep -q "frontend.register('session-lifecycle'" static/frontend/session_lifecycle.js
