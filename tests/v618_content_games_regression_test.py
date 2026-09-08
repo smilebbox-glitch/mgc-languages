@@ -24,6 +24,9 @@ SHOP = json.loads((ROOT / "data/shop_expansion_v618.json").read_text(encoding="u
 PARALLEL = json.loads((ROOT / "data/english_parallel_v618.json").read_text(encoding="utf-8"))
 INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
 GAME_LAB = (ROOT / "static/frontend/game_lab_v618.js").read_text(encoding="utf-8")
+ENGAGEMENT = (ROOT / "static/frontend/game_engagement_v618.js").read_text(encoding="utf-8")
+ENGAGEMENT_CSS = (ROOT / "static/game_engagement_v618.css").read_text(encoding="utf-8")
+BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 NAV = (ROOT / "static/frontend/navigation.js").read_text(encoding="utf-8")
 PRACTICE = (ROOT / "mgc/services/practice_games.py").read_text(encoding="utf-8")
 
@@ -116,7 +119,28 @@ assert INDEX.index("/frontend/game_lab_v618.js") < INDEX.index("/frontend/practi
 assert "frontend.has('game-lab-v618')" in NAV
 assert "GAME_TYPES" in PRACTICE
 
+# Engagement layer: department-aware recommendations, a deterministic game of
+# the day and a local Arcade Passport should make the 20 modes feel like a
+# coherent product rather than a flat wall of mini-games.
+assert "/game_engagement_v618.css" in INDEX
+assert "/frontend/game_engagement_v618.js" in INDEX
+assert INDEX.index("/frontend/game_lab_v618.js") < INDEX.index("/frontend/game_engagement_v618.js")
+assert INDEX.index("/frontend/game_engagement_v618.js") < INDEX.index("/frontend/practice_games.js")
+assert "frontend.register('game-engagement-v618'" in ENGAGEMENT
+assert "ПЕРСОНАЛЬНАЯ АРКАДА" in ENGAGEMENT
+assert "ARCADE PASSPORT" in ENGAGEMENT
+assert "ИГРА ДНЯ" in ENGAGEMENT
+assert "data-engage-game" in ENGAGEMENT
+assert "localStorage" in ENGAGEMENT
+for department_group in ("paint", "logistics", "body", "assembly", "quality", "rd", "purchasing"):
+    assert re.search(rf"\b{department_group}:\s*\[", ENGAGEMENT), department_group
+assert "'game-lab-v618'" in BOOT
+assert "'game-engagement-v618'" in BOOT
+assert ".arcade-engagement" in ENGAGEMENT_CSS
+assert ".arcade-passport" in ENGAGEMENT_CSS
+assert "prefers-reduced-motion" in ENGAGEMENT_CSS
+
 print(
     "PASS: v6.0.18 has 2029 terms in each language, exact Chinese/English parity, "
-    "80 new terms for each requested shop in both languages, and 20 game modes"
+    "80 new terms for each requested shop, 20 game modes and department-aware Arcade engagement"
 )
