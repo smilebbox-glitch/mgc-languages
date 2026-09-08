@@ -70,6 +70,12 @@ jobs:
       - name: v6.0.28 UX performance regression
         run: python tests/v628_ux_performance_test.py
 
+      - name: v6.0.29 release candidate freeze regression
+        run: python tests/v629_release_candidate_test.py
+
+      - name: Frozen release manifest guard
+        run: python scripts/release_candidate_guard.py --json
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -157,6 +163,7 @@ jobs:
           grep -q "ADAPTIVE TRAINING LOOP · v6.0.27" static/frontend/adaptive_training_v627.js
           grep -q "v628-skip-link" static/index.html
           grep -q "frontend.register('ux-performance-v628'" static/frontend/ux_performance_v628.js
+          grep -q "pilotCandidate: 'v6.0.29'" static/frontend/boot.js
           ! grep -q "About English" static/index.html
           ! grep -q "Сценарий смены" static/frontend/pilot_home.js
           ! grep -q "Новая сегодня" static/frontend/pilot_home.js
