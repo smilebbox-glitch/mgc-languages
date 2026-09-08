@@ -79,6 +79,9 @@ jobs:
       - name: v6.0.29 release candidate freeze regression
         run: python tests/v629_release_candidate_test.py
 
+      - name: v6.0.29 operability smoke contract
+        run: python tests/v629_operability_smoke_test.py
+
       - name: Release candidate manifest guard
         run: python scripts/release_candidate_guard.py --json
 
@@ -174,12 +177,47 @@ jobs:
           echo 'LAN stack did not reach readiness in time.'
           exit 1
 
+      - name: Verify HTTP operability through Nginx
+        shell: bash
+        run: |
+          curl -fsS http://127.0.0.1:18080/health/live > /tmp/lan-live.json
+          curl -fsS http://127.0.0.1:18080/health/ready > /tmp/lan-ready.json
+          curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
+          curl -fsS http://127.0.0.1:18080/ > /tmp/lan-index.html
+          grep -q '/frontend/boot.js' /tmp/lan-index.html
+          curl -fsS http://127.0.0.1:18080/frontend/boot.js > /tmp/lan-boot.js
+          grep -q "pilotCandidate: 'v6.0.29'" /tmp/lan-boot.js
+          for asset in \
+            /frontend/game_lab_v618.js \
+            /frontend/shift_simulation_v624.js \
+            /frontend/team_leaderboard_v626.js \
+            /frontend/adaptive_training_v627.js \
+            /frontend/ux_performance_v628.js; do
+            curl -fsS "http://127.0.0.1:18080${asset}" > /dev/null
+          done
+          python - <<'PY'
+          import json
+          with open('/tmp/lan-meta.json', encoding='utf-8') as fh:
+              meta = json.load(fh)
+          assert meta.get("version") == "6.0.29", meta
+          assert meta.get("title") == "MGC Languages", meta
+          assert meta.get("environment") == "pilot", meta
+          assert meta.get("chinese_learning_standard"), meta
+          print(json.dumps({"version": meta["version"], "environment": meta["environment"]}, ensure_ascii=False))
+          PY
+          for endpoint in /api/training/recommendation /api/manager/shift-analytics; do
+            status="$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:18080${endpoint}")"
+            case "$status" in
+              401|403) ;;
+              *) echo "Protected endpoint ${endpoint} returned ${status}"; exit 1 ;;
+            esac
+          done
+
       - name: Verify LAN services and modular runtime
         run: |
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r.SHIFT_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.TEAM_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == len(r._legacy_module.TERMS['english'])"
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python scripts/release_candidate_guard.py --json
-          curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
           cat /tmp/lan-meta.json
 
       - name: LAN runtime diagnostics
