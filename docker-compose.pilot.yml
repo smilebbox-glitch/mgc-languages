@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mgc-languages:5.7.1-it
+    image: mgc-languages:6.0.17-pilot
     depends_on:
       db:
         condition: service_healthy
@@ -188,7 +188,7 @@ services:
     restart: unless-stopped
 
   maintenance:
-    image: mgc-languages:5.7.1-it
+    image: mgc-languages:6.0.17-pilot
     depends_on:
       db:
         condition: service_healthy
