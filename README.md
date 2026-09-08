@@ -234,6 +234,13 @@ BUILD_INFO_v6.0.24.txt
 - более естественные браузерные TTS-голоса с приоритетом Natural / Neural / Online / Premium;
 - старый механизм произношения как fallback.
 
+Release-specific UX hardening и его regression guard:
+
+```text
+static/frontend/pilot_ux_hardening.js
+tests/v617_pilot_ux_regression_test.py
+```
+
 ## GitHub Actions и тесты
 
 На `main` работают два основных CI-контура:
