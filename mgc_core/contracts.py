@@ -19,6 +19,9 @@ CRITICAL_ROUTE_CONTRACT = frozenset({
     ("GET", "/api/me"),
     ("POST", "/api/shift-simulations"),
     ("GET", "/api/shift-simulations/history"),
+    ("GET", "/api/manager/shift-analytics"),
+    ("GET", "/api/leaderboards/games/{game_type}"),
+    ("GET", "/api/leaderboards/shifts"),
 })
 
 
@@ -78,11 +81,7 @@ def validate_route_contract(
         return report
     details: list[str] = []
     if report.missing_required:
-        details.append(
-            "missing=" + ",".join(f"{method} {path}" for method, path in report.missing_required)
-        )
+        details.append("missing=" + ",".join(f"{method} {path}" for method, path in report.missing_required))
     if report.duplicate_routes:
-        details.append(
-            "duplicates=" + ",".join(f"{method} {path}" for method, path in report.duplicate_routes)
-        )
+        details.append("duplicates=" + ",".join(f"{method} {path}" for method, path in report.duplicate_routes))
     raise RuntimeContractError("FastAPI runtime contract violation: " + "; ".join(details))
