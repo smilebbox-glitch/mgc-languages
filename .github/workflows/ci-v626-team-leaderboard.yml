@@ -1,0 +1,44 @@
+name: mgc-languages-v626-team-leaderboard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v626-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  v626-release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Compile backend
+        run: python -m compileall -q app.py asgi.py mgc mgc_core
+      - name: v6.0.25 compatibility
+        run: python tests/v625_shift_analytics_test.py
+      - name: v6.0.26 regression
+        run: python tests/v626_team_leaderboard_test.py
+      - name: Runtime route contract
+        run: python -c "import asgi, mgc_core.runtime as r; assert asgi.CONTRACT_REPORT.ok; assert r.TEAM_ANALYTICS_ROUTER_BINDING_REPORT.ok"
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/team_leaderboard_v626.js
+          node --check static/frontend/boot.js
+      - name: UI contract
+        run: |
+          grep -q "TOP 10 · SCORE + TIME" static/frontend/team_leaderboard_v626.js
+          grep -q "TEAM ANALYTICS · v6.0.26" static/frontend/team_leaderboard_v626.js
+          grep -q "team_leaderboard_v626.js" static/index.html
+          grep -q "pilotCandidate: 'v6.0.26'" static/frontend/boot.js
