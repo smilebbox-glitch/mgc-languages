@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -24,11 +25,12 @@ SHOP = json.loads((ROOT / "data/shop_expansion_v618.json").read_text(encoding="u
 PARALLEL = json.loads((ROOT / "data/english_parallel_v618.json").read_text(encoding="utf-8"))
 INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
 GAME_LAB = (ROOT / "static/frontend/game_lab_v618.js").read_text(encoding="utf-8")
+ENGAGEMENT = (ROOT / "static/frontend/game_engagement_v618.js").read_text(encoding="utf-8")
+ENGAGEMENT_CSS = (ROOT / "static/game_engagement_v618.css").read_text(encoding="utf-8")
+BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 NAV = (ROOT / "static/frontend/navigation.js").read_text(encoding="utf-8")
 PRACTICE = (ROOT / "mgc/services/practice_games.py").read_text(encoding="utf-8")
 
-# Generated source corpus: Chinese and English must have exact parity before
-# the shared experience vocabulary is added at runtime.
 assert MANIFEST["release"] == "6.0.18"
 assert MANIFEST["base_chinese"] == 1735
 assert MANIFEST["base_english"] == 256
@@ -48,8 +50,6 @@ for language in ("chinese", "english"):
     assert counts["Логистика"] == 80
     assert counts["Кузов и компоненты"] == 80
 
-# Runtime activation is the important contract: users must actually receive
-# the generated corpora rather than merely having JSON artifacts in the repo.
 assert runtime.V618_CONTENT_STATUS["release"] == "6.0.18"
 assert runtime.V618_CONTENT_STATUS["parity"] is True
 assert runtime.V618_CONTENT_STATUS["shop_expansion_per_language"] == 240
@@ -75,7 +75,6 @@ for category, topic in {
     assert all(row["topic"] == topic for row in zh_rows)
     assert all(row["topic"] == topic for row in en_rows)
 
-# Lock a few automotive terms that generic translation engines commonly mangle.
 parallel_by_ru = {str(row["ru"]).casefold(): str(row["term"]) for row in PARALLEL["items"]}
 for russian, expected in {
     "саморез": "self-tapping screw",
@@ -89,8 +88,6 @@ for russian, expected in {
     if russian in parallel_by_ru:
         assert parallel_by_ru[russian].casefold() == expected.casefold(), (russian, parallel_by_ru[russian], expected)
 
-# Game lab: 20 genuinely named modes, five-answer server cap, visual hotspot
-# mechanic, and frontend routing through the new module.
 assert len(GAME_TYPES) == 20
 assert len(set(GAME_TYPES)) == 20
 assert MAX_GAME_ANSWERS == 5
@@ -116,7 +113,32 @@ assert INDEX.index("/frontend/game_lab_v618.js") < INDEX.index("/frontend/practi
 assert "frontend.has('game-lab-v618')" in NAV
 assert "GAME_TYPES" in PRACTICE
 
+assert "/game_engagement_v618.css" in INDEX
+assert "/frontend/game_engagement_v618.js" in INDEX
+assert INDEX.index("/frontend/game_lab_v618.js") < INDEX.index("/frontend/game_engagement_v618.js")
+assert INDEX.index("/frontend/game_engagement_v618.js") < INDEX.index("/frontend/practice_games.js")
+assert "frontend.register('game-engagement-v618'" in ENGAGEMENT
+assert "ПЕРСОНАЛЬНАЯ АРКАДА" in ENGAGEMENT
+assert "ARCADE PASSPORT" in ENGAGEMENT
+assert "ИГРА ДНЯ" in ENGAGEMENT
+assert "data-engage-game" in ENGAGEMENT
+assert "localStorage" in ENGAGEMENT
+for department_group in ("paint", "logistics", "body", "assembly", "quality", "rd", "purchasing"):
+    assert re.search(rf"\b{department_group}:\s*\[", ENGAGEMENT), department_group
+assert "'game-lab-v618'" in BOOT
+assert "'game-engagement-v618'" in BOOT
+assert ".arcade-engagement" in ENGAGEMENT_CSS
+assert ".arcade-passport" in ENGAGEMENT_CSS
+assert "prefers-reduced-motion" in ENGAGEMENT_CSS
+
+for script in (
+    ROOT / "static/frontend/game_lab_v618.js",
+    ROOT / "static/frontend/game_engagement_v618.js",
+    ROOT / "static/frontend/boot.js",
+):
+    subprocess.run(["node", "--check", str(script)], check=True, cwd=ROOT)
+
 print(
     "PASS: v6.0.18 has 2029 terms in each language, exact Chinese/English parity, "
-    "80 new terms for each requested shop in both languages, and 20 game modes"
+    "80 new terms for each requested shop, 20 game modes and department-aware Arcade engagement"
 )
