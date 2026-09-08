@@ -20,7 +20,6 @@
 
   function gameLab() { return frontend.get('game-lab-v618'); }
   function engagement() { return frontend.get('game-engagement-v618'); }
-  function legacy() { return frontend.get('legacy-app'); }
   function query(selector, scope) { return (scope || document).querySelector(selector); }
   function queryAll(selector, scope) { return Array.from((scope || document).querySelectorAll(selector)); }
   function esc(value) {
@@ -54,6 +53,12 @@
     return {completed:completed, perfect:perfect, pct:pct};
   }
 
+  function journeySignature(data) {
+    return STATIONS.map(function (station, index) {
+      return [station.id, stationDone(station, data) ? 1 : 0, stationBest(station, data), stationUnlocked(index, data) ? 1 : 0].join(':');
+    }).join('|');
+  }
+
   function nextStation(data) {
     for (let index = 0; index < STATIONS.length; index += 1) {
       if (stationUnlocked(index, data) && !stationDone(STATIONS[index], data)) return STATIONS[index];
@@ -81,14 +86,17 @@
     const catalog = query('.game-lab-grid', main);
     if (!catalog) return;
 
+    const data = progress();
+    const signature = journeySignature(data);
     const existing = query('.factory-journey-v619', main);
+    if (existing && existing.dataset.journeySignature === signature) return;
     if (existing) existing.remove();
 
-    const data = progress();
     const summary = journeySummary(data);
     const next = nextStation(data);
     const section = document.createElement('section');
     section.className = 'factory-journey-v619';
+    section.dataset.journeySignature = signature;
     section.innerHTML =
       '<div class="factory-journey-head"><div><span class="kicker">FACTORY JOURNEY · v6.0.19</span>' +
       '<h2>Пройдите автомобиль через весь завод</h2>' +
@@ -105,12 +113,8 @@
     if (arcade && arcade.parentNode) arcade.parentNode.insertBefore(section, arcade.nextSibling);
     else catalog.parentNode.insertBefore(section, catalog);
 
-    queryAll('[data-factory-station]', section).forEach(function (button) {
+    queryAll('[data-factory-station]:not(:disabled)', section).forEach(function (button) {
       button.addEventListener('click', function () {
-        if (button.disabled) {
-          legacy().toast('Сначала завершите предыдущую станцию маршрута.');
-          return;
-        }
         Promise.resolve(gameLab().startGame(button.dataset.startV618Game)).catch(function () { /* game lab owns error UI */ });
       });
     });
