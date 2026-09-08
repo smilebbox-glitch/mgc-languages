@@ -6,6 +6,8 @@ __pycache__/
 .env.*
 !.env.example
 !.env.pilot.example
+!.env.lan.example
+!.env.company-pilot.example
 .git/
 .idea/
 .vscode/
