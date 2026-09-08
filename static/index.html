@@ -20,8 +20,10 @@
   <link rel="stylesheet" href="/shift_analytics_v625.css">
   <link rel="stylesheet" href="/team_leaderboard_v626.css">
   <link rel="stylesheet" href="/adaptive_training_v627.css">
+  <link rel="stylesheet" href="/ux_performance_v628.css">
 </head>
 <body>
+  <a class="v628-skip-link" href="#main">Перейти к основному содержанию</a>
   <section id="authView" class="auth-shell">
     <div class="auth-brand">
       <div class="brand-mark">M</div>
@@ -76,7 +78,7 @@
 
   <div id="appView" class="app-shell hidden">
     <header class="topbar">
-      <button id="menuToggle" class="icon-button menu-toggle" aria-label="Открыть меню">☰</button>
+      <button id="menuToggle" class="icon-button menu-toggle" aria-label="Открыть меню" aria-controls="sidebar" aria-expanded="false">☰</button>
       <button class="brand-button" data-view="home">
         <span class="brand-mark small">M</span>
         <span><b>MGC Language Lab</b><small>People · Languages · Automotive</small></span>
@@ -91,7 +93,7 @@
     </header>
 
     <div class="workspace">
-      <aside id="sidebar" class="sidebar">
+      <aside id="sidebar" class="sidebar" role="navigation" aria-label="Основная навигация">
         <div class="nav-group">
           <button class="nav-item active" data-view="home"><span>⌂</span>Главная</button>
           <button class="nav-item" data-view="topics"><span>▤</span>Темы</button>
@@ -107,11 +109,11 @@
         <div id="adminNav" class="nav-group hidden"><button class="nav-item" data-view="admin"><span>⚙</span>Админ</button></div>
       </aside>
       <div id="backdrop" class="backdrop hidden"></div>
-      <main id="main" class="main"><div class="loading-card"><span class="spinner"></span><p>Загрузка платформы</p></div></main>
+      <main id="main" class="main" role="main" tabindex="-1"><div class="loading-card"><span class="spinner"></span><p>Загрузка платформы</p></div></main>
     </div>
   </div>
 
-  <div id="toast" class="toast hidden" role="status"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
   <script src="/frontend/runtime.js" defer></script>
   <script src="/frontend/error_boundary.js" defer></script>
   <script src="/app.js" defer></script>
@@ -147,6 +149,7 @@
   <script src="/frontend/session_lifecycle.js" defer></script>
   <script src="/auth_department.js" defer></script>
   <script src="/frontend/pilot_ux_hardening.js" defer></script>
+  <script src="/frontend/ux_performance_v628.js" defer></script>
   <script src="/frontend/boot.js" defer></script>
 </body>
 </html>
