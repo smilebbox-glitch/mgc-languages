@@ -10,5 +10,10 @@
     "Логистика": 80,
     "Окраска": 80
   },
+  "english_translation": "committed translation memory + automotive override glossary; Google fallback only for new/missing rows",
+  "english_translation_sources": {
+    "committed_translation_memory": 1455,
+    "automotive_override": 24
+  },
   "runtime_note": "Experience extra_terms are added equally to both languages at runtime, preserving parity."
 }
