@@ -46,6 +46,10 @@ assert 'Сценарий смены' not in HOME
 assert 'Новая сегодня' not in HOME
 assert 'обновляются ежедневно' not in HOME
 
+# Homepage quote grammar regression guard.
+assert 'Большие цели начинаются с маленьких слов.' in HOME
+assert 'Большее цели' not in HOME
+
 # Daily phrase is deterministic per calendar day and refreshes after midnight.
 for token in (
     'function dayNumber(date)',
