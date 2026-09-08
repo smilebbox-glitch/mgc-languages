@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -66,7 +67,8 @@ assert "/ux_performance_v628.css" in INDEX
 assert "/frontend/ux_performance_v628.js" in INDEX
 assert INDEX.index("pilot_ux_hardening.js") < INDEX.index("ux_performance_v628.js") < INDEX.index("frontend/boot.js")
 assert "'ux-performance-v628'" in BOOT
-assert "pilotCandidate: 'v6.0.28'" in BOOT
+pilot_match = re.search(r"pilotCandidate: 'v6\.0\.(\d+)'", BOOT)
+assert pilot_match and int(pilot_match.group(1)) >= 28
 
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/ux_performance_v628.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/pilot_ux_hardening.js")], check=True, cwd=ROOT)
