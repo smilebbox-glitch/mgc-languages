@@ -33,6 +33,7 @@ class ShiftSimulationPayload(BaseModel):
     material: int = Field(ge=0, le=100)
     supplier: int = Field(ge=0, le=100)
     load: int = Field(ge=0, le=100)
+    duration_ms: int | None = Field(default=None, ge=1000, le=7_200_000)
 
 
 _DIMENSION_CODES = {
@@ -48,7 +49,7 @@ _FACTORY_FROM_CODE = {value: key for key, value in _FACTORY_CODES.items()}
 
 def encode_shift_topic(payload: ShiftSimulationPayload) -> str:
     values = [
-        "v625",
+        "v626",
         f"pc={payload.production_control}",
         f"pr={payload.prioritization}",
         f"pj={payload.production_judgement}",
@@ -61,6 +62,8 @@ def encode_shift_topic(payload: ShiftSimulationPayload) -> str:
         f"su={payload.supplier}",
         f"lo={payload.load}",
     ]
+    if payload.duration_ms is not None:
+        values.append(f"du={int(payload.duration_ms)}")
     encoded = "|".join(values)
     if len(encoded) > 160:
         raise RuntimeError("shift analytics payload exceeds PracticeResult.topic capacity")
@@ -81,6 +84,13 @@ def decode_shift_topic(topic: str) -> dict[str, Any]:
         except (TypeError, ValueError):
             return 0
 
+    duration_ms = None
+    if "du" in parsed:
+        try:
+            duration_ms = max(1000, min(7_200_000, int(parsed["du"])))
+        except (TypeError, ValueError):
+            duration_ms = None
+
     return {
         "production_control": number("pc"),
         "prioritization": number("pr"),
@@ -88,6 +98,7 @@ def decode_shift_topic(topic: str) -> dict[str, Any]:
         "language": number("la"),
         "weakest_dimension": _DIMENSION_FROM_CODE.get(parsed.get("wd", ""), "production_control"),
         "factory_weakest": _FACTORY_FROM_CODE.get(parsed.get("fw", ""), "line"),
+        "duration_ms": duration_ms,
         "final_metrics": {
             "line": number("ln"),
             "quality": number("qu"),
@@ -218,12 +229,6 @@ def build_shift_analytics_router(
 
 
 __all__ = [
-    "DIMENSIONS",
-    "FACTORY_METRICS",
-    "SHIFT_KIND",
-    "ShiftSimulationPayload",
-    "build_shift_analytics_router",
-    "decode_shift_topic",
-    "encode_shift_topic",
-    "summarize_shift_history",
+    "DIMENSIONS", "FACTORY_METRICS", "SHIFT_KIND", "ShiftSimulationPayload",
+    "build_shift_analytics_router", "decode_shift_topic", "encode_shift_topic", "summarize_shift_history",
 ]
