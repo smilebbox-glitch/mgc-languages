@@ -1,4 +1,4 @@
-/* v6.0.19: validate modular frontend core and publish pilot readiness. */
+/* v6.0.20: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -17,6 +17,7 @@
       'game-lab-v618',
       'game-engagement-v618',
       'factory-journey-v619',
+      'arcade-missions-v620',
       'practice-games',
       'support-notifications',
       'assistant-knowledge',
@@ -46,7 +47,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.19'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.20'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
