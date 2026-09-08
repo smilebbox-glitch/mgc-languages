@@ -40,12 +40,13 @@ assert "todayKey()" in MISSIONS
 assert "daily.scores[mission.slot] = score" in MISSIONS
 assert "daily.bossScore" in MISSIONS
 
-# Integration and release contract.
+# Integration contract. Historical regressions must not pin a newer pilot's exact version;
+# the active release owns the exact pilotCandidate assertion.
 assert "/arcade_missions_v620.css" in INDEX
 assert "/frontend/arcade_missions_v620.js" in INDEX
 assert INDEX.index("arcade_missions_v620.js") < INDEX.index("frontend/boot.js")
 assert "'arcade-missions-v620'" in BOOT
-assert "pilotCandidate: 'v6.0.20'" in BOOT
+assert "pilotCandidate:" in BOOT
 assert ".arcade-missions-v620" in CSS
 assert ".boss-shift" in CSS
 
