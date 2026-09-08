@@ -1,4 +1,4 @@
-/* v6.0.24: validate modular frontend core and publish pilot readiness. */
+/* v6.0.25: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -23,6 +23,7 @@
       'decision-chains-v622',
       'dynamic-factory-v623',
       'shift-simulation-v624',
+      'shift-analytics-v625',
       'practice-games',
       'support-notifications',
       'assistant-knowledge',
@@ -52,7 +53,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.24'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.25'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
