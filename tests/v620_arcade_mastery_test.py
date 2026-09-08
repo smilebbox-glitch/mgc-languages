@@ -15,6 +15,10 @@ assert "frontend.get('game-engagement-v618')" in MASTERY
 assert "engagement().progress()" in MASTERY
 assert "gameLab().startGame(gameId)" in MASTERY
 
+# Launches from the skill map must also be visible to the existing engagement tracker.
+assert MASTERY.count("data-start-v618-game") >= 2
+assert "data-master-game" in MASTERY
+
 # Seven distinct competency tracks must remain visible and mapped to real game types.
 for skill in [
     "vocabulary", "listening", "production", "quality",
@@ -59,4 +63,4 @@ assert "http://" not in MASTERY and "https://" not in MASTERY
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/arcade_mastery_v620.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/boot.js")], check=True, cwd=ROOT)
 
-print("PASS: v6.0.20 mastery patch adds 7-skill competency mapping, department focus, adaptive next-game guidance and achievements")
+print("PASS: v6.0.20 mastery patch adds 7-skill competency mapping, tracked launches, department focus, adaptive next-game guidance and achievements")
