@@ -44,6 +44,23 @@ v6.0.29 — это **RC1 для Company Pilot**. Новая пользовате
 7. запрещает неявное расширение функционального scope после RC;
 8. подтверждает, что v6.0.29 не добавляет новый runtime JS/CSS слой.
 
+## Operability hardening
+
+После RC freeze добавлен отдельный `tests/v629_operability_smoke_test.py`. Это не новая пользовательская функция, а release/test hardening.
+
+Дополнительно исправлена рассинхронизация runtime metadata: `mgc.config.APP_VERSION` теперь по умолчанию равен `6.0.29`, поэтому `/api/meta` больше не должен отдавать старый номер `6.0.20`.
+
+Main LAN CI теперь через реальный Nginx проверяет:
+
+- `/health/live`;
+- `/health/ready`;
+- `/api/meta` и точную версию `6.0.29`;
+- загрузку основной HTML-оболочки;
+- загрузку критических frontend assets;
+- `pilotCandidate: v6.0.29` в `boot.js`;
+- отказ в доступе к персональному adaptive-training API и manager analytics API без авторизации;
+- PostgreSQL, modular runtime и frozen release guard внутри контейнера.
+
 ## Freeze policy
 
 После RC1 без явного снятия freeze разрешены только:
