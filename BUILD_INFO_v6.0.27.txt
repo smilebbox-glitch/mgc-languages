@@ -1,0 +1,31 @@
+Release: v6.0.27
+Codename: Adaptive Training Loop
+Pilot candidate: v6.0.27
+
+Purpose:
+Turn completed game sessions and Shift Simulation reviews into a persistent, user-scoped next-training plan.
+
+Core behavior:
+- 7 automotive learning competencies
+- recent game performance + Shift Review signal
+- weakest-skill selection
+- different-mechanic rotation
+- perfect-game deprioritization
+- third-step Shift Simulation validation
+- Chinese / English scoped plan
+
+Persistence:
+Uses existing GameSession and PracticeResult records.
+No database migration required.
+
+Safety / gamification:
+No new XP path.
+Recommendation itself awards no XP.
+Existing max-5 game-session contract unchanged.
+Existing server anti-farm unchanged.
+
+API:
+GET /api/adaptive-training/plan
+
+Frontend module:
+adaptive-training-v627
