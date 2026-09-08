@@ -85,12 +85,12 @@ assert "backend-лимит пяти ответов" in SHIFT
 for forbidden in ["awarded_xp", "spendable_xp", "/api/games/"]:
     assert forbidden not in SHIFT, forbidden
 
-# Assets load before boot and the readiness contract owns exact active release.
+# Assets remain loaded before boot. Historical regressions must not pin the active release forever.
 assert "/shift_simulation_v624.css" in INDEX
 assert "/frontend/shift_simulation_v624.js" in INDEX
 assert INDEX.index("shift_simulation_v624.js") < INDEX.index("frontend/boot.js")
 assert "'shift-simulation-v624'" in BOOT
-assert "pilotCandidate: 'v6.0.24'" in BOOT
+assert "pilotCandidate: 'v6.0." in BOOT
 assert ".v624-launcher" in CSS
 assert ".v624-sim-shell" in CSS
 assert ".v624-summary" in CSS
