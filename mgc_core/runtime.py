@@ -8,6 +8,7 @@ from fastapi import FastAPI
 
 from mgc.content_v618 import apply_v618_content
 
+from .adaptive_training_router_bridge import AdaptiveTrainingRouterBindingReport, bind_adaptive_training_router
 from .admin_ops_router_bridge import AdminOpsRouterBindingReport, bind_admin_ops_router
 from .auth_bridge import AuthBindingReport, bind_legacy_auth
 from .auth_router_bridge import AuthRouterBindingReport, bind_auth_router
@@ -82,6 +83,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_practice_games_router(module, application)
     bind_shift_analytics_router(module, application)
     bind_team_analytics_router(module, application)
+    bind_adaptive_training_router(module, application)
     bind_terminology_admin_router(module, application)
     bind_pronunciation_router(module, application)
     bind_user_manager_router(module, application)
@@ -109,6 +111,7 @@ LEARNING_ROUTER_BINDING_REPORT: LearningRouterBindingReport = getattr(_legacy_mo
 PRACTICE_GAMES_ROUTER_BINDING_REPORT: PracticeGamesRouterBindingReport = getattr(_legacy_module, "MGC_PRACTICE_GAMES_ROUTER_BINDING_REPORT")
 SHIFT_ANALYTICS_ROUTER_BINDING_REPORT: ShiftAnalyticsRouterBindingReport = getattr(_legacy_module, "MGC_SHIFT_ANALYTICS_ROUTER_BINDING_REPORT")
 TEAM_ANALYTICS_ROUTER_BINDING_REPORT: TeamAnalyticsRouterBindingReport = getattr(_legacy_module, "MGC_TEAM_ANALYTICS_ROUTER_BINDING_REPORT")
+ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT: AdaptiveTrainingRouterBindingReport = getattr(_legacy_module, "MGC_ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT")
 TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT: TerminologyAdminRouterBindingReport = getattr(_legacy_module, "MGC_TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT")
 PRONUNCIATION_ROUTER_BINDING_REPORT: PronunciationRouterBindingReport = getattr(_legacy_module, "MGC_PRONUNCIATION_ROUTER_BINDING_REPORT")
 USER_MANAGER_ROUTER_BINDING_REPORT: UserManagerRouterBindingReport = getattr(_legacy_module, "MGC_USER_MANAGER_ROUTER_BINDING_REPORT")
@@ -123,6 +126,7 @@ __all__ = [
     "OBSERVABILITY_ROUTER_BINDING_REPORT", "WORKFLOW_BINDING_REPORT", "AUTH_BINDING_REPORT",
     "AUTH_ROUTER_BINDING_REPORT", "LEARNING_ROUTER_BINDING_REPORT", "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT", "TEAM_ANALYTICS_ROUTER_BINDING_REPORT",
+    "ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT", "PRONUNCIATION_ROUTER_BINDING_REPORT",
     "USER_MANAGER_ROUTER_BINDING_REPORT", "PILOT_ADMIN_ROUTER_BINDING_REPORT",
     "ADMIN_OPS_ROUTER_BINDING_REPORT", "NOTIFICATIONS_ROUTER_BINDING_REPORT",
