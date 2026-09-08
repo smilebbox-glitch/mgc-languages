@@ -1,0 +1,34 @@
+MGC Languages v6.0.19 — Factory Journey
+Date: 2026-09-08
+Branch: main
+
+Vocabulary runtime:
+- Chinese: 2029 terms
+- English: 2029 terms
+- Exact bilingual parity: yes
+- v6.0.18 shop additions retained:
+  - Paint Shop: +80 terms per language
+  - Logistics: +80 terms per language
+  - Body & Components: +80 terms per language
+
+Games:
+- 20 backend game types
+- max 5 answers per game session
+- department-aware recommendations
+- Game of the Day
+- Arcade Passport
+- Factory Journey meta-campaign with 6 stations:
+  Press -> Body/Welding -> Paint -> Assembly -> Quality -> Logistics
+
+New files:
+- static/frontend/factory_journey_v619.js
+- static/factory_journey_v619.css
+- tests/v619_factory_journey_test.py
+- CHANGELOG_v6.0.19.md
+
+CI:
+- v6.0.18 vocabulary/games regression retained
+- v6.0.19 Factory Journey regression added
+- JavaScript syntax checks updated
+- Company Pilot gate updated
+- LAN Docker/PostgreSQL/Nginx smoke retained
