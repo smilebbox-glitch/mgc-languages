@@ -22,6 +22,7 @@ CRITICAL_ROUTE_CONTRACT = frozenset({
     ("GET", "/api/manager/shift-analytics"),
     ("GET", "/api/leaderboards/games/{game_type}"),
     ("GET", "/api/leaderboards/shifts"),
+    ("GET", "/api/adaptive-training/plan"),
 })
 
 
