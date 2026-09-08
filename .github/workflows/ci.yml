@@ -205,7 +205,7 @@ jobs:
           assert meta.get("chinese_learning_standard"), meta
           print(json.dumps({"version": meta["version"], "environment": meta["environment"]}, ensure_ascii=False))
           PY
-          for endpoint in /api/training/recommendation /api/manager/shift-analytics; do
+          for endpoint in /api/adaptive-training/plan /api/manager/shift-analytics; do
             status="$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:18080${endpoint}")"
             case "$status" in
               401|403) ;;
