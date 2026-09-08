@@ -1,4 +1,4 @@
-/* v6.0.21: validate modular frontend core and publish pilot readiness. */
+/* v6.0.22: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -20,6 +20,7 @@
       'arcade-missions-v620',
       'arcade-mastery-v620',
       'game-depth-v621',
+      'decision-chains-v622',
       'practice-games',
       'support-notifications',
       'assistant-knowledge',
@@ -49,7 +50,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.21'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.22'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
@@ -57,7 +58,7 @@
     if (main) {
       main.innerHTML = '<div class="card"><h2>Не удалось загрузить интерфейс</h2><p>' +
         String(message).replace(/[&<>"']/g, function (char) {
-          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
         }) + '</p></div>';
     }
     throw error;
