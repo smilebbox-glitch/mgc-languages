@@ -1,8 +1,8 @@
-# MGC Languages — Company Pilot v6.0.19
+# MGC Languages — Company Pilot v6.0.20
 
 Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные рабочие сценарии, тесты, SRS и игровая практика.
 
-**Текущий статус:** v6.0.19 Company Pilot на `main`.
+**Текущий статус:** v6.0.20 Company Pilot на `main`.
 
 ## Ключевые цифры
 
@@ -11,9 +11,10 @@
 - **Точный паритет Chinese / English** контролируется CI и LAN runtime smoke.
 - **20 различных игровых механик**.
 - **6 станций Factory Journey**: Штамповка → Кузов/сварка → Окраска → Сборка → Качество → Логистика.
+- **3 адаптивные Daily Missions** + **Boss Shift** после выполнения 3/3.
 - Игровая сессия ограничена **5 ответами** на backend-уровне.
 
-## Словарь v6.0.18–v6.0.19
+## Словарь v6.0.18–v6.0.20
 
 Базовый корпус до расширения содержал 1735 китайских и 256 английских терминов. Для выравнивания английского словаря сформирован параллельный профессиональный English-layer из 1479 терминов.
 
@@ -93,6 +94,25 @@ CHANGELOG_v6.0.19.md
 BUILD_INFO_v6.0.19.txt
 ```
 
+## Daily Missions и Boss Shift — v6.0.20
+
+Чтобы игры не превращались в статичный каталог, добавлен ежедневный игровой слой:
+
+1. **Цеховая миссия** — игра под отдел/цех пользователя.
+2. **Новая механика** — режим, который пользователь ещё не проходил или проходил редко.
+3. **Точка роста** — восстановление слабого навыка по истории результатов.
+
+После выполнения 3/3 открывается **Boss Shift** — короткая тематическая сменная задача. Маршрутизация учитывает подразделение: окраска получает Defect Detective, логистика — Logistics Flow, кузов и компоненты — Car Part Hotspot, сборка — Build the Car, качество — Quality Gate, R&D — Build the BOM, закупки — Dialogue Duel.
+
+Файлы:
+
+```text
+static/frontend/arcade_missions_v620.js
+static/arcade_missions_v620.css
+tests/v620_arcade_missions_test.py
+BUILD_INFO_v6.0.20.txt
+```
+
 ## Персональная игровая практика
 
 Сохранён engagement-layer v6.0.18:
@@ -112,7 +132,7 @@ BUILD_INFO_v6.0.19.txt
 - профессиональная терминология по цехам и функциям;
 - реальные рабочие ситуации и Role Play;
 - тесты, SRS, курс 30 дней, итоговый экзамен;
-- 20 игр + Factory Journey;
+- 20 игр + Factory Journey + Daily Missions + Boss Shift;
 - XP, прогресс и anti-farm;
 - фраза дня, план на сегодня, быстрый доступ и подборки терминов;
 - роли User / Manager / Editor / Admin;
@@ -141,7 +161,7 @@ tests/v617_pilot_ux_regression_test.py
 На `main` работают два основных CI-контура:
 
 1. `.github/workflows/ci.yml` — quality gate + LAN PostgreSQL/Docker/Nginx smoke.
-2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate, теперь также проверяющий v6.0.18/v6.0.19.
+2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate, проверяющий текущий игровой и словарный слой до v6.0.20.
 
 Ключевые regression-тесты:
 
@@ -149,9 +169,10 @@ tests/v617_pilot_ux_regression_test.py
 tests/v617_pilot_ux_regression_test.py
 tests/v618_content_games_regression_test.py
 tests/v619_factory_journey_test.py
+tests/v620_arcade_missions_test.py
 ```
 
-CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, JavaScript syntax и реальный LAN runtime.
+CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, Daily Missions, Boss Shift, JavaScript syntax и реальный LAN runtime.
 
 ## One-click запуск Company Pilot
 
@@ -185,5 +206,5 @@ python scripts/company_pilot_preflight.py --strict-corporate
 
 ---
 
-**Pilot:** MGC Languages v6.0.19  
+**Pilot:** MGC Languages v6.0.20  
 **Назначение:** корпоративное изучение китайского и английского языка для задач автомобильной промышленности.
