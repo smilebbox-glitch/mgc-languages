@@ -20,7 +20,7 @@ assert "engagement().progress()" in MISSIONS
 for marker in ["ЦЕХОВАЯ МИССИЯ", "НОВАЯ МЕХАНИКА", "ТОЧКА РОСТА"]:
     assert marker in MISSIONS, marker
 assert "Три короткие миссии на сегодня" in MISSIONS
-assert "doneCount + '/3'" in MISSIONS
+assert "doneCount + '/3</b>'" in MISSIONS
 assert "data-mission-slot" in MISSIONS
 
 # Boss mode is gated by completion of all daily missions and is department-aware.
