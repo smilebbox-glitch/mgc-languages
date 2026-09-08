@@ -1,4 +1,4 @@
-/* v6.0.26: validate modular frontend core and publish pilot readiness. */
+/* v6.0.27: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -34,6 +34,7 @@
       'admin-analytics',
       'manager-admin',
       'team-leaderboard-v626',
+      'adaptive-training-v627',
       'legacy-retirement',
       'navigation',
       'session-lifecycle',
@@ -52,7 +53,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.26'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.27'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
