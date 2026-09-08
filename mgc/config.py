@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 STATIC_DIR = ROOT / "static"
-APP_VERSION = os.getenv("APP_VERSION", "6.0.18").strip() or "6.0.18"
+APP_VERSION = os.getenv("APP_VERSION", "6.0.20").strip() or "6.0.20"
 INSTANCE_ID = os.getenv("INSTANCE_ID", os.getenv("HOSTNAME", "local")).strip() or "local"
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'mgc.db'}")
 APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
