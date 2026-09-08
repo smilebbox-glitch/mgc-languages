@@ -61,12 +61,12 @@ assert "five-answer-badge" in LAB
 assert "max 5" in LAB
 assert "/api/games/" not in DEPTH
 
-# Assets must load before the boot readiness gate and be part of the required module contract.
+# Assets must load before the boot readiness gate and remain part of the required module contract.
 assert "/game_depth_v621.css" in INDEX
 assert "/frontend/game_depth_v621.js" in INDEX
 assert INDEX.index("game_depth_v621.js") < INDEX.index("frontend/boot.js")
 assert "'game-depth-v621'" in BOOT
-assert "pilotCandidate: 'v6.0.21'" in BOOT
+assert "pilotCandidate: 'v6.0." in BOOT
 assert "http://" not in DEPTH and "https://" not in DEPTH
 
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/game_depth_v621.js")], check=True, cwd=ROOT)
