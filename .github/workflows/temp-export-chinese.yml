@@ -1,0 +1,42 @@
+name: temp-export-chinese-corpus
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/temp-export-chinese.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Split Chinese corpus into review-sized chunks
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          src = Path('data/chinese.json')
+          payload = json.loads(src.read_text(encoding='utf-8'))
+          items = payload['items']
+          out = Path('.tmp_export/chinese')
+          out.mkdir(parents=True, exist_ok=True)
+          chunk_size = 120
+          for index in range(0, len(items), chunk_size):
+              chunk = items[index:index + chunk_size]
+              path = out / f'chunk_{index // chunk_size + 1:02d}.json'
+              path.write_text(json.dumps({'items': chunk}, ensure_ascii=False, indent=2), encoding='utf-8')
+          (out / 'manifest.json').write_text(json.dumps({'count': len(items), 'chunk_size': chunk_size, 'chunks': (len(items)+chunk_size-1)//chunk_size}, ensure_ascii=False, indent=2), encoding='utf-8')
+          PY
+      - name: Commit temporary export
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .tmp_export/chinese
+          git commit -m "chore: export Chinese corpus chunks for parity work [skip ci]"
+          git push
