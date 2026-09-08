@@ -1,6 +1,8 @@
 name: mgc-languages-v617-company-pilot
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
