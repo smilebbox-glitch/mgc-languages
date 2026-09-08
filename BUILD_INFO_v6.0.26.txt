@@ -1,0 +1,13 @@
+Release: v6.0.26
+Codename: Manager Team Analytics + Top-10 Leaderboard
+Pilot candidate: v6.0.26
+
+Scope:
+- department-scoped manager Shift Simulation analytics
+- Top-10 timed game leaderboard
+- score DESC, duration ASC, best attempt per employee
+- current-user position
+- no new XP path
+- no database migration
+- existing 20-game and anti-farm contracts unchanged
+- shift duration payload foundation for timed shift rankings
