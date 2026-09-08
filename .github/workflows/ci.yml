@@ -44,53 +44,89 @@ jobs:
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
 
-  docker-smoke:
+  lan-compose-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: [quality]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build current pilot image
-        run: docker build -t mgc-languages:ci .
-
-      - name: Start current pilot container
+      - name: Create disposable LAN pilot configuration
+        shell: bash
         run: |
-          docker run -d --name mgc-languages-ci \
-            -p 8000:8000 \
-            -e APP_ENV=development \
-            -e AUTH_MODE=local \
-            -e AUTO_CREATE_SCHEMA=true \
-            -e DATABASE_URL=sqlite:////tmp/mgc-languages-ci.db \
-            -e OIDC_STATE_SECRET=ci-runtime-state-secret-32-bytes \
-            -e TTS_CACHE_PERSISTENCE=ephemeral \
-            mgc-languages:ci
+          DB_SECRET="$(openssl rand -hex 24)"
+          ADMIN_SECRET="$(openssl rand -hex 24)"
+          STATE_SECRET="$(openssl rand -hex 24)"
+          METRICS_SECRET="$(openssl rand -hex 24)"
+          {
+            echo 'MGC_BIND_ADDRESS=127.0.0.1'
+            echo 'MGC_PORT=18080'
+            echo 'MGC_TRUSTED_HOSTS=localhost,127.0.0.1'
+            echo 'POSTGRES_DB=mgc_languages'
+            echo 'POSTGRES_USER=mgc_languages'
+            echo "POSTGRES_PASSWORD=$DB_SECRET"
+            echo 'MGC_ADMIN_USERNAME=admin'
+            echo "MGC_ADMIN_PASSWORD=$ADMIN_SECRET"
+            echo 'MGC_ADMIN_DISPLAY_NAME=MGC Admin'
+            echo 'MGC_ADMIN_DEPARTMENT=Administration'
+            echo 'MGC_ADMIN_SYNC_CREDENTIALS=true'
+            echo "OIDC_STATE_SECRET=$STATE_SECRET"
+            echo "METRICS_TOKEN=$METRICS_SECRET"
+            echo 'REGISTRATION_ENABLED=true'
+            echo 'SESSION_TTL_HOURS=168'
+            echo 'WEB_CONCURRENCY=2'
+            echo 'UVICORN_LIMIT_CONCURRENCY=200'
+            echo 'UVICORN_BACKLOG=2048'
+            echo 'UVICORN_KEEP_ALIVE_SECONDS=5'
+            echo 'DB_POOL_SIZE=5'
+            echo 'DB_MAX_OVERFLOW=5'
+            echo 'DB_POOL_TIMEOUT=10'
+            echo 'DB_POOL_RECYCLE=1800'
+            echo 'POSTGRES_MAX_CONNECTIONS=120'
+            echo 'DB_CONNECTION_RESERVE=20'
+            echo 'CAPACITY_EXPECTED_AUX_CONNECTIONS=8'
+            echo 'TTS_ENABLED=true'
+            echo 'TTS_CONCURRENCY=2'
+            echo 'CORS_ORIGINS='
+          } > .env.ci-lan
 
-      - name: Wait for readiness
+      - name: Validate LAN compose model
+        run: docker compose --env-file .env.ci-lan -f docker-compose.lan.yml config --quiet
+
+      - name: Start exact LAN PostgreSQL stack
+        run: docker compose --env-file .env.ci-lan -f docker-compose.lan.yml up -d --build
+
+      - name: Wait for LAN readiness through Nginx
+        shell: bash
         run: |
-          for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:8000/health/ready > /tmp/ready.json; then
-              cat /tmp/ready.json
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:18080/health/ready > /tmp/lan-ready.json; then
+              cat /tmp/lan-ready.json
               exit 0
             fi
-            if ! docker ps --format '{{.Names}}' | grep -qx 'mgc-languages-ci'; then
-              docker logs mgc-languages-ci || true
+            if docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps --status exited --services | grep -qx app; then
+              echo 'LAN app container exited before readiness.'
+              docker compose --env-file .env.ci-lan -f docker-compose.lan.yml logs --no-color --tail 200 app || true
               exit 1
             fi
             sleep 2
           done
-          docker logs mgc-languages-ci || true
+          echo 'LAN stack did not reach readiness in time.'
           exit 1
 
-      - name: Verify modular runtime in image
-        run: docker exec mgc-languages-ci python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+      - name: Verify LAN services and modular runtime
+        run: |
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+          curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
+          cat /tmp/lan-meta.json
 
-      - name: Runtime diagnostics
+      - name: LAN runtime diagnostics
         if: failure()
         run: |
-          docker inspect mgc-languages-ci || true
-          docker logs mgc-languages-ci || true
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps -a || true
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml logs --no-color --tail 250 app db nginx || true
 
-      - name: Stop runtime container
+      - name: Stop disposable LAN stack
         if: always()
-        run: docker rm -f mgc-languages-ci || true
+        run: docker compose --env-file .env.ci-lan -f docker-compose.lan.yml down -v --remove-orphans || true
