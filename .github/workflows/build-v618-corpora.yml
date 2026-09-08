@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install corpus-generation dependencies
-        run: pip install 'argostranslate==1.9.6' 'pypinyin==0.55.0'
+        run: pip install 'deep-translator==1.11.4' 'pypinyin==0.55.0'
       - name: Generate parity and shop corpora
         run: python scripts/build_v618_corpora.py
       - name: Validate generated payloads
@@ -40,6 +40,20 @@ jobs:
           assert manifest['shop_additions']['Окраска'] == 80, manifest
           assert manifest['shop_additions']['Логистика'] == 80, manifest
           assert manifest['shop_additions']['Кузов и компоненты'] == 80, manifest
+          assert 'automotive override glossary' in manifest['english_translation'], manifest
+          parity = json.loads((data/'english_parallel_v618.json').read_text(encoding='utf-8'))['items']
+          by_ru = {row['ru'].casefold(): row['term'].casefold() for row in parity}
+          expected = {
+              'саморез': 'self-tapping screw',
+              'кузов в белом': 'body-in-white',
+              'динамометрический ключ': 'torque wrench',
+              'канбан': 'kanban',
+              'лонжерон': 'side member',
+              'перепад поверхностей': 'flushness',
+          }
+          for ru, en in expected.items():
+              if ru in by_ru:
+                  assert by_ru[ru] == en, (ru, by_ru[ru], en)
           print(manifest)
           PY
       - name: Commit generated corpora
@@ -51,7 +65,7 @@ jobs:
             echo 'Generated corpora already current.'
             exit 0
           fi
-          git commit -m "content: generate v6.0.18 bilingual parity corpora [skip ci]"
+          git commit -m "content: generate v6.0.18 quality-gated bilingual corpora"
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
