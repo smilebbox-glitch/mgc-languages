@@ -52,6 +52,9 @@ jobs:
       - name: v6.0.20 arcade mastery regression
         run: python tests/v620_arcade_mastery_test.py
 
+      - name: v6.0.21 production game depth regression
+        run: python tests/v621_game_depth_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -62,6 +65,7 @@ jobs:
           node --check static/frontend/factory_journey_v619.js
           node --check static/frontend/arcade_missions_v620.js
           node --check static/frontend/arcade_mastery_v620.js
+          node --check static/frontend/game_depth_v621.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
