@@ -1,0 +1,29 @@
+name: test-v618-zh-en-quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/test-v618-zh-en-quality.yml'
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'argostranslate==1.9.6'
+      - name: Translate automotive samples zh -> en
+        run: |
+          python - <<'PY'
+          import argostranslate.package as package
+          import argostranslate.translate as translate
+          package.update_package_index()
+          pkg = next(p for p in package.get_available_packages() if p.from_code == 'zh' and p.to_code == 'en')
+          package.install_from_path(pkg.download())
+          samples = ['自攻螺钉','左后尾灯','保险杠','白车身','扭矩扳手','电泳涂装','供应链','关税','型面','凹痕','喷漆室','看板','纵梁','面差']
+          for value in samples:
+              print(value, '=>', translate.translate(value, 'zh', 'en'))
+          PY
