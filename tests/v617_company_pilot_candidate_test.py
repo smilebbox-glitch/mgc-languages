@@ -18,6 +18,7 @@ ENV = (ROOT / '.env.company-pilot.example').read_text(encoding='utf-8')
 ONE_CLICK = (ROOT / 'docs/ONE_CLICK_START_v6.0.17.md').read_text(encoding='utf-8')
 BAT = (ROOT / 'START_COMPANY_PILOT.bat').read_text(encoding='utf-8')
 PS1 = (ROOT / 'scripts/start_company_pilot.ps1').read_text(encoding='utf-8')
+LAN_PS1 = (ROOT / 'scripts/start_lan_windows.ps1').read_text(encoding='utf-8')
 
 # Pilot home is loaded before legacy learning so its capture-phase Home ownership wins.
 assert INDEX.index('/frontend/pilot_home.js') < INDEX.index('/frontend/learning.js')
@@ -86,10 +87,17 @@ for token in (
 for token in ('GO / GO WITH ACTIONS / NO-GO', 'no open S1/S2', 'company_pilot_preflight.py'):
     assert token.lower() in (RUNBOOK + UAT).lower(), token
 
-# One-click Windows startup must preserve the corporate safety gate instead of bypassing it.
-for path in (ROOT / 'START_COMPANY_PILOT.bat', ROOT / 'scripts/start_company_pilot.ps1', ROOT / 'docs/ONE_CLICK_START_v6.0.17.md'):
+# One-click Windows startup keeps strict corporate security when real SSO exists,
+# but must remain runnable as a clearly labelled local/LAN pilot before IT issues OIDC credentials.
+for path in (
+    ROOT / 'START_COMPANY_PILOT.bat',
+    ROOT / 'scripts/start_company_pilot.ps1',
+    ROOT / 'scripts/start_lan_windows.ps1',
+    ROOT / 'docs/ONE_CLICK_START_v6.0.17.md',
+):
     assert path.exists(), path
 assert 'start_company_pilot.ps1' in BAT
+assert 'git pull --ff-only origin main' in BAT
 for token in (
     'docker info',
     'docker compose version',
@@ -100,8 +108,17 @@ for token in (
     ' up -d',
     '/health/ready',
     'Start-Process',
+    'OIDC_CLIENT_ID',
+    'OIDC_CLIENT_SECRET',
+    'Test-Placeholder',
+    'Ensure-Secret',
+    'New-Secret',
+    'start_lan_windows.ps1',
+    '[LOCAL PILOT]',
 ):
     assert token in PS1, token
+for token in ('POSTGRES_PASSWORD', 'OIDC_STATE_SECRET', 'METRICS_TOKEN', 'New-Secret'):
+    assert token in LAN_PS1, token
 assert 'down -v' not in PS1.lower()
 assert 'one double-click' in ONE_CLICK.lower()
 
@@ -113,4 +130,4 @@ subprocess.run([sys.executable, '-m', 'py_compile', str(ROOT / 'scripts/company_
 for token in ('.pilot-dashboard', '.pilot-hero-chinese', '.pilot-hero-english', '.pilot-next-grid', '@media(max-width:820px)'):
     assert token in CSS, token
 
-print('PASS: v6.0.17 company pilot candidate has approved bilingual UI, daily rotation, one-click startup and GO/NO-GO operations gate')
+print('PASS: v6.0.17 company pilot candidate has approved bilingual UI, SSO-aware one-click startup and GO/NO-GO operations gate')
