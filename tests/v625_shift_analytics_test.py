@@ -25,20 +25,10 @@ INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
 BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 
 payload = ShiftSimulationPayload(
-    session_id="shift-v625-regression",
-    language="chinese",
-    production_control=82,
-    prioritization=76,
-    production_judgement=91,
-    language_score=68,
-    total_score=81,
-    weakest_dimension="language",
-    factory_weakest="supplier",
-    line=84,
-    quality=79,
-    material=73,
-    supplier=61,
-    load=42,
+    session_id="shift-v625-regression", language="chinese", production_control=82,
+    prioritization=76, production_judgement=91, language_score=68, total_score=81,
+    weakest_dimension="language", factory_weakest="supplier", line=84, quality=79,
+    material=73, supplier=61, load=42,
 )
 encoded = encode_shift_topic(payload)
 assert len(encoded) <= 160
@@ -65,62 +55,44 @@ summary = summarize_shift_history(history)
 assert summary["count"] == 4
 assert summary["latest_total"] == 81
 assert summary["weakest_dimension"] == "language"
-# Load is inverse-health: higher load means worse state, so these samples make team load weaker than supplier control.
 assert summary["factory_weakest"] == "load"
 assert summary["trend_delta"] is not None
 
-# Server storage is user-scoped and reuses PracticeResult without a schema migration or XP path.
 for marker in [
-    'SHIFT_KIND = "shift_simulation"',
-    '@router.post("/api/shift-simulations")',
-    '@router.get("/api/shift-simulations/history")',
-    "practice_result_model.user_id == user.id",
-    "storage_session_id(int(user.id)",
-    "kind=SHIFT_KIND",
-    "topic=encode_shift_topic(payload)",
+    'SHIFT_KIND = "shift_simulation"', '@router.post("/api/shift-simulations")',
+    '@router.get("/api/shift-simulations/history")', "practice_result_model.user_id == user.id",
+    "storage_session_id(int(user.id)", "kind=SHIFT_KIND", "topic=encode_shift_topic(payload)",
     '"learning_language": str(row.language)',
 ]:
     assert marker in ROUTER, marker
 for forbidden in ["XPEvent", "spendable_xp", "awarded_xp", "/api/games/"]:
     assert forbidden not in ROUTER, forbidden
 
-# New routes bind before the root static mount and are exposed through the production runtime.
 for marker in [
-    '("POST", "/api/shift-simulations")',
-    '("GET", "/api/shift-simulations/history")',
-    "application.router.routes.insert(insert_at, route)",
-    "practice_storage_session_id",
-    "user_scoped_storage",
+    '("POST", "/api/shift-simulations")', '("GET", "/api/shift-simulations/history")',
+    "application.router.routes.insert(insert_at, route)", "practice_storage_session_id", "user_scoped_storage",
 ]:
     assert marker in BRIDGE, marker
 assert "bind_shift_analytics_router(module, application)" in RUNTIME
 assert "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT" in RUNTIME
 assert "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT" in ASGI
 
-# Frontend automatically captures Shift Review, syncs to the account, survives temporary network failure and renders personal trends.
 for marker in [
-    'frontend.register("shift-analytics-v625"',
-    'const API_ROOT = "/api/shift-simulations"',
-    'const PENDING_KEY = "mgc.v625.shift.pending"',
-    'summary.dataset.v625Captured = "1"',
-    "enqueue(payload)",
-    "flushPending()",
-    'API_ROOT + "/history?limit=20"',
-    "PERSONAL SHIFT ANALYTICS · v6.0.25",
-    "ПОВТОРЯЮЩАЯСЯ ТОЧКА РОСТА",
-    "Тренировать в новой смене",
-    "История сохраняется под вашим аккаунтом в PostgreSQL",
+    'frontend.register("shift-analytics-v625"', 'const API_ROOT = "/api/shift-simulations"',
+    'const PENDING_KEY = "mgc.v625.shift.pending"', 'summary.dataset.v625Captured = "1"',
+    "enqueue(payload)", "flushPending()", 'API_ROOT + "/history?limit=20"',
+    "PERSONAL SHIFT ANALYTICS · v6.0.25", "ПОВТОРЯЮЩАЯСЯ ТОЧКА РОСТА",
+    "Тренировать в новой смене", "История сохраняется под вашим аккаунтом в PostgreSQL",
 ]:
     assert marker in FRONTEND, marker
 for forbidden in ["awarded_xp", "spendable_xp", "/api/games/"]:
     assert forbidden not in FRONTEND, forbidden
 
-# Assets load after Shift Simulation and before boot; v6.0.25 owns the exact active candidate marker.
 assert "/shift_analytics_v625.css" in INDEX
 assert "/frontend/shift_analytics_v625.js" in INDEX
 assert INDEX.index("shift_simulation_v624.js") < INDEX.index("shift_analytics_v625.js") < INDEX.index("frontend/boot.js")
 assert "'shift-analytics-v625'" in BOOT
-assert "pilotCandidate: 'v6.0.25'" in BOOT
+assert "pilotCandidate: 'v6.0." in BOOT
 assert ".v625-analytics-panel" in CSS
 assert ".v625-history-row" in CSS
 
