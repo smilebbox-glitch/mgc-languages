@@ -7,12 +7,12 @@
   if (frontend.has('factory-journey-v619')) return;
 
   const STATIONS = Object.freeze([
-    {id:'press', title:'Штамповка', subtitle:'Press Shop', game:'shop_route', icon:'01', copy:'Распределите термин по правильному цеху и закрепите производственную логику.'},
-    {id:'body', title:'Кузов / сварка', subtitle:'Body Shop', game:'hotspot', icon:'02', copy:'Найдите деталь на автомобиле и свяжите название с реальным расположением.'},
-    {id:'paint', title:'Окраска', subtitle:'Paint Shop', game:'defect_detective', icon:'03', copy:'Распознавайте дефекты покрытия и профессиональную терминологию окрасочного цеха.'},
-    {id:'assembly', title:'Сборка', subtitle:'Assembly Shop', game:'assembly_order', icon:'04', copy:'Соберите технологическую последовательность и закрепите рабочие фразы.'},
-    {id:'quality', title:'Качество', subtitle:'Quality Gate', game:'quality_gate', icon:'05', copy:'Примите решение PASS / REWORK / HOLD по фактическим данным.'},
-    {id:'logistics', title:'Логистика', subtitle:'Material Flow', game:'logistics_route', icon:'06', copy:'Постройте материальный поток от приёмки до линии и выучите JIT/JIS лексику.'}
+    {id:'press', title:'Штамповка', subtitle:'Press Shop', topic:'Штамповка', game:'shop_route', icon:'01', copy:'Распределите термин по правильному цеху и закрепите производственную логику.'},
+    {id:'body', title:'Кузов / сварка', subtitle:'Body Shop', topic:'Кузов и компоненты', game:'hotspot', icon:'02', copy:'Найдите деталь на автомобиле и свяжите название с реальным расположением.'},
+    {id:'paint', title:'Окраска', subtitle:'Paint Shop', topic:'Окраска', game:'defect_detective', icon:'03', copy:'Распознавайте дефекты покрытия и профессиональную терминологию окрасочного цеха.'},
+    {id:'assembly', title:'Сборка', subtitle:'Assembly Shop', topic:'Сборка автомобиля', game:'assembly_order', icon:'04', copy:'Соберите технологическую последовательность и закрепите рабочие фразы.'},
+    {id:'quality', title:'Качество', subtitle:'Quality Gate', topic:'Качество в автопроме', game:'quality_gate', icon:'05', copy:'Примите решение PASS / REWORK / HOLD по фактическим данным.'},
+    {id:'logistics', title:'Логистика', subtitle:'Material Flow', topic:'Логистика JIT/JIS', game:'logistics_route', icon:'06', copy:'Постройте материальный поток от приёмки до линии и выучите JIT/JIS лексику.'}
   ]);
 
   let observer = null;
@@ -20,6 +20,7 @@
 
   function gameLab() { return frontend.get('game-lab-v618'); }
   function engagement() { return frontend.get('game-engagement-v618'); }
+  function stateApi() { return frontend.get('app-state'); }
   function query(selector, scope) { return (scope || document).querySelector(selector); }
   function queryAll(selector, scope) { return Array.from((scope || document).querySelectorAll(selector)); }
   function esc(value) {
@@ -66,6 +67,11 @@
     return STATIONS[STATIONS.length - 1];
   }
 
+  function launchStation(game, topic) {
+    stateApi().set('topic', String(topic || ''));
+    return Promise.resolve(gameLab().startGame(game)).catch(function () { /* game lab owns error UI */ });
+  }
+
   function stationHTML(station, index, data) {
     const done = stationDone(station, data);
     const unlocked = stationUnlocked(index, data);
@@ -73,7 +79,8 @@
     const stateClass = done ? 'done' : unlocked ? 'unlocked' : 'locked';
     const stateText = done ? ('BEST ' + best + '/5') : unlocked ? 'ДОСТУПНО' : 'ЗАКРЫТО';
     return '<button class="factory-journey-station ' + stateClass + '" data-factory-station="' + esc(station.id) +
-      '" data-start-v618-game="' + esc(station.game) + '"' + (unlocked ? '' : ' disabled') + '>' +
+      '" data-start-v618-game="' + esc(station.game) + '" data-factory-topic="' + esc(station.topic) + '"' +
+      (unlocked ? '' : ' disabled') + '>' +
       '<span class="factory-station-index">' + esc(station.icon) + '</span>' +
       '<span class="factory-station-copy"><small>' + esc(station.subtitle) + '</small><b>' + esc(station.title) +
       '</b><em>' + esc(station.copy) + '</em></span><strong>' + esc(stateText) + '</strong></button>';
@@ -100,14 +107,15 @@
     section.innerHTML =
       '<div class="factory-journey-head"><div><span class="kicker">FACTORY JOURNEY · v6.0.19</span>' +
       '<h2>Пройдите автомобиль через весь завод</h2>' +
-      '<p>Шесть связанных станций превращают отдельные мини-игры в один маршрут: от штамповки до логистики. Следующая станция открывается после завершения предыдущей.</p></div>' +
+      '<p>Шесть связанных станций превращают отдельные мини-игры в один маршрут: от штамповки до логистики. Следующая станция открывается после завершения предыдущей, а каждая запускается на словаре своего цеха.</p></div>' +
       '<div class="factory-journey-meter"><span>МАРШРУТ</span><b>' + summary.completed + '/6</b><small>станций завершено</small>' +
       '<div><i style="width:' + summary.pct + '%"></i></div></div></div>' +
       '<div class="factory-conveyor" aria-label="Маршрут по цехам"><div class="factory-conveyor-line"></div>' +
       STATIONS.map(function (station, index) { return stationHTML(station, index, data); }).join('') + '</div>' +
       '<div class="factory-journey-footer"><div><b>' + summary.perfect + '</b><span>идеальных станций 5/5</span></div>' +
       '<div><b>' + summary.pct + '%</b><span>маршрута пройдено</span></div>' +
-      '<button class="primary" data-factory-continue data-start-v618-game="' + esc(next.game) + '">' +
+      '<button class="primary" data-factory-continue data-start-v618-game="' + esc(next.game) +
+      '" data-factory-topic="' + esc(next.topic) + '">' +
       (summary.completed >= STATIONS.length ? 'Повторить финальную станцию' : 'Продолжить маршрут') + ' →</button></div>';
 
     if (arcade && arcade.parentNode) arcade.parentNode.insertBefore(section, arcade.nextSibling);
@@ -115,13 +123,13 @@
 
     queryAll('[data-factory-station]:not(:disabled)', section).forEach(function (button) {
       button.addEventListener('click', function () {
-        Promise.resolve(gameLab().startGame(button.dataset.startV618Game)).catch(function () { /* game lab owns error UI */ });
+        void launchStation(button.dataset.startV618Game, button.dataset.factoryTopic);
       });
     });
 
     const continueButton = query('[data-factory-continue]', section);
     if (continueButton) continueButton.addEventListener('click', function () {
-      Promise.resolve(gameLab().startGame(continueButton.dataset.startV618Game)).catch(function () { /* game lab owns error UI */ });
+      void launchStation(continueButton.dataset.startV618Game, continueButton.dataset.factoryTopic);
     });
   }
 
