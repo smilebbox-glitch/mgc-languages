@@ -3,9 +3,17 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ======================================================
-echo   MGC Language Lab - Company Pilot Launcher v6.0.17
+echo   MGC Language Lab - Pilot Launcher v6.0.17
 echo ======================================================
 echo.
+
+where git >nul 2>nul
+if "%ERRORLEVEL%"=="0" if exist ".git" (
+  echo Updating project from GitHub...
+  git pull --ff-only origin main
+  if not "%ERRORLEVEL%"=="0" echo WARNING: Git update was skipped. Starting current local copy.
+  echo.
+)
 
 where powershell.exe >nul 2>nul
 if errorlevel 1 (
@@ -26,6 +34,6 @@ if not "%RC%"=="0" (
 )
 
 echo.
-echo [GO] MGC Language Lab company pilot is running.
+echo [GO] MGC Language Lab pilot launcher completed successfully.
 pause
 exit /b 0
