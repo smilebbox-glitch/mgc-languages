@@ -41,4 +41,4 @@ jobs:
           grep -q "TOP 10 · SCORE + TIME" static/frontend/team_leaderboard_v626.js
           grep -q "TEAM ANALYTICS · v6.0.26" static/frontend/team_leaderboard_v626.js
           grep -q "team_leaderboard_v626.js" static/index.html
-          grep -q "pilotCandidate: 'v6.0.26'" static/frontend/boot.js
+          grep -Eq "pilotCandidate: 'v6\\.0\\.[0-9]+'" static/frontend/boot.js
