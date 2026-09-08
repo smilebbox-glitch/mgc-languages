@@ -204,7 +204,7 @@
     return '<div class="v625-history-list">' + items.slice(0, 6).map(function (item) {
       const date = item.created_at ? new Date(item.created_at) : null;
       const dateText = date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString("ru-RU", {day:"2-digit", month:"2-digit", year:"2-digit"}) : "—";
-      return '<div class="v625-history-row"><div><span>' + esc(dateText) + '</span><b>' + esc(item.language === "english" ? "English" : "中文 · Putonghua") + '</b></div>' +
+      return '<div class="v625-history-row"><div><span>' + esc(dateText) + '</span><b>' + esc(item.learning_language === "english" ? "English" : "中文 · Putonghua") + '</b></div>' +
         '<strong>' + esc(item.total_score) + '<small>/100</small></strong>' +
         '<div class="v625-mini-scores"><span>Control ' + esc(item.production_control) + '</span><span>Priority ' + esc(item.prioritization) + '</span><span>Judgement ' + esc(item.production_judgement) + '</span><span>Language ' + esc(item.language) + '</span></div></div>';
     }).join("") + '</div>';
