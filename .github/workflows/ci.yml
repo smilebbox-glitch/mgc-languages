@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  static:
+  quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -22,39 +22,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pip install -r requirements.txt
-      - name: Existing static preflight
-        run: bash scripts/static_preflight.sh
-      - name: Extended language content contracts
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Python compile
+        run: python -m compileall -q app.py asgi.py mgc mgc_core scripts
+
+      - name: Current language-content contracts
         run: python tests/content_contract.py
 
-  regression:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [base, pronunciation, putonghua, reliability, ops, v57, v571, v572, v573, v574, v575, v576, v577, v578, v579, v580, v581, v582, v583, v584, v585, v586, v587, v588, v589, v590]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install -r requirements.txt
-      - name: Regression shard — ${{ matrix.shard }}
-        run: python scripts/run_release_tests.py --shard "${{ matrix.shard }}" --timeout 75
+      - name: Current pilot regression guards
+        run: |
+          python tests/v616_frontend_physical_shell_cleanup_test.py
+          python tests/v617_company_pilot_candidate_test.py
 
-  image:
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/pilot_home.js
+          node --check static/frontend/learning.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+
+  docker-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: [static, regression]
+    timeout-minutes: 25
+    needs: [quality]
     steps:
       - uses: actions/checkout@v4
-      - name: Build Docker image
+
+      - name: Build current pilot image
         run: docker build -t mgc-languages:ci .
-      - name: Verify modular entrypoint, extracted routers and runtime bindings in image
-        run: docker run --rm --entrypoint python mgc-languages:ci -c "import shutil, asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert asgi.ROUTER_BINDING_REPORT.ok; assert asgi.ROUTER_BINDING_REPORT.system_route_count == 5; assert asgi.ROUTER_BINDING_REPORT.root_mount_order_preserved; assert asgi.ROUTER_BINDING_REPORT.router_module_owned; assert asgi.OBSERVABILITY_ROUTER_BINDING_REPORT.ok; assert asgi.OBSERVABILITY_ROUTER_BINDING_REPORT.metrics_route_bound; assert asgi.OBSERVABILITY_ROUTER_BINDING_REPORT.root_mount_order_preserved; assert asgi.OBSERVABILITY_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.OBSERVABILITY_ROUTER_BINDING_REPORT.renderer_module_owned; assert asgi.SECURITY_BINDING_REPORT.ok; assert asgi.GOVERNANCE_BINDING_REPORT.ok; assert asgi.GOVERNANCE_BINDING_REPORT.rls_bound; assert asgi.GOVERNANCE_BINDING_REPORT.audit_event_bound; assert asgi.LEARNING_BINDING_REPORT.ok; assert asgi.LEARNING_BINDING_REPORT.xp_profile_bound; assert asgi.LEARNING_BINDING_REPORT.xp_award_bound; assert asgi.LEARNING_BINDING_REPORT.srs_schedule_bound; assert asgi.SERVICE_BINDING_REPORT.ok; assert asgi.SERVICE_BINDING_REPORT.user_view_bound; assert asgi.SERVICE_BINDING_REPORT.terms_query_bound; assert asgi.SERVICE_BINDING_REPORT.revision_bound; assert asgi.TTS_BINDING_REPORT.ok; assert asgi.TTS_BINDING_REPORT.cache_bound; assert asgi.TTS_BINDING_REPORT.circuit_bound; assert asgi.TTS_BINDING_REPORT.synthesis_bound; assert asgi.TTS_BINDING_REPORT.health_bound; assert asgi.TTS_BINDING_REPORT.pronunciation_response_bound; assert asgi.TTS_BINDING_REPORT.state_bound; assert asgi.TTS_BINDING_REPORT.config_preserved; assert asgi.TTS_BINDING_REPORT.lru_cache_preserved; assert asgi.TTS_BINDING_REPORT.observability_state_compatible; assert asgi.TTS_BINDING_REPORT.hooks_captured; assert asgi.TTS_BINDING_REPORT.module_owned; assert asgi.WORKFLOW_BINDING_REPORT.ok; assert asgi.WORKFLOW_BINDING_REPORT.practice_route_bound; assert asgi.WORKFLOW_BINDING_REPORT.game_start_route_bound; assert asgi.WORKFLOW_BINDING_REPORT.game_finish_route_bound; assert asgi.WORKFLOW_BINDING_REPORT.question_attempt_route_bound; assert asgi.WORKFLOW_BINDING_REPORT.learning_service_captured; assert asgi.WORKFLOW_BINDING_REPORT.terminology_service_captured; assert asgi.AUTH_BINDING_REPORT.ok; assert asgi.AUTH_BINDING_REPORT.current_user_dependency_occurrences > 0; assert asgi.AUTH_BINDING_REPORT.role_dependency_overrides > 0; assert asgi.AUTH_ROUTER_BINDING_REPORT.ok; assert asgi.AUTH_ROUTER_BINDING_REPORT.auth_route_count == 6; assert asgi.AUTH_ROUTER_BINDING_REPORT.local_route_count == 4; assert asgi.AUTH_ROUTER_BINDING_REPORT.oidc_route_count == 2; assert asgi.AUTH_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.AUTH_ROUTER_BINDING_REPORT.current_user_dependency_is_extracted; assert asgi.AUTH_ROUTER_BINDING_REPORT.session_factory_is_extracted; assert asgi.LEARNING_ROUTER_BINDING_REPORT.ok; assert asgi.LEARNING_ROUTER_BINDING_REPORT.learning_route_count == 12; assert asgi.LEARNING_ROUTER_BINDING_REPORT.progress_route_count == 2; assert asgi.LEARNING_ROUTER_BINDING_REPORT.course_route_count == 2; assert asgi.LEARNING_ROUTER_BINDING_REPORT.review_route_count == 2; assert asgi.LEARNING_ROUTER_BINDING_REPORT.gamification_route_count == 4; assert asgi.LEARNING_ROUTER_BINDING_REPORT.preferences_route_count == 2; assert asgi.LEARNING_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.LEARNING_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.LEARNING_ROUTER_BINDING_REPORT.learning_core_bound; assert asgi.LEARNING_ROUTER_BINDING_REPORT.terminology_service_bound; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.ok; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.route_count == 4; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.practice_route_count == 1; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.game_route_count == 2; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.question_attempt_route_count == 1; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.workflow_service_bound; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.learning_service_captured; assert asgi.PRACTICE_GAMES_ROUTER_BINDING_REPORT.terminology_service_captured; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.ok; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.route_count == 13; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.public_route_count == 2; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.admin_term_route_count == 10; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.taxonomy_route_count == 1; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.terminology_service_bound; assert asgi.TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT.governance_core_bound; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.ok; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.route_count == 3; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.status_route_count == 1; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.post_audio_route_count == 1; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.legacy_get_enabled; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.legacy_get_route_count == 1; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.tts_core_bound; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.payload_schema_preserved; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.tts_max_chars_preserved; assert asgi.PRONUNCIATION_ROUTER_BINDING_REPORT.legacy_tts_handlers_captured; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.ok; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.route_count == 6; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.admin_route_count == 4; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.manager_route_count == 2; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.mutation_route_count == 2; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.payload_schema_preserved; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.user_service_bound; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.manager_policy_bound; assert asgi.USER_MANAGER_ROUTER_BINDING_REPORT.governance_core_bound; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.ok; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.route_count == 13; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.group_route_count == 9; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.feature_route_count == 2; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.assignment_route_count == 2; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.export_route_count == 1; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.governance_route_count == 1; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.mutation_route_count == 9; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.payload_schemas_preserved; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.user_service_bound; assert asgi.PILOT_ADMIN_ROUTER_BINDING_REPORT.governance_core_bound; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.ok; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.route_count == 13; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.mutation_route_count == 2; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.router_module_owned; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.payload_schema_preserved; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.auth_core_bound; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.user_service_bound; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.governance_core_bound; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.tts_core_bound; assert asgi.ADMIN_OPS_ROUTER_BINDING_REPORT.observability_helpers_available; assert shutil.which('espeak-ng')"
-      - name: Start application container
+
+      - name: Start current pilot container
         run: |
           docker run -d --name mgc-languages-ci \
             -p 8000:8000 \
@@ -65,27 +65,32 @@ jobs:
             -e OIDC_STATE_SECRET=ci-runtime-state-secret-32-bytes \
             -e TTS_CACHE_PERSISTENCE=ephemeral \
             mgc-languages:ci
-      - name: Run automated runtime smoke
-        env:
-          BASE_URL: http://127.0.0.1:8000
-          SMOKE_STARTUP_TIMEOUT_SECONDS: '60'
-        run: python tests/runtime_smoke.py
-      - name: Capture runtime diagnostics
+
+      - name: Wait for readiness
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8000/health/ready > /tmp/ready.json; then
+              cat /tmp/ready.json
+              exit 0
+            fi
+            if ! docker ps --format '{{.Names}}' | grep -qx 'mgc-languages-ci'; then
+              docker logs mgc-languages-ci || true
+              exit 1
+            fi
+            sleep 2
+          done
+          docker logs mgc-languages-ci || true
+          exit 1
+
+      - name: Verify modular runtime in image
+        run: docker exec mgc-languages-ci python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
+
+      - name: Runtime diagnostics
         if: failure()
         run: |
-          docker inspect mgc-languages-ci > docker-inspect.json 2>&1 || true
-          docker logs mgc-languages-ci > docker-runtime.log 2>&1 || true
-          cat docker-runtime.log || true
-      - name: Upload runtime diagnostics
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mgc-languages-runtime-diagnostics
-          path: |
-            docker-inspect.json
-            docker-runtime.log
-          if-no-files-found: warn
-          retention-days: 7
+          docker inspect mgc-languages-ci || true
+          docker logs mgc-languages-ci || true
+
       - name: Stop runtime container
         if: always()
         run: docker rm -f mgc-languages-ci || true

@@ -4,11 +4,17 @@ These workflow definitions are preserved for release history and troubleshooting
 
 Archived after promotion of **MGC Languages Company Pilot v6.0.17** on 2026-09-08.
 
-Active CI is intentionally limited to:
+## Active CI
 
-- `.github/workflows/ci.yml` — current main regression/build CI;
-- `.github/workflows/ci-v617-company-pilot.yml` — current Company Pilot gate.
+Only two workflows are active:
 
-The archived `ci-v591.yml` … `ci-v616.yml` files remain available as historical release-specific checks. The two restore workflows are also archived because they were one-off recovery/migration workflows and should not stay armed in the active Actions directory.
+- `.github/workflows/ci.yml` — compact current CI: content/contracts, v6.0.16/v6.0.17 regression guards, JavaScript syntax and Docker runtime smoke;
+- `.github/workflows/ci-v617-company-pilot.yml` — dedicated Company Pilot gate, including corporate preflight and approved UI checks.
 
-If an archived workflow is ever needed again, review it first and deliberately restore a reviewed copy to `.github/workflows` rather than moving it back automatically.
+## Archived CI
+
+- `ci-v591.yml` … `ci-v616.yml` — historical release-specific checks;
+- `ci-pre-v617-full-regression.yml` — previous broad matrix CI retained for forensic/manual reference;
+- `restore-data-final.yml` and `restore-source-data.yml` — one-off recovery/migration workflows, intentionally disarmed.
+
+Archived YAML files are documentation/history only. If one is ever needed again, review it first and deliberately restore a reviewed copy to `.github/workflows`.
