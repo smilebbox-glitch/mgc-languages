@@ -1,0 +1,26 @@
+MGC Languages
+Release: v6.0.25
+Codename: Personal Shift Analytics
+
+Adds:
+- account-scoped Shift Simulation history in PostgreSQL
+- authenticated POST /api/shift-simulations
+- authenticated GET /api/shift-simulations/history
+- personal trend and recurring-weakness analytics
+- next-training recommendation
+- temporary local pending-sync fallback
+
+Compatibility:
+- reuses existing PracticeResult storage; no DB migration
+- existing 20 backend game types unchanged
+- existing max-5 game answer contract unchanged
+- XP and anti-farm unchanged
+- Shift Simulation v6.0.24 remains the simulation engine
+- offline frontend assets only
+
+Required verification:
+- v6.0.25 regression
+- JavaScript syntax
+- runtime route contract
+- Company Pilot Gate
+- LAN Docker/PostgreSQL/Nginx smoke
