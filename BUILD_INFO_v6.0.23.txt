@@ -1,0 +1,18 @@
+MGC Language Lab
+Pilot: v6.0.23 — Dynamic Factory Scenarios
+
+Scope:
+- dynamic factory state across v6.0.22 decision-chain steps
+- branch-specific downstream consequences
+- live metrics for risk, containment, evidence, recovery and restart readiness
+- supplier dialogue that changes based on escalation quality
+- Chinese supplier replies with pinyin and Russian meaning
+- English supplier replies with Russian meaning
+- no new XP path
+- server five-answer limit and anti-farm unchanged
+
+Primary files:
+- static/frontend/dynamic_factory_v623.js
+- static/dynamic_factory_v623.css
+- tests/v623_dynamic_factory_test.py
+- CHANGELOG_v6.0.23.md
