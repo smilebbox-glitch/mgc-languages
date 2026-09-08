@@ -1,0 +1,34 @@
+Release: v6.0.28
+Codename: UX / Accessibility / Performance Polish
+Pilot candidate: v6.0.28
+
+Purpose:
+Stabilize the company pilot before release freeze without adding a new game or backend feature.
+
+Accessibility:
+- skip link to main content
+- navigation landmark + aria-current
+- aria-expanded for mobile menu
+- aria-pressed for language / Pinyin controls
+- auth tab semantics + arrow-key switching
+- polite live regions for navigation/result feedback
+- focus management on view changes
+- Escape closes mobile menu
+- / focuses topic search when safe
+- prefers-reduced-motion and forced-colors support
+
+Performance:
+- pilot UX DOM hardening is batched with requestAnimationFrame
+- only added element roots are rescanned after mutations
+- full document scan occurs only at initial install
+- offscreen v6.0.24/v6.0.26/v6.0.27 heavy panels use content-visibility:auto
+
+Compatibility:
+No backend API change.
+No database migration.
+No new XP path.
+Existing max-5 game-session contract unchanged.
+Existing server anti-farm unchanged.
+
+Frontend module:
+ux-performance-v628
