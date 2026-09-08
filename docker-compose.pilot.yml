@@ -23,11 +23,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mgc-languages:6.0.17-pilot
+    image: mgc-languages:6.0.18-pilot
     depends_on:
       db:
         condition: service_healthy
     environment:
+      APP_VERSION: ${APP_VERSION:-6.0.18}
       APP_ENV: pilot
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mgc_languages}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-mgc_languages}
       DB_CONNECT_TIMEOUT_SECONDS: ${DB_CONNECT_TIMEOUT_SECONDS:-5}
@@ -188,13 +189,14 @@ services:
     restart: unless-stopped
 
   maintenance:
-    image: mgc-languages:6.0.17-pilot
+    image: mgc-languages:6.0.18-pilot
     depends_on:
       db:
         condition: service_healthy
       app:
         condition: service_healthy
     environment:
+      APP_VERSION: ${APP_VERSION:-6.0.18}
       APP_ENV: pilot
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mgc_languages}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-mgc_languages}
       AUTO_CREATE_SCHEMA: "false"
