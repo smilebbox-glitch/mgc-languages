@@ -70,6 +70,12 @@ jobs:
       - name: v6.0.26 team analytics and leaderboard regression
         run: python tests/v626_team_leaderboard_test.py
 
+      - name: v6.0.27 adaptive training regression
+        run: python tests/v627_adaptive_training_test.py
+
+      - name: v6.0.28 UX performance regression
+        run: python tests/v628_ux_performance_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -86,6 +92,8 @@ jobs:
           node --check static/frontend/shift_simulation_v624.js
           node --check static/frontend/shift_analytics_v625.js
           node --check static/frontend/team_leaderboard_v626.js
+          node --check static/frontend/adaptive_training_v627.js
+          node --check static/frontend/ux_performance_v628.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
@@ -163,7 +171,7 @@ jobs:
       - name: Verify LAN services and modular runtime
         run: |
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps
-          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r.SHIFT_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.TEAM_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == len(r._legacy_module.TERMS['english'])"
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r.SHIFT_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.TEAM_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == len(r._legacy_module.TERMS['english'])"
           curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
           cat /tmp/lan-meta.json
 
