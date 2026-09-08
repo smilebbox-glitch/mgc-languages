@@ -34,11 +34,16 @@ jobs:
       - name: User-review UX regression
         run: python tests/v617_pilot_ux_regression_test.py
 
+      - name: v6.0.18 vocabulary and games regression
+        run: python tests/v618_content_games_regression_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
           node --check static/frontend/pilot_ux_hardening.js
           node --check static/frontend/learning.js
+          node --check static/frontend/game_lab_v618.js
+          node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
 
@@ -71,6 +76,8 @@ jobs:
           grep -q "function dailyPhrase(language, date)" static/frontend/pilot_home.js
           grep -q "scheduleMidnightRefresh" static/frontend/pilot_home.js
           grep -q "Информация о китайском" static/index.html
+          grep -q "game_lab_v618.js" static/index.html
+          grep -q "MGC AUTOMOTIVE ARCADE · 20 ИГР" static/frontend/game_lab_v618.js
           ! grep -q "About English" static/index.html
           ! grep -q "Сценарий смены" static/frontend/pilot_home.js
           ! grep -q "Новая сегодня" static/frontend/pilot_home.js
