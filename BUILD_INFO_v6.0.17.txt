@@ -1,27 +1,70 @@
 MGC Language Lab v6.0.17 — Company Pilot Candidate
 
-Branch: pilot/v6.0.17-company-pilot
-Base: refactor/v6.0.16-physical-shell-cleanup
+Active branch: main
+Pilot lineage: pilot/v6.0.17-company-pilot
 Alembic head: c57d0a31f570 (unchanged)
-Backend API: unchanged
 ORM/schema: unchanged
+Backend API: unchanged
+Practice-game behavior: maximum 5 generated answers per game session
+General XP anti-farm policy: unchanged
 
-Pilot UI:
+Current pilot UI:
 - static/frontend/pilot_home.js
+- static/frontend/pilot_ux_hardening.js
 - static/pilot.css
+- static/pilot_overrides.css
 - static/pilot/hero-chinese.svg
 - static/pilot/hero-english.svg
 - static/pilot/phrase-1.svg ... phrase-7.svg
+- static/pilot/topics/assembly.svg
+- static/pilot/topics/welding.svg
+- static/pilot/topics/paint.svg
+- static/pilot/topics/stamping.svg
+- static/pilot/topics/quality.svg
+- static/pilot/topics/logistics.svg
+
+Current UX hardening:
+- decorative pilot quote/hero message blocks hidden
+- Pinyin fallback for core Chinese automotive terms
+- natural/neural browser TTS voices preferred where available
+- robotic browser voices deprioritized
+- topic cards use local/offline thematic artwork
+- hero artwork cleaned of unnecessary decorative elements
+- game sessions capped at 5 answers on backend generation
 
 Pilot operations:
 - .env.company-pilot.example
 - scripts/company_pilot_preflight.py
+- START_COMPANY_PILOT.bat
+- scripts/start_company_pilot.ps1
+- scripts/start_lan_windows.ps1
+- docker-compose.pilot.yml
+- docker-compose.lan.yml
 - docs/COMPANY_PILOT_RUNBOOK_v6.0.17.md
 - docs/PILOT_UAT_v6.0.17.md
 - docs/PILOT_PARTICIPANTS_v6.0.17.csv
 - docs/PILOT_FEEDBACK_v6.0.17.csv
+
+Active regression tests:
+- tests/v616_frontend_physical_shell_cleanup_test.py
 - tests/v617_company_pilot_candidate_test.py
+- tests/v617_pilot_ux_regression_test.py
+
+Active GitHub Actions:
+- .github/workflows/ci.yml
+  - Python compile
+  - API architecture contract
+  - current pilot regression guards
+  - v6.0.17 user-review UX regression
+  - JavaScript syntax
+  - exact LAN Docker Compose / PostgreSQL / Nginx smoke test
 - .github/workflows/ci-v617-company-pilot.yml
+  - v6.0.17 company pilot contract
+  - user-review UX regression
+  - JavaScript syntax
+  - strict corporate preflight contract
+  - approved UI parity guard
+  - local/offline pilot artwork checks
 
 Daily phrase policy:
 - deterministic by calendar date
@@ -33,3 +76,5 @@ Launch policy:
 - company pilot requires company_pilot_preflight.py => GO
 - no open S1/S2 UAT defects
 - final launch approval remains with IT/service owner
+
+Documentation sync date: 2026-09-08
