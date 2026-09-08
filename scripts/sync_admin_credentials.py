@@ -1,6 +1,16 @@
 from __future__ import annotations
 
 import os
+import sys
+from pathlib import Path
+
+# When this file is executed as `python scripts/sync_admin_credentials.py`,
+# Python puts /app/scripts at sys.path[0] rather than the repository root.
+# Add the root explicitly so the local `mgc` package is importable both in
+# Docker and during direct launcher execution.
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from sqlalchemy import select
 
