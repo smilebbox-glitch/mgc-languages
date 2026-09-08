@@ -17,9 +17,15 @@ Frozen product contract:
 - no new XP path
 - no feature addition after RC without explicit unfreeze
 
+Runtime version contract:
+- mgc.config APP_VERSION default = 6.0.29
+- /api/meta must report version 6.0.29 in the real LAN Docker stack
+
 Release controls:
 - scripts/release_candidate_guard.py
 - tests/v629_release_candidate_test.py
+- tests/v629_operability_smoke_test.py
 - .github/workflows/ci-v629-release-candidate.yml
 - Company Pilot Gate
 - Main CI + LAN PostgreSQL/Nginx smoke
+- HTTP smoke: live/ready/meta, root shell, critical frontend assets, protected API authorization
