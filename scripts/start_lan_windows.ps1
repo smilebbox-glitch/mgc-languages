@@ -7,6 +7,9 @@ $ErrorActionPreference = "Stop"
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $Root
 
+# Keep this launcher ASCII-only. Windows PowerShell 5.1 may decode UTF-8 files
+# without a BOM using the legacy Windows code page, which can corrupt non-ASCII
+# strings and even break parsing.
 function Write-Utf8NoBom([string]$Path, [string]$Text) {
     $encoding = New-Object System.Text.UTF8Encoding($false)
     [System.IO.File]::WriteAllText($Path, $Text, $encoding)
@@ -79,25 +82,25 @@ function Get-EnvInt([string]$Path, [string]$Key, [int]$Default) {
 function Validate-AdminPassword([string]$Value) {
     if ([string]::IsNullOrWhiteSpace($Value)) { return }
     if ($Value.Length -lt 12) {
-        throw "Пароль администратора должен быть не короче 12 символов."
+        throw "Admin password must contain at least 12 characters."
     }
     if ($Value.ToLowerInvariant() -in @("password", "administrator", "change_me", "change_me_with_a_long_password")) {
-        throw "Выберите более безопасный пароль администратора."
+        throw "Choose a stronger administrator password."
     }
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    throw "Docker не найден. Установите/запустите Docker Desktop и повторите запуск."
+    throw "Docker was not found. Install/start Docker Desktop and run the launcher again."
 }
 
 docker info *> $null
 if ($LASTEXITCODE -ne 0) {
-    throw "Docker Desktop установлен, но Docker Engine не запущен. Запустите Docker Desktop."
+    throw "Docker Desktop is installed but Docker Engine is not running. Start Docker Desktop."
 }
 
 docker compose version *> $null
 if ($LASTEXITCODE -ne 0) {
-    throw "Команда 'docker compose' недоступна. Обновите Docker Desktop."
+    throw "The 'docker compose' command is unavailable. Update Docker Desktop."
 }
 
 $LanIp = Get-LanIPv4
@@ -110,7 +113,7 @@ if ($NewConfig) {
     $dbPassword = New-Secret 32
     $adminPasswordValue = $AdminPassword.Trim()
     if ([string]::IsNullOrWhiteSpace($adminPasswordValue)) {
-        $adminPasswordValue = (Read-Host "Введите пароль для admin (Enter = сгенерировать случайный)").Trim()
+        $adminPasswordValue = (Read-Host "Enter admin password (press Enter to generate one)").Trim()
     }
     if ([string]::IsNullOrWhiteSpace($adminPasswordValue)) {
         $adminPasswordValue = New-Secret 24
@@ -131,7 +134,7 @@ POSTGRES_PASSWORD=$dbPassword
 MGC_ADMIN_USERNAME=admin
 MGC_ADMIN_PASSWORD=$adminPasswordValue
 MGC_ADMIN_DISPLAY_NAME=MGC Admin
-MGC_ADMIN_DEPARTMENT=Администрация
+MGC_ADMIN_DEPARTMENT=Administration
 MGC_ADMIN_SYNC_CREDENTIALS=true
 OIDC_STATE_SECRET=$stateSecret
 METRICS_TOKEN=$metricsToken
@@ -157,7 +160,7 @@ CORS_ORIGINS=
     $trusted = "localhost,127.0.0.1,$LanIp,$ComputerName"
     Set-EnvValue $EnvFile "MGC_BIND_ADDRESS" "0.0.0.0"
     Set-EnvValue $EnvFile "MGC_TRUSTED_HOSTS" $trusted
-    Ensure-EnvValue $EnvFile "MGC_ADMIN_DEPARTMENT" "Администрация"
+    Ensure-EnvValue $EnvFile "MGC_ADMIN_DEPARTMENT" "Administration"
     Ensure-EnvValue $EnvFile "MGC_ADMIN_SYNC_CREDENTIALS" "true"
     if (-not [string]::IsNullOrWhiteSpace($AdminPassword)) {
         Validate-AdminPassword $AdminPassword
@@ -188,20 +191,20 @@ $AppPeak = $Workers * ($PoolSize + $Overflow)
 $Usable = $PgMax - $Reserve - $Aux
 
 Write-Host ""
-Write-Host "MGC Languages LAN" -ForegroundColor Cyan
+Write-Host "MGC Languages LAN Pilot" -ForegroundColor Cyan
 Write-Host "Server IP: $LanIp"
 Write-Host "Trusted hosts: $trusted"
 Write-Host "Workers: $Workers"
 Write-Host "DB capacity: app peak $AppPeak / usable $Usable / PostgreSQL max $PgMax"
 if ($AppPeak -gt $Usable) {
-    throw "Небезопасная конфигурация DB capacity. Уменьшите workers/pool/overflow или согласуйте увеличение PostgreSQL max_connections."
+    throw "Unsafe DB capacity configuration. Reduce workers/pool/overflow or increase PostgreSQL max_connections with IT approval."
 }
 Write-Host ""
 
 $composeArgs = @("compose", "--env-file", ".env.lan", "-f", "docker-compose.lan.yml", "up", "-d")
 if (-not $SkipBuild) { $composeArgs += "--build" }
 & docker @composeArgs
-if ($LASTEXITCODE -ne 0) { throw "docker compose up завершился с ошибкой." }
+if ($LASTEXITCODE -ne 0) { throw "docker compose up failed." }
 
 $healthUrl = "http://127.0.0.1:$Port/health/ready"
 $deadline = (Get-Date).AddMinutes(3)
@@ -215,30 +218,30 @@ while ((Get-Date) -lt $deadline) {
 }
 
 if (-not $ready) {
-    Write-Host "Сервис запущен, но readiness пока не стал 200. Проверьте: docker compose --env-file .env.lan -f docker-compose.lan.yml logs app" -ForegroundColor Yellow
+    Write-Host "Service started, but readiness is not HTTP 200 yet. Check: docker compose --env-file .env.lan -f docker-compose.lan.yml logs app" -ForegroundColor Yellow
 } else {
     Write-Host "Readiness: OK" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "Открыть на этом компьютере: http://localhost:$Port" -ForegroundColor Green
+Write-Host "Open on this PC: http://localhost:$Port" -ForegroundColor Green
 if ($LanIp -ne "127.0.0.1") {
-    Write-Host "Ссылка для коллег в той же сети: http://${LanIp}:$Port" -ForegroundColor Green
-    Write-Host "Также может работать: http://${ComputerName}:$Port"
+    Write-Host "Link for colleagues on the same network: http://${LanIp}:$Port" -ForegroundColor Green
+    Write-Host "Computer-name URL may also work: http://${ComputerName}:$Port"
 }
 Write-Host ""
 
 $adminLine = Get-Content -LiteralPath $EnvFile | Where-Object { $_ -match '^MGC_ADMIN_PASSWORD=' } | Select-Object -First 1
 $adminPasswordSaved = ($adminLine -split '=', 2)[1]
-Write-Host "Администратор: admin" -ForegroundColor Cyan
-Write-Host "Отдел администратора: Администрация" -ForegroundColor Cyan
+Write-Host "Administrator: admin" -ForegroundColor Cyan
+Write-Host "Administrator department: Administration" -ForegroundColor Cyan
 if ($NewConfig) {
-    Write-Host "Пароль администратора: $adminPasswordSaved" -ForegroundColor Cyan
-    Write-Host "Пароль сохранён локально в .env.lan (файл исключён из Git)."
+    Write-Host "Administrator password: $adminPasswordSaved" -ForegroundColor Cyan
+    Write-Host "The password is stored locally in .env.lan; that file is excluded from Git."
 } else {
-    Write-Host "Пароль администратора хранится локально в .env.lan и синхронизируется при запуске."
+    Write-Host "Administrator password is stored locally in .env.lan and synchronized on startup."
 }
 
-Write-Host "Если коллеги не открывают ссылку, разрешите входящий TCP-порт $Port в Windows Firewall для Private/Domain сети." -ForegroundColor Yellow
-Write-Host "После запуска используйте scripts/multi_user_smoke.py для проверки capacity именно на целевом сервере." -ForegroundColor Yellow
-Write-Host "Для корпоративного rollout вместо открытого LAN-профиля используйте TLS + OIDC + явный TRUSTED_HOSTS." -ForegroundColor Yellow
+Write-Host "If colleagues cannot open the link, allow inbound TCP port $Port in Windows Firewall for Private/Domain networks." -ForegroundColor Yellow
+Write-Host "After startup, use scripts/multi_user_smoke.py to validate capacity on the target server." -ForegroundColor Yellow
+Write-Host "For corporate rollout, use TLS + OIDC + explicit TRUSTED_HOSTS instead of the local/LAN pilot profile." -ForegroundColor Yellow
