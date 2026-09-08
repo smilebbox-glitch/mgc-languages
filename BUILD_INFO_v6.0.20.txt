@@ -11,7 +11,8 @@ CONTENT
 GAMES
 - Automotive Arcade: 20 distinct backend game types
 - Factory Journey: 6 shop-specific stations
-- New in v6.0.20: 3 adaptive Daily Missions + department-aware Boss Shift
+- 3 adaptive Daily Missions + department-aware Boss Shift
+- Arcade Mastery: 7 competency tracks with department focus and adaptive next-game guidance
 - Backend session cap: max 5 answers
 - XP anti-farm: preserved
 
@@ -31,17 +32,28 @@ BOSS ROUTING
 - Purchasing -> dialogue_choice / Закупки / локализация / ВЭД
 - Default -> shift_incident
 
+ARCADE MASTERY
+- 7 competency tracks: Terminology, Listening, Production, Quality, Logistics, Engineering, Communication
+- Mastery score blends 75% best-result accuracy + 25% game coverage
+- Department-specific priority skills for Paint, Logistics, Body, Assembly, Quality, R&D and Purchasing
+- Weakest priority skill drives the recommended next game
+- Learning achievements: First Run, Explorer, Full Garage, Clean Shift, Consistency, Shop Specialist
+- Mastery launches feed the same Arcade Passport/progress tracker; no parallel XP engine
+
 FRONTEND
-- static/frontend/arcade_missions_v620.js
-- static/arcade_missions_v620.css
 - static/frontend/game_lab_v618.js
 - static/frontend/game_engagement_v618.js
 - static/frontend/factory_journey_v619.js
+- static/frontend/arcade_missions_v620.js
+- static/arcade_missions_v620.css
+- static/frontend/arcade_mastery_v620.js
+- static/arcade_mastery_v620.css
 
 REGRESSION
 - tests/v618_content_games_regression_test.py
 - tests/v619_factory_journey_test.py
 - tests/v620_arcade_missions_test.py
+- tests/v620_arcade_mastery_test.py
 - node --check for all active game frontend modules
 
 CORPORATE PLATFORM
