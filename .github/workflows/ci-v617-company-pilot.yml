@@ -61,6 +61,15 @@ jobs:
       - name: v6.0.25 personal shift analytics regression
         run: python tests/v625_shift_analytics_test.py
 
+      - name: v6.0.26 team analytics and leaderboard regression
+        run: python tests/v626_team_leaderboard_test.py
+
+      - name: v6.0.27 adaptive training regression
+        run: python tests/v627_adaptive_training_test.py
+
+      - name: v6.0.28 UX performance regression
+        run: python tests/v628_ux_performance_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -76,6 +85,9 @@ jobs:
           node --check static/frontend/dynamic_factory_v623.js
           node --check static/frontend/shift_simulation_v624.js
           node --check static/frontend/shift_analytics_v625.js
+          node --check static/frontend/team_leaderboard_v626.js
+          node --check static/frontend/adaptive_training_v627.js
+          node --check static/frontend/ux_performance_v628.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
@@ -118,6 +130,9 @@ jobs:
           grep -q "dynamic_factory_v623.js" static/index.html
           grep -q "shift_simulation_v624.js" static/index.html
           grep -q "shift_analytics_v625.js" static/index.html
+          grep -q "team_leaderboard_v626.js" static/index.html
+          grep -q "adaptive_training_v627.js" static/index.html
+          grep -q "ux_performance_v628.js" static/index.html
           grep -q "MGC AUTOMOTIVE ARCADE · 20 ИГР" static/frontend/game_lab_v618.js
           grep -q "Пройдите автомобиль через весь завод" static/frontend/factory_journey_v619.js
           grep -q "Три короткие миссии на сегодня" static/frontend/arcade_missions_v620.js
@@ -138,6 +153,10 @@ jobs:
           grep -q "PERSONAL SHIFT ANALYTICS · v6.0.25" static/frontend/shift_analytics_v625.js
           grep -q "ПОВТОРЯЮЩАЯСЯ ТОЧКА РОСТА" static/frontend/shift_analytics_v625.js
           grep -q "История сохраняется под вашим аккаунтом в PostgreSQL" static/frontend/shift_analytics_v625.js
+          grep -q "TEAM ANALYTICS · v6.0.26" static/frontend/team_leaderboard_v626.js
+          grep -q "ADAPTIVE TRAINING LOOP · v6.0.27" static/frontend/adaptive_training_v627.js
+          grep -q "v628-skip-link" static/index.html
+          grep -q "frontend.register('ux-performance-v628'" static/frontend/ux_performance_v628.js
           ! grep -q "About English" static/index.html
           ! grep -q "Сценарий смены" static/frontend/pilot_home.js
           ! grep -q "Новая сегодня" static/frontend/pilot_home.js
