@@ -6,6 +6,8 @@ from types import ModuleType
 
 from fastapi import FastAPI
 
+from mgc.content_v618 import apply_v618_content
+
 from .admin_ops_router_bridge import AdminOpsRouterBindingReport, bind_admin_ops_router
 from .auth_bridge import AuthBindingReport, bind_legacy_auth
 from .auth_router_bridge import AuthRouterBindingReport, bind_auth_router
@@ -49,6 +51,9 @@ LEGACY_APP_MODULE = os.getenv("MGC_LEGACY_APP_MODULE", "mgc.legacy_app").strip()
 def load_legacy_module(module_name: str = LEGACY_APP_MODULE) -> ModuleType:
     """Load the historical implementation behind the stable modular boundary."""
     module = importlib.import_module(module_name)
+    # v6.0.18 content must be active here, not only in the historical app.py
+    # facade, because production starts from asgi.py -> mgc_core.runtime.
+    apply_v618_content(module)
     # Ordering is intentional: governance consumes the extracted client fingerprint;
     # learning binds before user services; services bind before workflows. TTS binds
     # before observability so Prometheus, pronunciation and admin ops share one state.
