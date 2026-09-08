@@ -1,0 +1,78 @@
+name: finalize-v618-cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-v618-cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix SVG hotspot semantics and keyboard access
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('static/frontend/game_lab_v618.js')
+          text = path.read_text(encoding='utf-8')
+          replacements = {
+              '<button class="svg-hotspot" data-hotspot-zone="hood" aria-label="Капот"><circle cx="565" cy="174" r="23"/></button>': '<g class="svg-hotspot" data-hotspot-zone="hood" role="button" tabindex="0" aria-label="Капот"><circle cx="565" cy="174" r="23"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="windshield" aria-label="Ветровое стекло"><circle cx="475" cy="132" r="22"/></button>': '<g class="svg-hotspot" data-hotspot-zone="windshield" role="button" tabindex="0" aria-label="Ветровое стекло"><circle cx="475" cy="132" r="22"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="mirror" aria-label="Зеркало"><circle cx="508" cy="160" r="20"/></button>': '<g class="svg-hotspot" data-hotspot-zone="mirror" role="button" tabindex="0" aria-label="Зеркало"><circle cx="508" cy="160" r="20"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="door" aria-label="Дверь"><circle cx="414" cy="205" r="25"/></button>': '<g class="svg-hotspot" data-hotspot-zone="door" role="button" tabindex="0" aria-label="Дверь"><circle cx="414" cy="205" r="25"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="fender" aria-label="Крыло"><circle cx="620" cy="211" r="22"/></button>': '<g class="svg-hotspot" data-hotspot-zone="fender" role="button" tabindex="0" aria-label="Крыло"><circle cx="620" cy="211" r="22"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="headlamp" aria-label="Фара"><circle cx="660" cy="195" r="19"/></button>': '<g class="svg-hotspot" data-hotspot-zone="headlamp" role="button" tabindex="0" aria-label="Фара"><circle cx="660" cy="195" r="19"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="bumper" aria-label="Бампер"><circle cx="690" cy="231" r="18"/></button>': '<g class="svg-hotspot" data-hotspot-zone="bumper" role="button" tabindex="0" aria-label="Бампер"><circle cx="690" cy="231" r="18"/></g>',
+              '<button class="svg-hotspot" data-hotspot-zone="wheel" aria-label="Колесо"><circle cx="580" cy="248" r="25"/></button>': '<g class="svg-hotspot" data-hotspot-zone="wheel" role="button" tabindex="0" aria-label="Колесо"><circle cx="580" cy="248" r="25"/></g>',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing expected hotspot markup: {old[:72]}')
+              text = text.replace(old, new)
+
+          old_handler = """    queryAll('[data-hotspot-zone]').forEach(function (button) {\n      button.addEventListener('click', function () { submitAnswer(button.dataset.hotspotZone); });\n    });"""
+          new_handler = """    queryAll('[data-hotspot-zone]').forEach(function (button) {\n      const chooseHotspot = function () { submitAnswer(button.dataset.hotspotZone); };\n      button.addEventListener('click', chooseHotspot);\n      button.addEventListener('keydown', function (event) {\n        if (event.key !== 'Enter' && event.key !== ' ') return;\n        event.preventDefault();\n        chooseHotspot();\n      });\n    });"""
+          if old_handler not in text:
+              raise SystemExit('missing expected hotspot event handler')
+          text = text.replace(old_handler, new_handler)
+          if '<button class="svg-hotspot"' in text:
+              raise SystemExit('invalid HTML button remains inside SVG')
+          path.write_text(text, encoding='utf-8')
+
+          test_path = Path('tests/v618_content_games_regression_test.py')
+          test = test_path.read_text(encoding='utf-8')
+          needle = 'assert "data-hotspot-zone" in GAME_LAB\n'
+          addition = (
+              'assert "data-hotspot-zone" in GAME_LAB\n'
+              'assert \'<button class="svg-hotspot"\' not in GAME_LAB\n'
+              'assert \'role="button" tabindex="0"\' in GAME_LAB\n'
+              'assert "event.key !== \'Enter\'" in GAME_LAB\n'
+          )
+          if needle not in test:
+              raise SystemExit('missing v6.0.18 hotspot regression anchor')
+          test = test.replace(needle, addition, 1)
+          test_path.write_text(test, encoding='utf-8')
+          PY
+      - name: Remove temporary corpus inspection artifacts
+        run: |
+          rm -rf .tmp_export
+          rm -f .github/workflows/temp-export-chinese.yml
+          rm -f .github/workflows/finalize-v618-cleanup.yml
+      - name: Commit final cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: finalize accessible v6.0.18 arcade and clean temporary exports"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
