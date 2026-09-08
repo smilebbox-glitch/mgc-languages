@@ -49,6 +49,9 @@ jobs:
       - name: v6.0.20 adaptive arcade missions regression
         run: python tests/v620_arcade_missions_test.py
 
+      - name: v6.0.20 arcade mastery regression
+        run: python tests/v620_arcade_mastery_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -58,6 +61,7 @@ jobs:
           node --check static/frontend/game_engagement_v618.js
           node --check static/frontend/factory_journey_v619.js
           node --check static/frontend/arcade_missions_v620.js
+          node --check static/frontend/arcade_mastery_v620.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
