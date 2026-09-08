@@ -13,6 +13,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 
+MAX_GAME_ANSWERS = 5
+
+
 @dataclass(frozen=True)
 class PracticeGameWorkflowBindings:
     save_practice_result: Callable[..., dict[str, Any]]
@@ -150,7 +153,7 @@ def build_practice_game_workflows(
 
         public_id = secrets.token_urlsafe(18)
         rng = random.Random(secrets.randbits(64))
-        selected = rng.sample(pool, min(8, len(pool)))
+        selected = rng.sample(pool, min(MAX_GAME_ANSWERS, len(pool)))
         items: list[dict[str, Any]] = []
         answers: list[Any] = []
 
@@ -213,7 +216,7 @@ def build_practice_game_workflows(
                 row for row in pool if len((row.get("example") or "").strip()) >= 8
             ]
             phrase_pool = phrase_rows or pool
-            selected = rng.sample(phrase_pool, min(6, len(phrase_pool)))
+            selected = rng.sample(phrase_pool, min(MAX_GAME_ANSWERS, len(phrase_pool)))
             for row in selected:
                 phrase = row.get("example") or row["term"]
                 tokens = phrase.split() if language == "english" else chunk_chinese(phrase)
@@ -372,6 +375,7 @@ def build_practice_game_workflows(
 
 __all__ = [
     "PracticeGameWorkflowBindings",
+    "MAX_GAME_ANSWERS",
     "build_practice_game_workflows",
     "practice_raw_xp",
     "chunk_chinese",

@@ -1,2 +1,51 @@
-/* v6.0.17 pilot wording policy: employees see "Китайский язык" in primary UI. */
-.putonghua-learning-banner{display:none!important}
+/* v6.0.17 pilot UX overrides. Keep this file small and release-specific. */
+
+/* Remove decorative slogans/quote blocks reported during pilot UI review. */
+.pilot-next-head blockquote,
+.pilot-hero-quote,
+.pilot-hero-message,
+.pilot-quote-card{
+  display:none!important;
+}
+.pilot-hero-copy{max-width:78%!important}
+
+/* Professional topics: real local thematic artwork instead of flat gradient placeholders. */
+.pilot-topic-thumb{
+  position:relative;
+  height:86px!important;
+  background-color:#dcecf7!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  overflow:hidden;
+}
+.pilot-topic-thumb:after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(4,28,56,.02),rgba(4,28,56,.12));
+  pointer-events:none;
+}
+.pilot-topic-1{background-image:url('/pilot/topics/assembly.svg')!important}
+.pilot-topic-2{background-image:url('/pilot/topics/welding.svg')!important}
+.pilot-topic-3{background-image:url('/pilot/topics/paint.svg')!important}
+.pilot-topic-4{background-image:url('/pilot/topics/stamping.svg')!important}
+.pilot-topic-5{background-image:url('/pilot/topics/quality.svg')!important}
+.pilot-topic-6{background-image:url('/pilot/topics/logistics.svg')!important}
+.pilot-topic{box-shadow:0 5px 14px rgba(45,86,124,.06)}
+.pilot-topic:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(45,86,124,.11)}
+
+/* Matching exercise: pinyin is learning content, not secondary metadata. */
+.game-question .question-pinyin,
+.game-question .pilot-pinyin-fallback{
+  display:block;
+  margin:-8px 0 18px;
+  color:#496f94;
+  font-size:17px;
+  line-height:1.35;
+  font-weight:650;
+  letter-spacing:.01em;
+}
+
+/* Keep the five-answer game session visually explicit. */
+.game-question [data-game-answer]{min-height:62px}
