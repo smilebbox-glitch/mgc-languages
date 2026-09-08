@@ -41,4 +41,9 @@ jobs:
           grep -q "ADAPTIVE TRAINING LOOP · v6.0.27" static/frontend/adaptive_training_v627.js
           grep -q "adaptive_training_v627.js" static/index.html
           grep -q "adaptive-training-v627" static/frontend/boot.js
-          grep -q "pilotCandidate: 'v6.0.27'" static/frontend/boot.js
+          python - <<'PY'
+          import re
+          text = open('static/frontend/boot.js', encoding='utf-8').read()
+          match = re.search(r"pilotCandidate: 'v6\.0\.(\d+)'", text)
+          assert match and int(match.group(1)) >= 27, text
+          PY
