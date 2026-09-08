@@ -172,14 +172,14 @@
       '<path class="car-window" d="M285 108 L448 108 Q490 112 535 160 L270 160 Z"/>' +
       '<circle class="car-wheel" cx="210" cy="248" r="48"/><circle class="car-wheel" cx="580" cy="248" r="48"/>' +
       '<rect class="car-door-line" x="340" y="166" width="150" height="77" rx="8"/>' +
-      '<button class="svg-hotspot" data-hotspot-zone="hood" aria-label="Капот"><circle cx="565" cy="174" r="23"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="windshield" aria-label="Ветровое стекло"><circle cx="475" cy="132" r="22"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="mirror" aria-label="Зеркало"><circle cx="508" cy="160" r="20"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="door" aria-label="Дверь"><circle cx="414" cy="205" r="25"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="fender" aria-label="Крыло"><circle cx="620" cy="211" r="22"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="headlamp" aria-label="Фара"><circle cx="660" cy="195" r="19"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="bumper" aria-label="Бампер"><circle cx="690" cy="231" r="18"/></button>' +
-      '<button class="svg-hotspot" data-hotspot-zone="wheel" aria-label="Колесо"><circle cx="580" cy="248" r="25"/></button>' +
+      '<g class="svg-hotspot" data-hotspot-zone="hood" role="button" tabindex="0" aria-label="Капот"><circle cx="565" cy="174" r="23"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="windshield" role="button" tabindex="0" aria-label="Ветровое стекло"><circle cx="475" cy="132" r="22"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="mirror" role="button" tabindex="0" aria-label="Зеркало"><circle cx="508" cy="160" r="20"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="door" role="button" tabindex="0" aria-label="Дверь"><circle cx="414" cy="205" r="25"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="fender" role="button" tabindex="0" aria-label="Крыло"><circle cx="620" cy="211" r="22"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="headlamp" role="button" tabindex="0" aria-label="Фара"><circle cx="660" cy="195" r="19"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="bumper" role="button" tabindex="0" aria-label="Бампер"><circle cx="690" cy="231" r="18"/></g>' +
+      '<g class="svg-hotspot" data-hotspot-zone="wheel" role="button" tabindex="0" aria-label="Колесо"><circle cx="580" cy="248" r="25"/></g>' +
       '</svg><div class="hotspot-hint">Нажмите на нужную зону</div></div>';
   }
 
@@ -318,7 +318,13 @@
       });
     });
     queryAll('[data-hotspot-zone]').forEach(function (button) {
-      button.addEventListener('click', function () { submitAnswer(button.dataset.hotspotZone); });
+      const chooseHotspot = function () { submitAnswer(button.dataset.hotspotZone); };
+      button.addEventListener('click', chooseHotspot);
+      button.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        chooseHotspot();
+      });
     });
     queryAll('[data-order-token]').forEach(function (button) {
       button.addEventListener('click', function () {

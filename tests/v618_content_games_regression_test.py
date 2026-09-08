@@ -91,6 +91,9 @@ assert set(catalog_ids) == set(GAME_TYPES)
 assert "Car Part Hotspot" in GAME_LAB
 assert "car-hotspot-stage" in GAME_LAB
 assert "data-hotspot-zone" in GAME_LAB
+assert '<button class="svg-hotspot"' not in GAME_LAB
+assert 'role="button" tabindex="0"' in GAME_LAB
+assert "event.key !== 'Enter'" in GAME_LAB
 assert "MGC AUTOMOTIVE ARCADE · 20 ИГР" in GAME_LAB
 assert "/frontend/game_lab_v618.js" in INDEX
 assert INDEX.index("/frontend/game_lab_v618.js") < INDEX.index("/frontend/practice_games.js")
