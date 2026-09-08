@@ -33,6 +33,10 @@ from .pronunciation_router_bridge import (
 from .router_bridge import RouterBindingReport, bind_system_router
 from .security_bridge import SecurityBindingReport, bind_legacy_security
 from .service_bridge import ServiceBindingReport, bind_legacy_services
+from .shift_analytics_router_bridge import (
+    ShiftAnalyticsRouterBindingReport,
+    bind_shift_analytics_router,
+)
 from .terminology_admin_router_bridge import (
     TerminologyAdminRouterBindingReport,
     bind_terminology_admin_router,
@@ -80,6 +84,7 @@ def load_application(module_name: str = LEGACY_APP_MODULE) -> tuple[FastAPI, Rou
     bind_auth_router(module, application)
     bind_learning_router(module, application)
     bind_practice_games_router(module, application)
+    bind_shift_analytics_router(module, application)
     bind_terminology_admin_router(module, application)
     bind_pronunciation_router(module, application)
     bind_user_manager_router(module, application)
@@ -129,6 +134,9 @@ LEARNING_ROUTER_BINDING_REPORT: LearningRouterBindingReport = getattr(
 PRACTICE_GAMES_ROUTER_BINDING_REPORT: PracticeGamesRouterBindingReport = getattr(
     _legacy_module, "MGC_PRACTICE_GAMES_ROUTER_BINDING_REPORT"
 )
+SHIFT_ANALYTICS_ROUTER_BINDING_REPORT: ShiftAnalyticsRouterBindingReport = getattr(
+    _legacy_module, "MGC_SHIFT_ANALYTICS_ROUTER_BINDING_REPORT"
+)
 TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT: TerminologyAdminRouterBindingReport = getattr(
     _legacy_module, "MGC_TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT"
 )
@@ -166,6 +174,7 @@ __all__ = [
     "AUTH_ROUTER_BINDING_REPORT",
     "LEARNING_ROUTER_BINDING_REPORT",
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
+    "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
     "USER_MANAGER_ROUTER_BINDING_REPORT",
