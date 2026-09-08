@@ -1,0 +1,25 @@
+MGC Languages v6.0.24
+Codename: Shift Simulation
+
+Release focus:
+- five linked virtual-shift episodes
+- real prioritization with delay consequences for unhandled incidents
+- branching by previous decisions and Live Shift State
+- production / quality / logistics / R&D / Chinese supplier scenarios
+- bilingual communication choices (Chinese + pinyin + RU, or English + RU)
+- end-of-shift scorecard and language review
+
+Frontend module:
+static/frontend/shift_simulation_v624.js
+
+Styles:
+static/shift_simulation_v624.css
+
+Regression guard:
+tests/v624_shift_simulation_test.py
+
+Pilot candidate:
+v6.0.24
+
+Backend game contract:
+unchanged — existing 20 game types, server max-5 answers, XP and anti-farm remain authoritative.
