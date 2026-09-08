@@ -34,7 +34,7 @@
   function queryAll(selector, scope) { return Array.from((scope || document).querySelectorAll(selector)); }
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
     });
   }
 
@@ -187,7 +187,6 @@
     const doneCount = completedCount(daily, missions);
     const boss = bossPlan();
     const bossUnlocked = doneCount >= missions.length;
-    const bossGame = gameById(boss.id);
     const panel = document.createElement('section');
     panel.className = 'arcade-missions-v620';
     panel.dataset.missionSignature = signature;
