@@ -50,11 +50,13 @@ for marker in ["Первый заезд", "Исследователь", "Пол�
     assert marker in MASTERY, marker
 assert "Без искусственного фарма XP" in MASTERY
 
-# Integration, offline UI, and boot contract.
+# Integration and offline UI contract. Historical regressions must not pin a newer
+# pilot's exact version; the active release owns the exact pilotCandidate assertion.
 assert "/arcade_mastery_v620.css" in INDEX
 assert "/frontend/arcade_mastery_v620.js" in INDEX
 assert INDEX.index("arcade_mastery_v620.js") < INDEX.index("frontend/boot.js")
 assert "'arcade-mastery-v620'" in BOOT
+assert "pilotCandidate:" in BOOT
 assert ".arcade-mastery-v620" in CSS
 assert ".mastery-ring" in CSS
 assert ".mastery-skill-card" in CSS
