@@ -1,8 +1,8 @@
-# MGC Languages — Company Pilot v6.0.20
+# MGC Languages — Company Pilot v6.0.21
 
 Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные рабочие сценарии, тесты, SRS и игровая практика.
 
-**Текущий статус:** v6.0.20 Company Pilot на `main`.
+**Текущий статус:** v6.0.21 Company Pilot на `main`.
 
 ## Ключевые цифры
 
@@ -13,9 +13,10 @@
 - **6 станций Factory Journey**: Штамповка → Кузов/сварка → Окраска → Сборка → Качество → Логистика.
 - **3 адаптивные Daily Missions** + **Boss Shift** после выполнения 3/3.
 - **7 рабочих компетенций Arcade Mastery** с персональной картой навыков.
+- **3 производственных уровня сложности** + адаптивный режим внутри 20 игр.
 - Игровая сессия ограничена **5 ответами** на backend-уровне.
 
-## Словарь v6.0.18–v6.0.20
+## Словарь v6.0.18–v6.0.21
 
 Базовый корпус до расширения содержал 1735 китайских и 256 английских терминов. Для выравнивания английского словаря сформирован параллельный профессиональный English-layer из 1479 терминов.
 
@@ -150,6 +151,28 @@ static/arcade_mastery_v620.css
 tests/v620_arcade_mastery_test.py
 ```
 
+## Production Game Depth — v6.0.21
+
+Существующие 20 игр получили более глубокий производственный слой без дублирования backend-механик.
+
+- **Режимы сложности:** Учебный / Смена / Эксперт + Адаптивно.
+- В адаптивном режиме 5 вопросов проходят путь **2 учебных → 2 сменных → 1 экспертный**.
+- Для всех 20 игр добавлены контекстные постановки, основанные на реальной работе автопроизводства: запуск, смена, quality gate, line stop, поставщик, material flow, BOM, спецификация, safety и эскалация.
+- Добавлены отдельные сцены **сварки, окраски, логистики, сборки, качества, безопасности, инженерии и рабочих коммуникаций**.
+- `Car Part Hotspot` получил более детальную схему автомобиля: линии кузова, светотехника, решётка, ручки, ступицы, спицы и элементы остекления — исходные интерактивные зоны при этом сохранены.
+- Экспертный режим уменьшает визуальную помощь и скрывает часть переводных подсказок.
+- Серверный лимит **max 5**, XP и anti-farm не изменялись.
+
+Файлы:
+
+```text
+static/frontend/game_depth_v621.js
+static/game_depth_v621.css
+tests/v621_game_depth_test.py
+CHANGELOG_v6.0.21.md
+BUILD_INFO_v6.0.21.txt
+```
+
 ## Что входит в актуальный пилот
 
 - китайский язык для автопрома с пиньинем, тонами и произношением;
@@ -157,7 +180,7 @@ tests/v620_arcade_mastery_test.py
 - профессиональная терминология по цехам и функциям;
 - реальные рабочие ситуации и Role Play;
 - тесты, SRS, курс 30 дней, итоговый экзамен;
-- 20 игр + Factory Journey + Daily Missions + Boss Shift + Arcade Mastery;
+- 20 игр + Factory Journey + Daily Missions + Boss Shift + Arcade Mastery + Production Game Depth;
 - XP, прогресс и anti-farm;
 - фраза дня, план на сегодня, быстрый доступ и подборки терминов;
 - роли User / Manager / Editor / Admin;
@@ -186,7 +209,7 @@ tests/v617_pilot_ux_regression_test.py
 На `main` работают два основных CI-контура:
 
 1. `.github/workflows/ci.yml` — quality gate + LAN PostgreSQL/Docker/Nginx smoke.
-2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate, проверяющий текущий игровой и словарный слой до v6.0.20.
+2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate, проверяющий текущий игровой и словарный слой до v6.0.21.
 
 Ключевые regression-тесты:
 
@@ -196,9 +219,10 @@ tests/v618_content_games_regression_test.py
 tests/v619_factory_journey_test.py
 tests/v620_arcade_missions_test.py
 tests/v620_arcade_mastery_test.py
+tests/v621_game_depth_test.py
 ```
 
-CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, Daily Missions, Boss Shift, Arcade Mastery, JavaScript syntax и реальный LAN runtime.
+CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, Daily Missions, Boss Shift, Arcade Mastery, Production Game Depth, JavaScript syntax и реальный LAN runtime.
 
 ## One-click запуск Company Pilot
 
@@ -232,5 +256,5 @@ python scripts/company_pilot_preflight.py --strict-corporate
 
 ---
 
-**Pilot:** MGC Languages v6.0.20  
+**Pilot:** MGC Languages v6.0.21  
 **Назначение:** корпоративное изучение китайского и английского языка для задач автомобильной промышленности.
