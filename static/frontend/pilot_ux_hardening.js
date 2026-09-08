@@ -27,7 +27,7 @@
     '.pilot-quote-card'
   ]);
 
-  const NATURAL_VOICE_NAME = /natural|neural|premium|enhanced|siri|aria|jenny|guy|ava|andrew|emma|brian|samantha|daniel|karen|moira|serena|xiaoxiao|xiaoyi|yunxi|yunyang|huihui|yaoyao|tingting|meijia|sinji|普通话|putonghua|mandarin|google us english/i;
+  const NATURAL_VOICE_NAME = /natural|neural|online|premium|enhanced|siri|aria|jenny|guy|ava|andrew|emma|brian|samantha|daniel|karen|moira|serena|xiaoxiao|xiaoyi|yunxi|yunyang|huihui|yaoyao|tingting|meijia|sinji|普通话|putonghua|mandarin|google us english/i;
   const ROBOTIC_VOICE_NAME = /espeak|festival|compact|robot|eloquence/i;
   const MIN_NATURAL_VOICE_SCORE = 72;
   const VOICE_CACHE = {items: [], ready: false};
