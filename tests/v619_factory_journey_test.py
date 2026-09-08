@@ -15,21 +15,30 @@ assert "frontend.register('factory-journey-v619'" in JOURNEY
 assert "FACTORY JOURNEY · v6.0.19" in JOURNEY
 assert "Пройдите автомобиль через весь завод" in JOURNEY
 assert "Следующая станция открывается" in JOURNEY
+assert "каждая запускается на словаре своего цеха" in JOURNEY
 assert "journeySignature" in JOURNEY
 assert "dataset.journeySignature" in JOURNEY
 assert "data-factory-continue" in JOURNEY
 assert "data-start-v618-game" in JOURNEY
+assert "data-factory-topic" in JOURNEY
+assert "stateApi().set('topic'" in JOURNEY
 
-station_ids = re.findall(r"\{id:'([^']+)', title:'[^']+', subtitle:'[^']+', game:'([^']+)'", JOURNEY)
-assert len(station_ids) == 6, station_ids
-assert len({station for station, _ in station_ids}) == 6
-assert [station for station, _ in station_ids] == ["press", "body", "paint", "assembly", "quality", "logistics"]
-assert [game for _, game in station_ids] == [
+stations = re.findall(
+    r"\{id:'([^']+)', title:'[^']+', subtitle:'[^']+', topic:'([^']+)', game:'([^']+)'",
+    JOURNEY,
+)
+assert len(stations) == 6, stations
+assert len({station for station, _, _ in stations}) == 6
+assert [station for station, _, _ in stations] == ["press", "body", "paint", "assembly", "quality", "logistics"]
+assert [topic for _, topic, _ in stations] == [
+    "Штамповка", "Кузов и компоненты", "Окраска", "Сборка автомобиля", "Качество в автопроме", "Логистика JIT/JIS"
+]
+assert [game for _, _, game in stations] == [
     "shop_route", "hotspot", "defect_detective", "assembly_order", "quality_gate", "logistics_route"
 ]
 
 catalog_ids = set(re.findall(r"\{id:'([^']+)'", GAME_LAB))
-for _, game in station_ids:
+for _, _, game in stations:
     assert game in catalog_ids, game
 
 assert "/factory_journey_v619.css" in INDEX
@@ -47,4 +56,4 @@ for required in (
 
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/factory_journey_v619.js")], check=True, cwd=ROOT)
 
-print("PASS: v6.0.19 Factory Journey adds a six-station automotive route over the 20-game arcade")
+print("PASS: v6.0.19 Factory Journey adds a six-station automotive route with shop-specific vocabulary")
