@@ -1,0 +1,28 @@
+MGC Languages Company Pilot
+Release: v6.0.22
+Codename: Production Decision Chains
+
+Scope:
+- 3-step decision chains on Shift and Expert difficulty
+- Andon / Line Stop
+- Quality containment and escalation
+- Material shortage and recovery
+- Welding / Body Shop containment
+- Paint process recovery
+- Safety near miss
+- Engineering change control
+- Chinese supplier escalation
+- Chinese phrases include pinyin
+- English includes shop-floor phrasing
+- Wrong decisions show explicit production consequences
+- Production judgement is local-only and does not award XP
+
+Compatibility:
+- Builds on game-depth-v621
+- Existing 20 backend game types unchanged
+- Existing max-5 answer session unchanged
+- Existing XP and anti-farm path unchanged
+- Offline frontend assets only
+
+Primary regression:
+python tests/v622_decision_chains_test.py
