@@ -60,12 +60,13 @@ assert "не начисляет дополнительный XP" in DYNAMIC
 assert "spendable_xp" not in DYNAMIC
 assert "awarded_xp" not in DYNAMIC
 
-# Assets load before boot and the readiness contract recognizes the current pilot.
+# Assets load before boot. Historical regressions must not pin future releases to v6.0.23;
+# the active release test owns the exact pilotCandidate assertion.
 assert "/dynamic_factory_v623.css" in INDEX
 assert "/frontend/dynamic_factory_v623.js" in INDEX
 assert INDEX.index("dynamic_factory_v623.js") < INDEX.index("frontend/boot.js")
 assert "'dynamic-factory-v623'" in BOOT
-assert "pilotCandidate: 'v6.0.23'" in BOOT
+assert "pilotCandidate:" in BOOT
 assert "http://" not in DYNAMIC and "https://" not in DYNAMIC
 
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/dynamic_factory_v623.js")], check=True, cwd=ROOT)
