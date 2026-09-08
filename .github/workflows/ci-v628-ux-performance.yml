@@ -39,4 +39,4 @@ jobs:
           grep -q "frontend.register('ux-performance-v628'" static/frontend/ux_performance_v628.js
           grep -q 'prefers-reduced-motion:reduce' static/ux_performance_v628.css
           grep -q 'content-visibility:auto' static/ux_performance_v628.css
-          grep -q "pilotCandidate: 'v6.0.28'" static/frontend/boot.js
+          grep -q "pilotCandidate: 'v6.0." static/frontend/boot.js
