@@ -32,6 +32,9 @@ jobs:
       - name: v6.0.29 release candidate regression
         run: python tests/v629_release_candidate_test.py
 
+      - name: v6.0.29 operability smoke contract
+        run: python tests/v629_operability_smoke_test.py
+
       - name: Frozen release manifest guard
         run: python scripts/release_candidate_guard.py --json
 
@@ -44,5 +47,6 @@ jobs:
           grep -q '"candidate": "RC1"' RELEASE_MANIFEST_v6.0.29.json
           grep -q '"status": "pilot-freeze"' RELEASE_MANIFEST_v6.0.29.json
           grep -q "pilotCandidate: 'v6.0.29'" static/frontend/boot.js
+          grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.29")' mgc/config.py
           grep -q 'Release: v6.0.29' BUILD_INFO_v6.0.29.txt
           grep -q 'Release Candidate / Pilot Freeze' CHANGELOG_v6.0.29.md
