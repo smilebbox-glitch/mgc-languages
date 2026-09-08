@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="/dynamic_factory_v623.css">
   <link rel="stylesheet" href="/shift_simulation_v624.css">
   <link rel="stylesheet" href="/shift_analytics_v625.css">
+  <link rel="stylesheet" href="/team_leaderboard_v626.css">
 </head>
 <body>
   <section id="authView" class="auth-shell">
@@ -79,22 +80,12 @@
         <span class="brand-mark small">M</span>
         <span><b>MGC Language Lab</b><small>People · Languages · Automotive</small></span>
       </button>
-
-      <label class="pilot-search-wrap" aria-label="Поиск по темам">
-        <input id="pilotSearch" class="pilot-search" type="search" autocomplete="off" placeholder="Поиск по темам…">
-      </label>
-
-      <div class="language-switch" role="group" aria-label="Изучаемый язык">
-        <button data-language="chinese">Китайский язык · 中文</button>
-        <button data-language="english">English</button>
-      </div>
+      <label class="pilot-search-wrap" aria-label="Поиск по темам"><input id="pilotSearch" class="pilot-search" type="search" autocomplete="off" placeholder="Поиск по темам…"></label>
+      <div class="language-switch" role="group" aria-label="Изучаемый язык"><button data-language="chinese">Китайский язык · 中文</button><button data-language="english">English</button></div>
       <button id="pinyinToggle" class="pinyin-toggle hidden" type="button" title="Показать или скрыть Pinyin">拼 Pinyin: вкл</button>
       <button id="notificationButton" class="icon-button" data-view="notifications" title="Уведомления" aria-label="Уведомления">◌</button>
       <button id="xpPill" class="xp-pill" data-view="xp" title="XP и помощь">0 XP</button>
-      <div class="pilot-profile" aria-label="Профиль пользователя">
-        <span class="pilot-profile-avatar">M</span>
-        <span class="pilot-profile-copy"><b id="userProfileName">Пользователь</b><small id="userProfileDept"></small></span>
-      </div>
+      <div class="pilot-profile" aria-label="Профиль пользователя"><span class="pilot-profile-avatar">M</span><span class="pilot-profile-copy"><b id="userProfileName">Пользователь</b><small id="userProfileDept"></small></span></div>
       <button id="logoutButton" class="icon-button" title="Выйти" aria-label="Выйти">↪</button>
     </header>
 
@@ -110,22 +101,12 @@
           <button class="nav-item" data-view="xp"><span>XP</span>XP</button>
           <button class="nav-item" data-view="exam"><span>★</span>Итоговый экзамен</button>
         </div>
-        <div class="nav-group">
-          <button class="nav-item" data-view="assistant"><span>✦</span>Помощник</button>
-          <button id="chineseBasicsNav" class="nav-item hidden" data-view="chinese-basics"><span>i</span>Информация о китайском</button>
-        </div>
-        <div id="managerNav" class="nav-group hidden">
-          <button class="nav-item" data-view="manager"><span>♙</span>Руководитель</button>
-        </div>
-        <div id="adminNav" class="nav-group hidden">
-          <button class="nav-item" data-view="admin"><span>⚙</span>Админ</button>
-        </div>
+        <div class="nav-group"><button class="nav-item" data-view="assistant"><span>✦</span>Помощник</button><button id="chineseBasicsNav" class="nav-item hidden" data-view="chinese-basics"><span>i</span>Информация о китайском</button></div>
+        <div id="managerNav" class="nav-group hidden"><button class="nav-item" data-view="manager"><span>♙</span>Руководитель</button></div>
+        <div id="adminNav" class="nav-group hidden"><button class="nav-item" data-view="admin"><span>⚙</span>Админ</button></div>
       </aside>
       <div id="backdrop" class="backdrop hidden"></div>
-
-      <main id="main" class="main">
-        <div class="loading-card"><span class="spinner"></span><p>Загрузка платформы</p></div>
-      </main>
+      <main id="main" class="main"><div class="loading-card"><span class="spinner"></span><p>Загрузка платформы</p></div></main>
     </div>
   </div>
 
@@ -158,6 +139,7 @@
   <script src="/frontend/admin_ops.js" defer></script>
   <script src="/frontend/admin_analytics.js" defer></script>
   <script src="/frontend/manager_admin.js" defer></script>
+  <script src="/frontend/team_leaderboard_v626.js" defer></script>
   <script src="/frontend/legacy_retirement.js" defer></script>
   <script src="/frontend/navigation.js" defer></script>
   <script src="/frontend/session_lifecycle.js" defer></script>
