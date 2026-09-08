@@ -1,22 +1,23 @@
-# MGC Languages — Company Pilot v6.0.24
+# MGC Languages — Company Pilot v6.0.25
 
-Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные производственные ситуации, тесты, курс, игровая практика и сменные симуляции.
+Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные производственные ситуации, тесты, курс, игровая практика, связанные производственные сценарии и виртуальные смены.
 
-**Текущий статус:** v6.0.24 Company Pilot на `main`.
+**Текущий статус:** v6.0.25 Company Pilot на `main`.
 
-## Ключевые цифры
+## Ключевые возможности
 
 - **2029 китайских терминов** в runtime.
 - **2029 английских терминов** в runtime.
-- **Точный паритет Chinese / English** контролируется CI и LAN runtime smoke.
-- **20 различных игровых механик**.
+- Точный Chinese / English parity контролируется CI и LAN runtime smoke.
+- **20 игровых механик** для автомобильной промышленности.
 - **6 станций Factory Journey**: Штамповка → Кузов/сварка → Окраска → Сборка → Качество → Логистика.
-- **3 адаптивные Daily Missions** + **Boss Shift**.
-- **7 рабочих компетенций Arcade Mastery**.
-- **3 производственных уровня сложности** + адаптивный режим.
-- **8 семейств Production Decision Chains / Dynamic Factory Scenarios**.
-- **5 связанных эпизодов Shift Simulation**, по 3 решения на эпизод.
-- Игровая backend-сессия ограничена **5 ответами**; новый симуляционный слой не создаёт отдельный XP-контур.
+- **3 Daily Missions** + Boss Shift.
+- **7 компетенций Arcade Mastery**.
+- Учебный / Смена / Эксперт + адаптивная сложность.
+- Production Decision Chains и Dynamic Factory Scenarios.
+- **Shift Simulation** из пяти связанных производственных эпизодов.
+- **Personal Shift Analytics** с историей результатов под аккаунтом пользователя.
+- Игровая backend-сессия ограничена **5 ответами**; Shift Simulation и аналитика не создают отдельный XP-контур.
 
 ## Automotive Arcade — 20 игр
 
@@ -24,91 +25,78 @@
 2. Listening Sprint — распознавание на слух.
 3. Precision Check — точное значение.
 4. Phrase Builder — сборка рабочей фразы.
-5. Car Part Hotspot — найти деталь на интерактивной схеме автомобиля.
+5. Car Part Hotspot — детали автомобиля на интерактивной схеме.
 6. Build the Car — технологическая последовательность.
-7. Factory Router — отправить термин в правильный цех.
-8. Tool Selector — выбрать инструмент под задачу.
-9. Defect Detective — определить производственный дефект.
-10. Safety Spot — найти опасность на рабочем месте.
+7. Factory Router — маршрутизация по цехам.
+8. Tool Selector — выбор инструмента.
+9. Defect Detective — производственные дефекты.
+10. Safety Spot — производственная безопасность.
 11. Quality Gate — PASS / REWORK / HOLD.
-12. Logistics Flow — собрать материальный поток.
-13. Kanban Challenge — решение о пополнении.
-14. Build the BOM — связать компонент с подсистемой.
-15. Spec or NOK? — сравнить факт с допуском.
-16. 10-Second Recall — быстрый ответ под таймер.
-17. Memory Garage — карточки-пары.
-18. Odd One Out — найти лишний термин.
-19. Dialogue Duel — выбрать профессиональную реплику.
-20. Shift Incident — решение в реальной сменной ситуации.
+12. Logistics Flow — материальный поток.
+13. Kanban Challenge — пополнение.
+14. Build the BOM — компонент ↔ подсистема.
+15. Spec or NOK? — факт против допуска.
+16. 10-Second Recall — быстрый ответ.
+17. Memory Garage — пары.
+18. Odd One Out — лишний термин.
+19. Dialogue Duel — профессиональная рабочая реплика.
+20. Shift Incident — решение производственной ситуации.
 
-Игры используют интерактивные зоны автомобиля, визуальные дефекты, производственные маршруты, инструменты, измерения, Kanban, BOM, память, таймер, аудио и рабочие сценарии.
+## Словарь и языковой стандарт
 
-## Словарь
+Runtime содержит **2029 терминов на китайском и 2029 на английском**. Профессиональный слой включает производство, качество, логистику, кузов, компоненты, окраску, инженерные изменения и коммуникацию с поставщиками.
 
-Базовый корпус был расширен и выровнен между языками. В runtime сейчас **2029 терминов на китайском и 2029 на английском**. В оба языка дополнительно добавлены профессиональные термины по окраске, логистике, кузову и компонентам.
+Основной китайский курс учит **путунхуа (普通话) — Standard Mandarin**. Для китайского используются иероглифы, pinyin, тоны, русский смысл и произношение. Диалекты остаются справочным материалом и не подменяют основной стандарт.
 
-Основные файлы:
+Ключевые данные:
 
 ```text
 data/shop_expansion_v618.json
 data/english_parallel_v618.json
 data/v618_content_manifest.json
 mgc/content_v618.py
-tests/v618_content_games_regression_test.py
 ```
 
 ## Factory Journey — v6.0.19
 
-Пользователь последовательно проходит шесть автомобильных производственных станций:
+Пользователь проводит автомобиль через шесть производственных станций. Следующая станция открывается после завершения предыдущей; сохраняются лучший результат, общий прогресс и идеальные 5/5.
 
-1. Штамповка.
-2. Кузов / сварка.
-3. Окраска.
-4. Сборка.
-5. Качество.
-6. Логистика.
+Journey работает поверх существующих backend game types и не дублирует игровой backend.
 
-Следующая станция открывается после завершения предыдущей. Показываются лучший результат, общий прогресс и идеальные 5/5. Journey использует существующие 20 backend game types и не создаёт отдельный XP-контур.
+## Daily Missions, Boss Shift и Arcade Mastery — v6.0.20
 
-## Daily Missions и Boss Shift — v6.0.20
+Daily Missions формируют три короткие задачи:
 
-Ежедневный слой формирует три короткие миссии:
-
-1. цеховая миссия под подразделение пользователя;
+1. цеховая миссия под подразделение;
 2. новая или редко используемая механика;
-3. точка роста по слабому навыку.
+3. тренировка слабого навыка.
 
-После выполнения 3/3 открывается Boss Shift. Маршрутизация учитывает отдел: окраска, логистика, кузов, сборка, качество, R&D и закупки получают разные игровые приоритеты.
+Arcade Mastery переводит игровую практику в семь рабочих компетенций:
 
-## Arcade Mastery — v6.0.20
+- Терминология;
+- Аудирование;
+- Производство;
+- Качество;
+- Логистика;
+- Инженерия;
+- Коммуникация.
 
-Результаты переводятся в 7 рабочих компетенций:
-
-1. Терминология.
-2. Аудирование.
-3. Производство.
-4. Качество.
-5. Логистика.
-6. Инженерия.
-7. Коммуникация.
-
-Сервис определяет слабейший приоритетный навык, рекомендует следующую игру и показывает уровни ROOKIE → DEVELOPING → OPERATOR → SPECIALIST → EXPERT → MASTER.
+Сервис предлагает следующую полезную игру по слабейшему приоритетному навыку.
 
 ## Production Game Depth — v6.0.21
 
-Все 20 игр получили дополнительный производственный слой:
+Все 20 игр получили производственный контекст и уровни сложности:
 
-- Учебный / Смена / Эксперт + Адаптивно;
-- адаптивная последовательность 5 вопросов: **2 учебных → 2 сменных → 1 экспертный**;
-- отдельные сцены сварки, окраски, логистики, сборки, качества, безопасности, инженерии и рабочих коммуникаций;
-- более детальная схема автомобиля в Car Part Hotspot;
-- уменьшение подсказок в экспертном режиме.
+- Учебный;
+- Смена;
+- Эксперт;
+- Адаптивно.
 
-Backend max-5, XP и anti-farm не изменялись.
+В адаптивном режиме пять вопросов идут как **2 учебных → 2 сменных → 1 экспертный**. Используются сцены сварки, окраски, логистики, сборки, качества, безопасности, инженерии и рабочих коммуникаций.
 
 ## Production Decision Chains — v6.0.22
 
-На уровнях Смена и Эксперт языковая задача может начинаться с трёх последовательных производственных решений. Неправильный выбор показывает конкретное последствие, а после каждого шага даётся полезная рабочая фраза на изучаемом языке.
+На уровнях Смена и Эксперт пользователь проходит трёхшаговые производственные решения до основной языковой задачи.
 
 Восемь семейств:
 
@@ -121,96 +109,112 @@ Backend max-5, XP и anti-farm не изменялись.
 - Engineering Change;
 - Supplier Escalation.
 
-Production judgement не начисляет отдельный XP.
+Неправильное решение показывает конкретное производственное последствие. Production judgement не начисляет отдельный XP.
 
 ## Dynamic Factory Scenarios — v6.0.23
 
-Решения из v6.0.22 теперь меняют **состояние следующего шага**.
+Решения влияют на последующие события. Live Factory State учитывает suspect window, line-stop risk, material run-out, containment, restart readiness, configuration risk и качество supplier response.
 
-Live Factory State может отражать:
-
-- число автомобилей/кузовов в suspect window;
-- риск повторного line stop;
-- material run-out;
-- containment и process evidence;
-- restart readiness;
-- engineering configuration risk;
-- качество supplier response.
-
-Supplier Dialogue также ветвится: размытая эскалация вызывает уточняющий ответ, а точная формулировка с part / lot / quantity / owner / deadline / evidence ускоряет переход к traceability, containment и подтверждённому ETA.
+Supplier Dialogue также ветвится: точные запросы с part / lot / quantity / owner / deadline / evidence дают лучший downstream outcome, чем общие эскалации.
 
 ## Shift Simulation — v6.0.24
 
-Shift Simulation объединяет производственную логику и язык в полноценную виртуальную смену из **5 связанных эпизодов**:
+Полная виртуальная смена состоит из пяти связанных эпизодов:
 
 1. **08:00** — первые параллельные сигналы.
 2. **09:35** — последствия ранних решений.
-3. **11:20** — качество, material recovery и supplier control.
-4. **14:05** — line stop / sequencing / supplier escalation в зависимости от состояния смены.
+3. **11:20** — quality, material recovery и supplier control.
+4. **14:05** — line stop / sequencing / supplier escalation.
 5. **16:25** — финальные риски и shift handover.
 
 На каждом эпизоде пользователь:
 
-1. выбирает, какой из одновременно активных инцидентов разбирать первым;
+1. выбирает, какой инцидент разбирать первым;
 2. принимает техническое/производственное решение;
 3. выбирает рабочую формулировку на китайском или английском.
 
-Невыбранные инциденты получают **delay consequence** и ухудшают Live Shift State. Поэтому пользователь тренирует реальную приоритизацию, а не независимые тестовые вопросы.
+Невыбранные инциденты получают delay consequence и меняют Live Shift State.
 
 ### Live Shift State
 
 В течение смены меняются:
 
-- **Стабильность линии**;
-- **Защита качества**;
-- **Material runway**;
-- **Supplier control**;
-- **Нагрузка команды**.
-
-Следующие эпизоды ветвятся по предыдущим решениям и этим значениям. Например, корректный supplier expedite ведёт к traceability, отсутствие recovery — к material run-out; корректный torque containment — к first-off, плохая реакция — к Quality Gate hold; накопленные риски могут привести к line stop.
-
-### Языковая практика
-
-В китайском режиме пользователь видит:
-
-- иероглифы;
-- pinyin;
-- русский смысл;
-- оценку точности рабочей формулировки.
-
-В английском режиме используются shop-floor English и русский смысл.
+- Стабильность линии;
+- Защита качества;
+- Material runway;
+- Supplier control;
+- Нагрузка команды.
 
 ### Shift Review
 
 После пятого эпизода отдельно оцениваются:
 
-- **Production control**;
-- **Prioritization**;
-- **Production judgement**;
-- **Language**;
+- Production control;
+- Prioritization;
+- Production judgement;
+- Language;
 - общий результат смены.
 
-Пользователь также получает конечный Live Shift State, основную точку роста и языковой разбор с более профессиональными формулировками.
+Shift Simulation не добавляет `/api/games/*`, не начисляет отдельный XP и не меняет max-5 / anti-farm.
 
-Shift Simulation не добавляет `/api/games/*`, не начисляет отдельный XP, не изменяет серверный max-5 и anti-farm.
+## Personal Shift Analytics — v6.0.25
 
-Файлы:
+Результат Shift Review теперь не исчезает после завершения одной смены. Он автоматически сохраняется под текущим корпоративным аккаунтом в PostgreSQL.
+
+Для каждой смены фиксируются:
+
+- общий результат;
+- Production control;
+- Prioritization;
+- Production judgement;
+- Language;
+- изучаемый язык;
+- финальные Line / Quality / Material / Supplier / Load;
+- слабейшая компетенция;
+- слабая производственная зона.
+
+### Что видит пользователь
+
+Блок `PERSONAL SHIFT ANALYTICS · v6.0.25` показывает:
+
+- количество завершённых смен;
+- последний результат;
+- динамику относительно предыдущих смен;
+- средние значения четырёх компетенций;
+- повторяющуюся точку роста;
+- производственный сигнал, который систематически проседает;
+- последние смены;
+- следующую рекомендуемую тренировку.
+
+Рекомендации замыкают обучение в цикл:
+
+- Production control → Shift Simulation + Quality Gate;
+- Prioritization → Shift Simulation + Shift Incident;
+- Production judgement → Quality Gate + Spec or NOK? + Shift Incident;
+- Language → Dialogue Duel + Phrase Builder.
+
+### Хранение и отказоустойчивость
+
+v6.0.25 использует существующую таблицу `practice_results`, поэтому новая миграция БД не требуется. Записи user-scoped и доступны после входа с другого рабочего места.
+
+При временной потере связи клиент держит небольшую pending-очередь и синхронизирует результат после восстановления доступа. Основным источником истории остаётся PostgreSQL.
+
+API:
 
 ```text
-static/frontend/shift_simulation_v624.js
-static/shift_simulation_v624.css
-tests/v624_shift_simulation_test.py
-CHANGELOG_v6.0.24.md
-BUILD_INFO_v6.0.24.txt
+POST /api/shift-simulations
+GET  /api/shift-simulations/history
 ```
+
+Маршруты аутентифицированы и входят в runtime route contract.
 
 ## Что входит в актуальный пилот
 
-- китайский язык для автопрома с пиньинем, тонами и произношением;
-- английский язык для автомобильной промышленности;
+- китайский язык для автопрома с pinyin, тонами и произношением;
+- английский для автомобильной промышленности;
 - профессиональная терминология по цехам и функциям;
-- реальные рабочие ситуации и Role Play;
-- тесты, SRS, курс 30 дней, итоговый экзамен;
+- Role Play и реальные рабочие ситуации;
+- тесты, SRS, курс 30 дней и итоговый экзамен;
 - 20 игр;
 - Factory Journey;
 - Daily Missions + Boss Shift;
@@ -219,6 +223,7 @@ BUILD_INFO_v6.0.24.txt
 - Production Decision Chains;
 - Dynamic Factory Scenarios;
 - Shift Simulation;
+- Personal Shift Analytics;
 - XP, прогресс и anti-farm;
 - роли User / Manager / Editor / Admin;
 - OIDC/SSO, secure cookies, PostgreSQL, Alembic и RLS;
@@ -226,15 +231,15 @@ BUILD_INFO_v6.0.24.txt
 
 ## UX hardening
 
-Сохранены:
+Сохранены release-specific UX hardening и пользовательские regression guards:
 
 - упрощённый интерфейс без лишних декоративных блоков;
-- Pinyin fallback для китайских автомобильных терминов;
-- локальные/offline SVG по сборке, сварке, окраске, штамповке, качеству и логистике;
-- более естественные браузерные TTS-голоса с приоритетом Natural / Neural / Online / Premium;
+- Pinyin fallback для китайской терминологии;
+- локальные/offline SVG для основных цехов;
+- браузерные TTS-голоса с приоритетом **Natural / Neural / Online / Premium**;
 - старый механизм произношения как fallback.
 
-Release-specific UX hardening и его regression guard:
+Ключевые файлы:
 
 ```text
 static/frontend/pilot_ux_hardening.js
@@ -245,10 +250,10 @@ tests/v617_pilot_ux_regression_test.py
 
 На `main` работают два основных CI-контура:
 
-1. `.github/workflows/ci.yml` — quality gate + LAN PostgreSQL/Docker/Nginx smoke.
-2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate текущего словарного, игрового и симуляционного слоя до v6.0.24.
+1. `.github/workflows/ci.yml` — quality gate + реальный LAN PostgreSQL/Docker/Nginx smoke.
+2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate текущего пользовательского, словарного, игрового и симуляционного слоя.
 
-Ключевые regression-тесты:
+Ключевые regressions:
 
 ```text
 tests/v617_pilot_ux_regression_test.py
@@ -260,9 +265,10 @@ tests/v621_game_depth_test.py
 tests/v622_decision_chains_test.py
 tests/v623_dynamic_factory_test.py
 tests/v624_shift_simulation_test.py
+tests/v625_shift_analytics_test.py
 ```
 
-CI контролирует словарный паритет 2029/2029, 20 game types, игровой UX, production depth, decision chains, dynamic factory state, Shift Simulation, JavaScript syntax и реальный LAN runtime.
+CI контролирует 2029/2029 vocabulary parity, 20 game types, игровой UX, production depth, decision chains, dynamic factory state, Shift Simulation, Personal Shift Analytics, JavaScript syntax, runtime route contract и LAN runtime.
 
 ## One-click запуск Company Pilot
 
@@ -286,15 +292,11 @@ Launcher использует `scripts/start_company_pilot.ps1`, выполня�
 python scripts/company_pilot_preflight.py --strict-corporate
 ```
 
-## Китайский стандарт
-
-Основной курс учит **путунхуа (普通话) — Standard Mandarin**. Диалекты используются только как справочный материал и не подменяют основной стандарт обучения.
-
 ## Корпоративная безопасность
 
-Для controlled company pilot предусмотрены OIDC/SSO, secure cookies, роли, PostgreSQL, RLS, readiness checks, governance терминологии и аудит. Финальная production-приёмка по TLS/reverse proxy, backup/recovery, мониторингу и корпоративным политикам остаётся задачей IT/Security.
+Для controlled company pilot предусмотрены OIDC/SSO, secure cookies, роли, PostgreSQL, RLS, readiness checks, governance терминологии и аудит. Финальная production-приёмка TLS/reverse proxy, backup/recovery, мониторинга и корпоративных политик остаётся задачей IT/Security.
 
 ---
 
-**Pilot:** MGC Languages v6.0.24  
+**Pilot:** MGC Languages v6.0.25  
 **Назначение:** корпоративное изучение китайского и английского языка для задач автомобильной промышленности.
