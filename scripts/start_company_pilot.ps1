@@ -96,8 +96,24 @@ if (-not $HasCorporateOidc) {
     Write-Host "This mode is for pilot/demo use and is NOT the corporate SSO-certified rollout profile." -ForegroundColor Yellow
     Write-Host "When IT provides OIDC_CLIENT_ID and OIDC_CLIENT_SECRET, this launcher will automatically use strict corporate mode." -ForegroundColor Yellow
     Write-Host ""
+
+    $LanEnv = Join-Path $Root '.env.lan'
+    $LanLauncher = Join-Path $Root 'scripts\start_lan_windows.ps1'
+    if (-not (Test-Path $LanLauncher)) { Stop-NoGo "Missing local/LAN pilot launcher." 30 }
+
     try {
-        & (Join-Path $Root 'scripts\start_lan_windows.ps1')
+        if (Test-Path $LanEnv) {
+            # Repair an older manually copied LAN config that still contains placeholders.
+            Ensure-Secret $LanEnv 'POSTGRES_PASSWORD' 32
+            Ensure-Secret $LanEnv 'OIDC_STATE_SECRET' 32
+            Ensure-Secret $LanEnv 'METRICS_TOKEN' 32
+            Ensure-Secret $LanEnv 'MGC_ADMIN_PASSWORD' 24
+            & $LanLauncher
+        } else {
+            # First local launch remains one-click: create a strong admin password automatically.
+            $BootstrapAdminPassword = New-Secret 24
+            & $LanLauncher -AdminPassword $BootstrapAdminPassword
+        }
         if ($LASTEXITCODE -ne 0) { Stop-NoGo "Local/LAN pilot launcher failed." 30 }
         Write-Host "[GO] Local/LAN pilot started successfully." -ForegroundColor Green
         exit 0
