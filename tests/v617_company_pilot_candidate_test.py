@@ -119,6 +119,9 @@ for token in (
     assert token in PS1, token
 for token in ('POSTGRES_PASSWORD', 'OIDC_STATE_SECRET', 'METRICS_TOKEN', 'New-Secret'):
     assert token in LAN_PS1, token
+# Windows PowerShell 5.1 may misdecode UTF-8 scripts without BOM via the legacy
+# Windows code page. Keep the LAN launcher ASCII-only so parsing is deterministic.
+LAN_PS1.encode('ascii')
 assert 'down -v' not in PS1.lower()
 assert 'one double-click' in ONE_CLICK.lower()
 
