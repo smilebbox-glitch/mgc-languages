@@ -1,0 +1,35 @@
+MGC Language Lab v6.0.17 — Company Pilot Candidate
+
+Branch: pilot/v6.0.17-company-pilot
+Base: refactor/v6.0.16-physical-shell-cleanup
+Alembic head: c57d0a31f570 (unchanged)
+Backend API: unchanged
+ORM/schema: unchanged
+
+Pilot UI:
+- static/frontend/pilot_home.js
+- static/pilot.css
+- static/pilot/hero-chinese.svg
+- static/pilot/hero-english.svg
+- static/pilot/phrase-1.svg ... phrase-7.svg
+
+Pilot operations:
+- .env.company-pilot.example
+- scripts/company_pilot_preflight.py
+- docs/COMPANY_PILOT_RUNBOOK_v6.0.17.md
+- docs/PILOT_UAT_v6.0.17.md
+- docs/PILOT_PARTICIPANTS_v6.0.17.csv
+- docs/PILOT_FEEDBACK_v6.0.17.csv
+- tests/v617_company_pilot_candidate_test.py
+- .github/workflows/ci-v617-company-pilot.yml
+
+Daily phrase policy:
+- deterministic by calendar date
+- same phrase for all clients on the same day/track
+- local midnight refresh
+- offline artwork rotation
+
+Launch policy:
+- company pilot requires company_pilot_preflight.py => GO
+- no open S1/S2 UAT defects
+- final launch approval remains with IT/service owner

@@ -1,0 +1,73 @@
+name: mgc-languages-v617-company-pilot
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v617-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  company-pilot-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Previous shell + pilot candidate contracts
+        run: |
+          python tests/v616_frontend_physical_shell_cleanup_test.py
+          python tests/v617_company_pilot_candidate_test.py
+
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/pilot_home.js
+          node --check static/frontend/learning.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+
+      - name: Corporate configuration preflight contract
+        run: |
+          cat > .env.ci-pilot <<'EOF'
+          POSTGRES_PASSWORD=ci-strong-db-password
+          OIDC_STATE_SECRET=ci-state-secret-32-bytes-minimum-value
+          METRICS_TOKEN=ci-metrics-token-value
+          REGISTRATION_ENABLED=false
+          READY_REQUIRE_SCHEMA_HEAD=true
+          READY_REQUIRE_RLS=true
+          READY_REQUIRE_TERM_APPROVAL=true
+          TRUSTED_HOSTS=mgc-pilot.internal
+          AUTH_MODE=oidc
+          COOKIE_SECURE=true
+          READY_REQUIRE_OIDC=true
+          READY_REQUIRE_SECURE_COOKIE=true
+          OIDC_DISCOVERY_URL=https://sso.invalid/.well-known/openid-configuration
+          OIDC_CLIENT_ID=ci-client
+          OIDC_CLIENT_SECRET=ci-secret
+          EOF
+          python scripts/company_pilot_preflight.py --env-file .env.ci-pilot --strict-corporate
+
+      - name: Approved UI parity guard
+        run: |
+          grep -q "frontend.register('pilot-home'" static/frontend/pilot_home.js
+          grep -q "Китайский язык для автопрома" static/frontend/pilot_home.js
+          grep -q "English for the automotive industry" static/frontend/pilot_home.js
+          grep -q "function dailyPhrase(language, date)" static/frontend/pilot_home.js
+          grep -q "scheduleMidnightRefresh" static/frontend/pilot_home.js
+          grep -q "Информация о китайском" static/index.html
+          ! grep -q "About English" static/index.html
+          ! grep -q "Сценарий смены" static/frontend/pilot_home.js
+          ! grep -q "Новая сегодня" static/frontend/pilot_home.js
+
+      - name: Pilot artwork is local/offline
+        run: |
+          test -f static/pilot/hero-chinese.svg
+          test -f static/pilot/hero-english.svg
+          for i in 1 2 3 4 5 6 7; do test -f "static/pilot/phrase-${i}.svg"; done
