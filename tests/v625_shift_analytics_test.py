@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
-from mgc.routers.shift_analytics import (
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from mgc.routers.shift_analytics import (  # noqa: E402
     ShiftSimulationPayload,
     decode_shift_topic,
     encode_shift_topic,
     summarize_shift_history,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
 ROUTER = (ROOT / "mgc/routers/shift_analytics.py").read_text(encoding="utf-8")
 BRIDGE = (ROOT / "mgc_core/shift_analytics_router_bridge.py").read_text(encoding="utf-8")
 RUNTIME = (ROOT / "mgc_core/runtime.py").read_text(encoding="utf-8")
