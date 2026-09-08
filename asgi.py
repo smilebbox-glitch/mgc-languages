@@ -9,9 +9,11 @@ v5.9.2 moves language summary, quiz and scenario-content HTTP ownership behind
 an authenticated language-content router while preserving content generation.
 v6.0.25 adds authenticated, user-scoped Shift Simulation history and analytics.
 v6.0.26 adds department-scoped manager analytics and timed Top-10 leaderboards.
+v6.0.27 adds a user-scoped adaptive training plan from games and Shift Reviews.
 """
 
 from mgc_core.runtime import (
+    ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT,
     ADMIN_OPS_ROUTER_BINDING_REPORT,
     AUTH_BINDING_REPORT,
     AUTH_ROUTER_BINDING_REPORT,
@@ -43,6 +45,7 @@ __all__ = [
     "OBSERVABILITY_ROUTER_BINDING_REPORT", "WORKFLOW_BINDING_REPORT", "AUTH_BINDING_REPORT",
     "AUTH_ROUTER_BINDING_REPORT", "LEARNING_ROUTER_BINDING_REPORT", "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
     "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT", "TEAM_ANALYTICS_ROUTER_BINDING_REPORT",
+    "ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT", "PRONUNCIATION_ROUTER_BINDING_REPORT",
     "USER_MANAGER_ROUTER_BINDING_REPORT", "PILOT_ADMIN_ROUTER_BINDING_REPORT",
     "ADMIN_OPS_ROUTER_BINDING_REPORT", "NOTIFICATIONS_ROUTER_BINDING_REPORT",
