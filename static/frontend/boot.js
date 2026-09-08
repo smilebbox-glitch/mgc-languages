@@ -1,4 +1,4 @@
-/* v6.0.25: validate modular frontend core and publish pilot readiness. */
+/* v6.0.26: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -33,15 +33,14 @@
       'admin-ops',
       'admin-analytics',
       'manager-admin',
+      'team-leaderboard-v626',
       'legacy-retirement',
       'navigation',
       'session-lifecycle',
       'auth-department'
     ];
     const missingModules = requiredModules.filter(function (name) { return !frontend.has(name); });
-    if (missingModules.length) {
-      throw new Error('Frontend modules missing: ' + missingModules.join(', '));
-    }
+    if (missingModules.length) throw new Error('Frontend modules missing: ' + missingModules.join(', '));
 
     const requiredDomIds = [
       'authView', 'authForm', 'username', 'department', 'password',
@@ -53,7 +52,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.25'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.26'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
