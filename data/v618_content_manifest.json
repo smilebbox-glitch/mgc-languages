@@ -1,0 +1,14 @@
+{
+  "release": "6.0.18",
+  "base_chinese": 1735,
+  "base_english": 256,
+  "generated_english_parallel": 1479,
+  "shop_expansion_per_language": 240,
+  "source_terms_per_language": 1975,
+  "shop_additions": {
+    "Кузов и компоненты": 80,
+    "Логистика": 80,
+    "Окраска": 80
+  },
+  "runtime_note": "Experience extra_terms are added equally to both languages at runtime, preserving parity."
+}
