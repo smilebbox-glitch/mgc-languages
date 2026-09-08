@@ -65,7 +65,8 @@ summary = summarize_shift_history(history)
 assert summary["count"] == 4
 assert summary["latest_total"] == 81
 assert summary["weakest_dimension"] == "language"
-assert summary["factory_weakest"] == "supplier"
+# Load is inverse-health: higher load means worse state, so these samples make team load weaker than supplier control.
+assert summary["factory_weakest"] == "load"
 assert summary["trend_delta"] is not None
 
 # Server storage is user-scoped and reuses PracticeResult without a schema migration or XP path.
