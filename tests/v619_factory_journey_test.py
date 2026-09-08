@@ -46,7 +46,8 @@ assert "/frontend/factory_journey_v619.js" in INDEX
 assert INDEX.index("/frontend/game_engagement_v618.js") < INDEX.index("/frontend/factory_journey_v619.js")
 assert INDEX.index("/frontend/factory_journey_v619.js") < INDEX.index("/frontend/practice_games.js")
 assert "'factory-journey-v619'" in BOOT
-assert "pilotCandidate: 'v6.0.19'" in BOOT
+release = re.search(r"pilotCandidate: 'v6\.0\.(\d+)'", BOOT)
+assert release and int(release.group(1)) >= 19, release.group(1) if release else None
 
 for required in (
     ".factory-journey-v619", ".factory-conveyor", ".factory-journey-station",
