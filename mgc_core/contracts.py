@@ -17,6 +17,8 @@ CRITICAL_ROUTE_CONTRACT = frozenset({
     ("POST", "/api/login"),
     ("POST", "/api/logout"),
     ("GET", "/api/me"),
+    ("POST", "/api/shift-simulations"),
+    ("GET", "/api/shift-simulations/history"),
 })
 
 
