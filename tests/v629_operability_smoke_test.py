@@ -12,6 +12,8 @@ RC_GATE = (ROOT / ".github/workflows/ci-v629-release-candidate.yml").read_text(e
 INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
 BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 ADAPTIVE_ROUTER = (ROOT / "mgc/routers/adaptive_training.py").read_text(encoding="utf-8")
+APP_JS = (ROOT / "static/app.js").read_text(encoding="utf-8")
+UX_HARDENING = (ROOT / "static/frontend/pilot_ux_hardening.js").read_text(encoding="utf-8")
 
 assert MANIFEST["release"] == "6.0.29"
 assert MANIFEST["candidate"] == "RC1"
@@ -52,12 +54,28 @@ for marker in (
 ):
     assert marker in CI, marker
 
+# Natural pronunciation is a non-versioned pilot quality fix: prefer a high-quality
+# browser/OS voice when available, while retaining the existing offline server TTS fallback.
+for marker in (
+    "NATURAL_VOICE_NAME",
+    "MIN_NATURAL_VOICE_SCORE",
+    "voice.localService === true",
+    "naturalRate",
+    "selectNaturalVoice",
+    "speechSynthesis.addEventListener('voiceschanged', refreshVoiceCache)",
+    "return originalPlayPronunciation(text, rate, language)",
+):
+    assert marker in UX_HARDENING, marker
+assert "server_audio" in APP_JS
+assert "/api/pronunciation/audio" in APP_JS
+
 assert "python tests/v629_operability_smoke_test.py" in CI
 assert "python tests/v629_operability_smoke_test.py" in RC_GATE
 
 # Keep source/runtime syntax checks close to the operability contract.
 subprocess.run(["python", "-m", "compileall", "-q", "mgc", "mgc_core", "asgi.py"], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/boot.js")], check=True, cwd=ROOT)
+subprocess.run(["node", "--check", str(ROOT / "static/frontend/pilot_ux_hardening.js")], check=True, cwd=ROOT)
 subprocess.run(["python", str(ROOT / "scripts/release_candidate_guard.py"), "--json"], check=True, cwd=ROOT)
 
-print("PASS: v6.0.29 operability contract covers runtime version, Nginx shell/assets, health/meta endpoints and protected APIs")
+print("PASS: v6.0.29 operability contract covers runtime, LAN HTTP checks, protected APIs and natural pronunciation fallback")
