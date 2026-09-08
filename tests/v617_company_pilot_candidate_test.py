@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -19,6 +20,7 @@ ONE_CLICK = (ROOT / 'docs/ONE_CLICK_START_v6.0.17.md').read_text(encoding='utf-8
 BAT = (ROOT / 'START_COMPANY_PILOT.bat').read_text(encoding='utf-8')
 PS1 = (ROOT / 'scripts/start_company_pilot.ps1').read_text(encoding='utf-8')
 LAN_PS1 = (ROOT / 'scripts/start_lan_windows.ps1').read_text(encoding='utf-8')
+SYNC_ADMIN = ROOT / 'scripts/sync_admin_credentials.py'
 
 # Pilot home is loaded before legacy learning so its capture-phase Home ownership wins.
 assert INDEX.index('/frontend/pilot_home.js') < INDEX.index('/frontend/learning.js')
@@ -128,6 +130,12 @@ assert 'one double-click' in ONE_CLICK.lower()
 for script in ('pilot_home.js', 'navigation.js', 'boot.js'):
     subprocess.run(['node', '--check', str(ROOT / 'static/frontend' / script)], check=True, cwd=ROOT)
 subprocess.run([sys.executable, '-m', 'py_compile', str(ROOT / 'scripts/company_pilot_preflight.py')], check=True, cwd=ROOT)
+
+# Container entrypoint executes the bootstrap as a file under scripts/. That execution
+# mode must still be able to import the repository-local mgc package before touching DB.
+bootstrap_env = os.environ.copy()
+bootstrap_env['MGC_ADMIN_SYNC_CREDENTIALS'] = 'false'
+subprocess.run([sys.executable, str(SYNC_ADMIN)], check=True, cwd=ROOT, env=bootstrap_env)
 
 # Visual system has responsive company-pilot layouts.
 for token in ('.pilot-dashboard', '.pilot-hero-chinese', '.pilot-hero-english', '.pilot-next-grid', '@media(max-width:820px)'):
