@@ -126,8 +126,7 @@ jobs:
       - name: Verify LAN services and modular runtime
         run: |
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps
-          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi; assert asgi.app; assert asgi.CONTRACT_REPORT.ok"
-          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import app; assert app.V618_CONTENT_STATUS['parity']; assert len(app.TERMS['chinese']) == len(app.TERMS['english'])"
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == len(r._legacy_module.TERMS['english'])"
           curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
           cat /tmp/lan-meta.json
 
