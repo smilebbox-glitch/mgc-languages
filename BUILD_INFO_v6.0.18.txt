@@ -1,0 +1,80 @@
+MGC Languages v6.0.18 — Company Pilot
+Date: 2026-09-08
+
+RELEASE FOCUS
+- Vocabulary expansion: Paint, Logistics, Body & Components
+- Exact Chinese / English runtime term-count parity
+- 20-mode Automotive Arcade
+- Production ASGI runtime activation + regression gates
+
+VOCABULARY
+Base Chinese terms: 1735
+Base English terms: 256
+Generated English parity terms: 1479
+New shop terms per language: 240
+  Paint / Окраска: 80
+  Logistics / Логистика: 80
+  Body & Components / Кузов и компоненты: 80
+Source corpus per language before shared experience extras: 1975
+Runtime rule: shared experience.extra_terms are appended equally to both languages.
+Result: Chinese term count == English term count.
+
+CONTENT FILES
+- data/shop_expansion_v618_source.psv
+- data/shop_expansion_v618.json
+- data/english_parallel_v618.json
+- data/v618_content_manifest.json
+- scripts/build_v618_corpora.py
+- mgc/content_v618.py
+
+AUTOMOTIVE ARCADE — 20 MODES
+- match
+- listening
+- mistake
+- phrase
+- hotspot
+- assembly_order
+- shop_route
+- tool_select
+- defect_detective
+- safety_spot
+- quality_gate
+- logistics_route
+- kanban
+- bom_builder
+- spec_check
+- rapid_recall
+- memory_pairs
+- odd_one_out
+- dialogue_choice
+- shift_incident
+
+Frontend:
+- static/frontend/game_lab_v618.js
+- static/index.html
+- static/frontend/navigation.js
+Backend:
+- mgc/services/practice_games.py
+Server game cap: MAX_GAME_ANSWERS = 5
+
+VISUAL GAME EXAMPLE
+Car Part Hotspot renders an interactive vehicle SVG with clickable zones for parts such as hood, windshield, mirror, door, fender, headlamp, bumper and wheel.
+
+RUNTIME
+- Compatibility facade app.py activates v6.0.18 content.
+- Production path asgi.py -> mgc_core.runtime also activates v6.0.18 content before router/service bindings.
+- No DB schema migration required for this release.
+
+REGRESSION / CI
+- tests/v618_content_games_regression_test.py
+- main CI quality gate
+- Company Pilot gate
+- LAN Docker Compose + PostgreSQL + Nginx smoke test
+- ASGI runtime parity assertion
+
+PRESERVED FROM v6.0.17
+- Pinyin fallback
+- Putonghua / Standard Mandarin learning standard
+- Natural / Neural / Online / Premium browser TTS preference
+- Local/offline topic SVG artwork
+- OIDC/SSO, PostgreSQL, RLS, Alembic and pilot governance controls
