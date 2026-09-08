@@ -1,4 +1,4 @@
-/* v6.0.17 pilot UX hardening: cleaner home, pinyin gaps and natural browser TTS. */
+/* v6.0.28: pilot UX hardening with batched DOM work and natural browser TTS. */
 (function () {
   'use strict';
 
@@ -136,13 +136,30 @@
     };
   }
 
+  const pendingRoots = new Set();
+  let domFrame = 0;
+
+  function flushDomFixes() {
+    domFrame = 0;
+    const roots = Array.from(pendingRoots);
+    pendingRoots.clear();
+    roots.forEach(function (node) {
+      if (node && node.isConnected !== false) applyDomFixes(node);
+    });
+  }
+
+  function queueDomFixes(node) {
+    if (!node || node.nodeType !== 1) return;
+    pendingRoots.add(node);
+    if (domFrame) return;
+    if (window.requestAnimationFrame) domFrame = window.requestAnimationFrame(flushDomFixes);
+    else domFrame = window.setTimeout(flushDomFixes, 0);
+  }
+
   const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
-      mutation.addedNodes.forEach(function (node) {
-        if (node && node.nodeType === 1) applyDomFixes(node);
-      });
+      mutation.addedNodes.forEach(function (node) { queueDomFixes(node); });
     });
-    applyDomFixes(document);
   });
 
   if (document.documentElement) {
@@ -154,6 +171,7 @@
     frontend.register('pilot-ux-hardening', {
       owns: function () { return false; },
       apply: applyDomFixes,
+      queue: queueDomFixes,
       pinyinFallback: PINYIN_FALLBACK
     });
   }
