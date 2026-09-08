@@ -27,6 +27,11 @@
     '.pilot-quote-card'
   ]);
 
+  const NATURAL_VOICE_NAME = /natural|neural|premium|enhanced|siri|aria|jenny|guy|ava|andrew|emma|brian|samantha|daniel|karen|moira|serena|xiaoxiao|xiaoyi|yunxi|yunyang|huihui|yaoyao|tingting|meijia|sinji|普通话|putonghua|mandarin|google us english/i;
+  const ROBOTIC_VOICE_NAME = /espeak|festival|compact|robot|eloquence/i;
+  const MIN_NATURAL_VOICE_SCORE = 72;
+  const VOICE_CACHE = {items: [], ready: false};
+
   function cleanDecorativeCopy(root) {
     const scope = root && root.querySelectorAll ? root : document;
     REMOVE_SELECTORS.forEach(function (selector) {
@@ -58,29 +63,46 @@
     ? window.playPronunciation
     : null;
 
+  function normalizeLocale(value) {
+    return String(value || '').trim().toLowerCase().replace('_', '-');
+  }
+
   function voiceScore(voice, language) {
-    const lang = String(voice && voice.lang || '').toLowerCase();
-    const name = String(voice && voice.name || '').toLowerCase();
+    const lang = normalizeLocale(voice && voice.lang);
+    const name = String(voice && voice.name || '');
     const wanted = language === 'chinese' ? 'zh' : 'en';
     if (!lang.startsWith(wanted)) return -1000;
 
-    let score = 20;
-    if (language === 'chinese' && (lang === 'zh-cn' || lang === 'zh-hans-cn')) score += 35;
-    if (language === 'english' && lang === 'en-us') score += 30;
-    if (/natural|neural|online|premium/.test(name)) score += 90;
+    let score = 24;
+    if (language === 'chinese' && (lang === 'zh-cn' || lang === 'zh-hans-cn')) score += 38;
+    if (language === 'english' && lang === 'en-us') score += 34;
+    if (language === 'english' && /^en-(gb|au|ca)$/.test(lang)) score += 18;
 
-    if (language === 'chinese' && /xiaoxiao|xiaoyi|yunxi|yunyang|huihui|yaoyao|tingting|普通话|putonghua|mandarin/.test(name)) score += 55;
-    if (language === 'english' && /aria|jenny|guy|ava|andrew|emma|brian|samantha|google us english/.test(name)) score += 55;
+    if (NATURAL_VOICE_NAME.test(name)) score += 92;
+    if (/natural|neural|premium|enhanced/i.test(name)) score += 42;
+    if (ROBOTIC_VOICE_NAME.test(name)) score -= 180;
 
-    if (/espeak|festival|compact|robot/.test(name)) score -= 140;
-    if (voice && voice.localService === false) score += 8;
-    if (voice && voice.default) score += 4;
+    // A local OS/browser voice is preferred for privacy and usually has lower latency.
+    if (voice && voice.localService === true) score += 34;
+    else if (voice && voice.localService === false) score += 6;
+    if (voice && voice.default) score += 8;
     return score;
   }
 
+  function refreshVoiceCache() {
+    if (!('speechSynthesis' in window) || typeof speechSynthesis.getVoices !== 'function') {
+      VOICE_CACHE.items = [];
+      VOICE_CACHE.ready = true;
+      return VOICE_CACHE.items;
+    }
+    VOICE_CACHE.items = speechSynthesis.getVoices() || [];
+    VOICE_CACHE.ready = VOICE_CACHE.items.length > 0;
+    return VOICE_CACHE.items;
+  }
+
   function availableVoices() {
-    if (!('speechSynthesis' in window) || typeof speechSynthesis.getVoices !== 'function') return [];
-    return speechSynthesis.getVoices() || [];
+    if (VOICE_CACHE.ready && VOICE_CACHE.items.length) return VOICE_CACHE.items;
+    return refreshVoiceCache();
   }
 
   function waitForVoices() {
@@ -92,31 +114,46 @@
         if (settled) return;
         settled = true;
         if ('speechSynthesis' in window) speechSynthesis.removeEventListener('voiceschanged', finish);
-        resolve(availableVoices());
+        resolve(refreshVoiceCache());
       };
       if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', finish, {once:true});
-      setTimeout(finish, 350);
+      setTimeout(finish, 450);
     });
+  }
+
+  function naturalRate(requestedRate, language) {
+    const requested = Number(requestedRate || 0.9);
+    if (requested <= 0.75) return Math.max(0.62, Math.min(0.76, requested));
+    if (language === 'chinese') return Math.max(0.84, Math.min(0.98, requested * 1.01));
+    return Math.max(0.88, Math.min(1.03, requested * 1.04));
+  }
+
+  function selectNaturalVoice(voices, language) {
+    const ranked = voices
+      .map(function (voice) { return {voice: voice, score: voiceScore(voice, language)}; })
+      .filter(function (item) { return item.score >= MIN_NATURAL_VOICE_SCORE; })
+      .sort(function (a, b) {
+        if (b.score !== a.score) return b.score - a.score;
+        if (Boolean(a.voice.localService) !== Boolean(b.voice.localService)) return a.voice.localService ? -1 : 1;
+        return String(a.voice.name || '').localeCompare(String(b.voice.name || ''));
+      });
+    return ranked.length ? ranked[0].voice : null;
   }
 
   async function speakNaturally(text, rate, language) {
     if (!text || !('speechSynthesis' in window) || typeof window.SpeechSynthesisUtterance !== 'function') return false;
     const voices = await waitForVoices();
-    const ranked = voices
-      .map(function (voice) { return {voice: voice, score: voiceScore(voice, language)}; })
-      .filter(function (item) { return item.score > 0; })
-      .sort(function (a, b) { return b.score - a.score; });
-    if (!ranked.length) return false;
+    const voice = selectNaturalVoice(voices, language);
+    if (!voice) return false;
 
     return new Promise(function (resolve) {
       try {
         speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(String(text));
         utterance.lang = language === 'chinese' ? 'zh-CN' : 'en-US';
-        utterance.voice = ranked[0].voice;
-        const requested = Number(rate || 0.9);
-        utterance.rate = Math.max(0.72, Math.min(1.08, requested || 0.9));
-        utterance.pitch = language === 'chinese' ? 1.02 : 1.0;
+        utterance.voice = voice;
+        utterance.rate = naturalRate(rate, language);
+        utterance.pitch = 1.0;
         utterance.volume = 1;
         utterance.onend = function () { resolve(true); };
         utterance.onerror = function () { resolve(false); };
@@ -127,11 +164,17 @@
     });
   }
 
+  if ('speechSynthesis' in window) {
+    refreshVoiceCache();
+    speechSynthesis.addEventListener('voiceschanged', refreshVoiceCache);
+  }
+
   if (originalPlayPronunciation) {
     window.playPronunciation = async function (text, rate, language) {
       const normalizedLanguage = language === 'chinese' ? 'chinese' : 'english';
       const natural = await speakNaturally(text, rate, normalizedLanguage);
       if (natural) return;
+      // Keep the frozen offline eSpeak/eSpeak-NG path as the reliable fallback.
       return originalPlayPronunciation(text, rate, language);
     };
   }
