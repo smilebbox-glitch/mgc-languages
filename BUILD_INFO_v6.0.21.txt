@@ -1,0 +1,23 @@
+MGC Languages Company Pilot v6.0.21
+Codename: Production Game Depth
+Branch: main
+
+Release focus:
+- deepen the existing 20 Automotive Arcade games;
+- detailed vehicle visualization without breaking hotspot answer handlers;
+- dedicated paint, welding, logistics, quality, assembly, safety, engineering and communication scenes;
+- selectable Training / Shift / Expert difficulty plus 5-question adaptive progression;
+- realistic automotive-production context for all 20 game types;
+- preserve backend max-5 session, XP and anti-farm contracts.
+
+Frontend module:
+static/frontend/game_depth_v621.js
+
+Styles:
+static/game_depth_v621.css
+
+Regression guard:
+tests/v621_game_depth_test.py
+
+Pilot readiness marker:
+static/frontend/boot.js -> pilotCandidate v6.0.21
