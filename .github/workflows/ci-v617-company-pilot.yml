@@ -52,6 +52,9 @@ jobs:
       - name: v6.0.22 production decision chains regression
         run: python tests/v622_decision_chains_test.py
 
+      - name: v6.0.23 dynamic factory scenarios regression
+        run: python tests/v623_dynamic_factory_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -64,6 +67,7 @@ jobs:
           node --check static/frontend/arcade_mastery_v620.js
           node --check static/frontend/game_depth_v621.js
           node --check static/frontend/decision_chains_v622.js
+          node --check static/frontend/dynamic_factory_v623.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
@@ -103,6 +107,7 @@ jobs:
           grep -q "arcade_mastery_v620.js" static/index.html
           grep -q "game_depth_v621.js" static/index.html
           grep -q "decision_chains_v622.js" static/index.html
+          grep -q "dynamic_factory_v623.js" static/index.html
           grep -q "MGC AUTOMOTIVE ARCADE · 20 ИГР" static/frontend/game_lab_v618.js
           grep -q "Пройдите автомобиль через весь завод" static/frontend/factory_journey_v619.js
           grep -q "Три короткие миссии на сегодня" static/frontend/arcade_missions_v620.js
@@ -115,6 +120,8 @@ jobs:
           grep -q "PRODUCTION DECISION CHAIN" static/frontend/decision_chains_v622.js
           grep -q "Quality Escalation" static/frontend/decision_chains_v622.js
           grep -q "Supplier Escalation" static/frontend/decision_chains_v622.js
+          grep -q "LIVE FACTORY STATE · v6.0.23" static/frontend/dynamic_factory_v623.js
+          grep -q "Состояние после предыдущего решения" static/frontend/dynamic_factory_v623.js
           ! grep -q "About English" static/index.html
           ! grep -q "Сценарий смены" static/frontend/pilot_home.js
           ! grep -q "Новая сегодня" static/frontend/pilot_home.js
