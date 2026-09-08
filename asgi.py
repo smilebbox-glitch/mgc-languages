@@ -7,6 +7,7 @@ terminology, pronunciation/TTS, user/manager and pilot-administration boundaries
 v5.9.0-v5.9.1 move admin operations and notifications behind dedicated routers.
 v5.9.2 moves language summary, quiz and scenario-content HTTP ownership behind
 an authenticated language-content router while preserving content generation.
+v6.0.25 adds authenticated, user-scoped Shift Simulation history and analytics.
 """
 
 from mgc_core.runtime import (
@@ -26,6 +27,7 @@ from mgc_core.runtime import (
     ROUTER_BINDING_REPORT,
     SECURITY_BINDING_REPORT,
     SERVICE_BINDING_REPORT,
+    SHIFT_ANALYTICS_ROUTER_BINDING_REPORT,
     TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT,
     TTS_BINDING_REPORT,
     USER_MANAGER_ROUTER_BINDING_REPORT,
@@ -48,6 +50,7 @@ __all__ = [
     "AUTH_ROUTER_BINDING_REPORT",
     "LEARNING_ROUTER_BINDING_REPORT",
     "PRACTICE_GAMES_ROUTER_BINDING_REPORT",
+    "SHIFT_ANALYTICS_ROUTER_BINDING_REPORT",
     "TERMINOLOGY_ADMIN_ROUTER_BINDING_REPORT",
     "PRONUNCIATION_ROUTER_BINDING_REPORT",
     "USER_MANAGER_ROUTER_BINDING_REPORT",
