@@ -1,4 +1,4 @@
-/* v6.0.17: canonical navigation/session-view facade with pilot home ownership. */
+/* v6.0.18: canonical navigation/session-view facade with dedicated automotive game lab. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -13,6 +13,9 @@
     }
     if (frontend.has('learning') && frontend.get('learning').owns(view)) {
       return frontend.get('learning').navigate(view);
+    }
+    if (frontend.has('game-lab-v618') && frontend.get('game-lab-v618').owns(view)) {
+      return frontend.get('game-lab-v618').navigate(view);
     }
     if (frontend.has('practice-games') && frontend.get('practice-games').owns(view)) {
       return frontend.get('practice-games').navigate(view);
