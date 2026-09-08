@@ -1,0 +1,48 @@
+MGC Languages — Company Pilot v6.0.20
+Date: 2026-09-08
+Branch: main
+
+CONTENT
+- Chinese runtime terms: 2029
+- English runtime terms: 2029
+- Chinese / English parity: exact
+- v6.0.18 shop expansion: +80 Paint +80 Logistics +80 Body & Components per language
+
+GAMES
+- Automotive Arcade: 20 distinct backend game types
+- Factory Journey: 6 shop-specific stations
+- New in v6.0.20: 3 adaptive Daily Missions + department-aware Boss Shift
+- Backend session cap: max 5 answers
+- XP anti-farm: preserved
+
+DAILY MISSIONS
+1. Department mission
+2. New/untried mechanic
+3. Weak-point recovery
+Boss Shift unlocks after 3/3.
+
+BOSS ROUTING
+- Paint -> defect_detective / Окраска
+- Logistics -> logistics_route / Логистика JIT/JIS
+- Body -> hotspot / Кузов и компоненты
+- Assembly -> assembly_order / Сборка автомобиля
+- Quality -> quality_gate / Качество в автопроме
+- R&D -> bom_builder / R&D автомобиля
+- Purchasing -> dialogue_choice / Закупки / локализация / ВЭД
+- Default -> shift_incident
+
+FRONTEND
+- static/frontend/arcade_missions_v620.js
+- static/arcade_missions_v620.css
+- static/frontend/game_lab_v618.js
+- static/frontend/game_engagement_v618.js
+- static/frontend/factory_journey_v619.js
+
+REGRESSION
+- tests/v618_content_games_regression_test.py
+- tests/v619_factory_journey_test.py
+- tests/v620_arcade_missions_test.py
+- node --check for all active game frontend modules
+
+CORPORATE PLATFORM
+OIDC/SSO, RBAC, PostgreSQL, Alembic, RLS, Docker/LAN deployment and v6.0.17 UX/TTS hardening are preserved.
