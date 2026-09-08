@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Previous shell + pilot candidate contracts
         run: |
           python tests/v616_frontend_physical_shell_cleanup_test.py
