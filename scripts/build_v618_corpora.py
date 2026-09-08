@@ -117,6 +117,11 @@ def clean_english(value: str) -> str:
     return text
 
 
+def valid_english(value: str) -> bool:
+    text = clean_english(value)
+    return bool(text) and not CYRILLIC.search(text) and not HAN.search(text)
+
+
 def make_google_translator():
     from deep_translator import GoogleTranslator
     return GoogleTranslator(source="ru", target="en")
@@ -138,14 +143,12 @@ def translate_ru(text: str, translator, cache: dict[str, str], *, zh: str = "") 
     for attempt in range(4):
         try:
             value = clean_english(translator.translate(ru))
-            if not value or CYRILLIC.search(value) or HAN.search(value):
+            if not valid_english(value):
                 raise ValueError(f"invalid English translation {value!r}")
             cache[ru] = value
-            # A small pause makes the one-time generator friendlier to the
-            # public translation endpoint and reduces transient throttling.
             time.sleep(0.08)
             return value
-        except Exception as exc:  # pragma: no cover - network dependent generator
+        except Exception as exc:  # pragma: no cover - network dependent fallback
             last_error = exc
             time.sleep(0.8 * (attempt + 1))
     raise RuntimeError(f"English translation failed for {ru!r}: {last_error}")
@@ -216,6 +219,26 @@ def build_shop(rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
     return {"chinese": chinese, "english": english}
 
 
+def existing_parallel_by_id() -> dict[str, dict[str, str]]:
+    """Use the committed parity corpus as a deterministic translation memory.
+
+    The external translator is only a fallback for genuinely new Chinese rows.
+    This makes CI reproducible and prevents a public translation outage from
+    invalidating an already-reviewed 1479-row corpus.
+    """
+    if not PARITY_OUT.exists():
+        return {}
+    try:
+        payload = json.loads(PARITY_OUT.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {
+        str(row.get("id", "")): row
+        for row in payload.get("items", [])
+        if str(row.get("id", ""))
+    }
+
+
 def build_parallel(chinese_raw: dict, english_raw: dict) -> dict[str, list[dict[str, str]]]:
     source_rows = list(chinese_raw.get("items", []))
     english_rows = list(english_raw.get("items", []))
@@ -223,9 +246,12 @@ def build_parallel(chinese_raw: dict, english_raw: dict) -> dict[str, list[dict[
     if needed <= 0:
         return {"items": []}
 
-    translator = make_google_translator()
+    translation_memory = existing_parallel_by_id()
+    translator = None
     cache: dict[str, str] = {}
     generated: list[dict[str, str]] = []
+    source_counts: Counter[str] = Counter()
+
     for row in source_rows:
         if len(generated) >= needed:
             break
@@ -233,14 +259,31 @@ def build_parallel(chinese_raw: dict, english_raw: dict) -> dict[str, list[dict[
         zh = normalize_text(row.get("zh", ""))
         if not ru:
             continue
-        term = translate_ru(ru, translator, cache, zh=zh)
+
+        parity_id = f"en-parity-{row.get('id')}"
+        override = AUTOMOTIVE_OVERRIDES_ZH.get(zh) or AUTOMOTIVE_OVERRIDES_RU.get(ru.casefold())
+        previous = translation_memory.get(parity_id, {})
+        previous_term = clean_english(previous.get("term", ""))
+
+        if override:
+            term = override
+            source_counts["automotive_override"] += 1
+        elif valid_english(previous_term):
+            term = previous_term
+            source_counts["committed_translation_memory"] += 1
+        else:
+            if translator is None:
+                translator = make_google_translator()
+            term = translate_ru(ru, translator, cache, zh=zh)
+            source_counts["google_fallback"] += 1
+
         category = str(row.get("category", "")).strip() or "Автопром"
         subcategory = str(row.get("subcategory", "")).strip() or category
         level = str(row.get("level", "B1")).strip()
         if level not in ALLOWED_LEVELS:
             level = "B1"
         generated.append({
-            "id": f"en-parity-{row.get('id')}",
+            "id": parity_id,
             "topic": category,
             "category": category,
             "subcategory": subcategory,
@@ -251,11 +294,10 @@ def build_parallel(chinese_raw: dict, english_raw: dict) -> dict[str, list[dict[
             "example_ru": f"Используйте термин «{ru}» корректно в рабочей инструкции для автопрома.",
             "source": "Chinese corpus parity translation v6.0.18 / reviewed automotive glossary",
         })
+
     if len(generated) != needed:
         raise RuntimeError(f"English parity generation incomplete: expected {needed}, got {len(generated)}")
 
-    # Hard quality gates for terms where generic machine translators are known
-    # to make dangerous or comical mistakes in an automotive context.
     by_ru = {item["ru"].casefold(): item["term"].casefold() for item in generated}
     required_pairs = {
         "саморез": "self-tapping screw",
@@ -274,6 +316,8 @@ def build_parallel(chinese_raw: dict, english_raw: dict) -> dict[str, list[dict[
             raise RuntimeError(f"non-English characters leaked into parity term: {item['id']}={term!r}")
         if term.casefold() in {"selfie", "left-light", "watch", "liang", "face difference", "the wrench"}:
             raise RuntimeError(f"known bad machine translation leaked into corpus: {item['id']}={term!r}")
+
+    build_parallel.source_counts = dict(source_counts)
     return {"items": generated}
 
 
@@ -293,6 +337,7 @@ def main() -> int:
         raise RuntimeError(f"source parity failed: Chinese={chinese_source}, English={english_source}")
 
     category_counts = Counter(item["category"] for item in shop["chinese"])
+    translation_sources = getattr(build_parallel, "source_counts", {})
     manifest = {
         "release": "6.0.18",
         "base_chinese": len(chinese_raw["items"]),
@@ -301,7 +346,8 @@ def main() -> int:
         "shop_expansion_per_language": len(shop["chinese"]),
         "source_terms_per_language": chinese_source,
         "shop_additions": dict(sorted(category_counts.items())),
-        "english_translation": "Google translation bootstrap from curated Russian gloss + automotive override glossary + regression gates",
+        "english_translation": "committed translation memory + automotive override glossary; Google fallback only for new/missing rows",
+        "english_translation_sources": translation_sources,
         "runtime_note": "Experience extra_terms are added equally to both languages at runtime, preserving parity.",
     }
     MANIFEST_OUT.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
