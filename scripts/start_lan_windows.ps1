@@ -89,6 +89,17 @@ function Validate-AdminPassword([string]$Value) {
     }
 }
 
+function Show-AppLogs {
+    Write-Host ""
+    Write-Host "Application startup diagnostics (last 120 app log lines):" -ForegroundColor Yellow
+    try {
+        & docker compose --env-file ".env.lan" -f "docker-compose.lan.yml" logs --no-color --tail 120 app
+    } catch {
+        Write-Host "Unable to read application logs automatically." -ForegroundColor Yellow
+    }
+    Write-Host ""
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "Docker was not found. Install/start Docker Desktop and run the launcher again."
 }
@@ -204,7 +215,10 @@ Write-Host ""
 $composeArgs = @("compose", "--env-file", ".env.lan", "-f", "docker-compose.lan.yml", "up", "-d")
 if (-not $SkipBuild) { $composeArgs += "--build" }
 & docker @composeArgs
-if ($LASTEXITCODE -ne 0) { throw "docker compose up failed." }
+if ($LASTEXITCODE -ne 0) {
+    Show-AppLogs
+    throw "docker compose up failed. See the app diagnostics above."
+}
 
 $healthUrl = "http://127.0.0.1:$Port/health/ready"
 $deadline = (Get-Date).AddMinutes(3)
@@ -218,10 +232,10 @@ while ((Get-Date) -lt $deadline) {
 }
 
 if (-not $ready) {
-    Write-Host "Service started, but readiness is not HTTP 200 yet. Check: docker compose --env-file .env.lan -f docker-compose.lan.yml logs app" -ForegroundColor Yellow
-} else {
-    Write-Host "Readiness: OK" -ForegroundColor Green
+    Show-AppLogs
+    throw "Service did not reach HTTP 200 readiness within 3 minutes."
 }
+Write-Host "Readiness: OK" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "Open on this PC: http://localhost:$Port" -ForegroundColor Green
