@@ -53,7 +53,7 @@
     if (main) {
       main.innerHTML = '<div class="card"><h2>Не удалось загрузить интерфейс</h2><p>' +
         String(message).replace(/[&<>"']/g, function (char) {
-          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
         }) + '</p></div>';
     }
     throw error;
