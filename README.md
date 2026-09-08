@@ -12,6 +12,7 @@
 - **20 различных игровых механик**.
 - **6 станций Factory Journey**: Штамповка → Кузов/сварка → Окраска → Сборка → Качество → Логистика.
 - **3 адаптивные Daily Missions** + **Boss Shift** после выполнения 3/3.
+- **7 рабочих компетенций Arcade Mastery** с персональной картой навыков.
 - Игровая сессия ограничена **5 ответами** на backend-уровне.
 
 ## Словарь v6.0.18–v6.0.20
@@ -125,6 +126,30 @@ BUILD_INFO_v6.0.20.txt
 
 Для сотрудников окраски выше поднимаются Defect Detective / Spec Check / Tool Selector / Safety Spot; для логистики — Logistics Flow / Kanban / Factory Router / Rapid Recall; для кузова и компонентов — Hotspot / BOM / технологические последовательности / дефекты.
 
+## Arcade Mastery — карта навыков
+
+Игровые результаты теперь переводятся в **7 рабочих компетенций**, чтобы сотрудник видел не только XP, но и развитие конкретных навыков:
+
+1. Терминология.
+2. Аудирование.
+3. Производство.
+4. Качество.
+5. Логистика.
+6. Инженерия.
+7. Коммуникация.
+
+Mastery-score на 75% учитывает лучший результат в релевантных играх и на 25% — охват разных механик. Для каждого отдела выделяются приоритетные компетенции: например, для окраски — качество / производство / терминология, для логистики — логистика / коммуникация / терминология, для кузова и компонентов — инженерия / производство / качество.
+
+Сервис автоматически находит слабейший приоритетный навык и предлагает **следующую наиболее полезную игру**. Добавлены уровни ROOKIE → DEVELOPING → OPERATOR → SPECIALIST → EXPERT → MASTER и достижения за реальный прогресс. Запуски из карты навыков идут через тот же Arcade Passport и не создают отдельный XP-контур.
+
+Файлы:
+
+```text
+static/frontend/arcade_mastery_v620.js
+static/arcade_mastery_v620.css
+tests/v620_arcade_mastery_test.py
+```
+
 ## Что входит в актуальный пилот
 
 - китайский язык для автопрома с пиньинем, тонами и произношением;
@@ -132,7 +157,7 @@ BUILD_INFO_v6.0.20.txt
 - профессиональная терминология по цехам и функциям;
 - реальные рабочие ситуации и Role Play;
 - тесты, SRS, курс 30 дней, итоговый экзамен;
-- 20 игр + Factory Journey + Daily Missions + Boss Shift;
+- 20 игр + Factory Journey + Daily Missions + Boss Shift + Arcade Mastery;
 - XP, прогресс и anti-farm;
 - фраза дня, план на сегодня, быстрый доступ и подборки терминов;
 - роли User / Manager / Editor / Admin;
@@ -170,9 +195,10 @@ tests/v617_pilot_ux_regression_test.py
 tests/v618_content_games_regression_test.py
 tests/v619_factory_journey_test.py
 tests/v620_arcade_missions_test.py
+tests/v620_arcade_mastery_test.py
 ```
 
-CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, Daily Missions, Boss Shift, JavaScript syntax и реальный LAN runtime.
+CI контролирует словарный паритет 2029/2029, 20 game types, Car Part Hotspot, персональную аркаду, Factory Journey, Daily Missions, Boss Shift, Arcade Mastery, JavaScript syntax и реальный LAN runtime.
 
 ## One-click запуск Company Pilot
 
