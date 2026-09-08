@@ -1,6 +1,6 @@
 """Environment-driven configuration for MGC Languages.
 
-Extracted from app.py in v5.7.3 without changing defaults or validation bounds.
+Extracted from app.py in v5.7.3 without changing validation bounds.
 """
 
 import os
@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 STATIC_DIR = ROOT / "static"
-APP_VERSION = os.getenv("APP_VERSION", "5.7.1").strip() or "5.7.1"
+APP_VERSION = os.getenv("APP_VERSION", "6.0.18").strip() or "6.0.18"
 INSTANCE_ID = os.getenv("INSTANCE_ID", os.getenv("HOSTNAME", "local")).strip() or "local"
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'mgc.db'}")
 APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
@@ -121,7 +121,7 @@ RTO_TARGET_MINUTES = max(1, min(60 * 24, int(os.getenv("RTO_TARGET_MINUTES", "60
 RECOVERY_EVIDENCE_REQUIRED = os.getenv("RECOVERY_EVIDENCE_REQUIRED", "false").lower() == "true"
 
 BUILTIN_FEATURE_FLAGS = {
-    "games": {"title":"Мини-игры", "description":"Word Match, Listening, Phrase Builder, Find the Mistake", "default_enabled":True},
+    "games": {"title":"Automotive Arcade", "description":"20 игровых режимов: слова, аудио, автомобильные детали, производство, качество, логистика и рабочие сценарии", "default_enabled":True},
     "xp_economy": {"title":"XP и помощь", "description":"Расходуемый XP, подсказки и персональные пакеты", "default_enabled":True},
     "learning_nudges": {"title":"Мягкие напоминания", "description":"Learning Nudge Engine без давления", "default_enabled":True},
     "chinese_reference": {"title":"Информация о китайском", "description":"Pinyin, тоны, Путунхуа и справка о диалектах", "default_enabled":True},
