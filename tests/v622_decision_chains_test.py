@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -48,12 +49,13 @@ assert "не создаёт отдельный XP-фарм" in CHAINS
 assert "awarded" not in CHAINS
 assert "spendable_xp" not in CHAINS
 
-# Assets load before the readiness gate and are required by the pilot boot contract.
+# Assets load before the readiness gate and remain part of all later pilots.
 assert "/decision_chains_v622.css" in INDEX
 assert "/frontend/decision_chains_v622.js" in INDEX
 assert INDEX.index("decision_chains_v622.js") < INDEX.index("frontend/boot.js")
 assert "'decision-chains-v622'" in BOOT
-assert "pilotCandidate: 'v6.0.22'" in BOOT
+version = re.search(r"pilotCandidate: 'v6\.0\.(\d+)'", BOOT)
+assert version and int(version.group(1)) >= 22
 assert ".v622-chain-panel" in CSS
 assert ".v622-chain-locked" in CSS
 assert "http://" not in CHAINS and "https://" not in CHAINS
