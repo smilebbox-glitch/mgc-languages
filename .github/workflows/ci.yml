@@ -29,8 +29,8 @@ jobs:
       - name: Python compile
         run: python -m compileall -q app.py asgi.py mgc mgc_core scripts
 
-      - name: Current language-content contracts
-        run: python tests/content_contract.py
+      - name: API architecture contract
+        run: python scripts/api_contract_guard.py
 
       - name: Current pilot regression guards
         run: |
