@@ -158,7 +158,7 @@ def build_shift_analytics_router(
         detail = decode_shift_topic(row.topic)
         return {
             "id": int(row.id),
-            "language": str(row.language),
+            "learning_language": str(row.language),
             "total_score": int(row.score),
             "created_at": row.created_at.isoformat() if row.created_at else None,
             **detail,
