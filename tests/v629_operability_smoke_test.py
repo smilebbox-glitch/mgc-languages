@@ -11,6 +11,7 @@ CI = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
 RC_GATE = (ROOT / ".github/workflows/ci-v629-release-candidate.yml").read_text(encoding="utf-8")
 INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
 BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
+ADAPTIVE_ROUTER = (ROOT / "mgc/routers/adaptive_training.py").read_text(encoding="utf-8")
 
 assert MANIFEST["release"] == "6.0.29"
 assert MANIFEST["candidate"] == "RC1"
@@ -37,12 +38,15 @@ assert "/frontend/boot.js" in INDEX
 for endpoint in MANIFEST["deployment_contract"]["health_endpoints"]:
     assert f"http://127.0.0.1:18080{endpoint}" in CI, endpoint
 
+# Use the real authenticated adaptive route, so a renamed/nonexistent path cannot make the smoke test lie.
+assert '@router.get("/api/adaptive-training/plan")' in ADAPTIVE_ROUTER
+
 # Runtime metadata and unauthenticated protection are explicit operability contracts.
 for marker in (
     "Verify HTTP operability through Nginx",
     'meta.get("version") == "6.0.29"',
     'meta.get("title") == "MGC Languages"',
-    "/api/training/recommendation",
+    "/api/adaptive-training/plan",
     "/api/manager/shift-analytics",
     "401|403",
 ):
