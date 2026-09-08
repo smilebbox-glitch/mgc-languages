@@ -157,7 +157,7 @@
       const next = nextGameForSkill(row, p);
       const bestText = next && next.game ? next.game.title : 'Нет доступной игры';
       return '<button class="mastery-skill-card ' + (focus ? 'focus' : '') + '" data-mastery-skill="' + esc(row.id) + '"' +
-        (next ? ' data-master-game="' + esc(next.id) + '"' : ' disabled') + '>' +
+        (next ? ' data-master-game="' + esc(next.id) + '" data-start-v618-game="' + esc(next.id) + '"' : ' disabled') + '>' +
         '<span class="mastery-skill-icon">' + esc(row.icon) + '</span><span class="mastery-skill-copy"><small>' +
         (focus ? 'ПРИОРИТЕТ ЦЕХА' : 'НАВЫК') + '</small><b>' + esc(row.title) + '</b><em>Следующее: ' + esc(bestText) + '</em></span>' +
         '<span class="mastery-score"><b>' + row.score + '%</b><i><u style="width:' + row.score + '%"></u></i><small>' + tier(row.score) + '</small></span></button>';
@@ -200,7 +200,7 @@
       '<span><b>' + stats.perfect + '</b><small>идеальных 5/5</small></span><span><b>' + stats.days + '</b><small>активных дней</small></span></div>' +
       '<div class="mastery-next"><div><small>СЛЕДУЮЩИЙ АПГРЕЙД</small><h3>' + esc(weakest ? weakest.title : 'Практика') + '</h3><p>' +
       (next && next.game ? ('Сейчас выгоднее всего пройти «' + esc(next.game.title) + '»: это самый слабый приоритетный навык.') : 'Продолжайте игровые сессии — карта обновится автоматически.') +
-      '</p></div>' + (next && next.game ? '<button class="primary" data-master-game="' + esc(next.id) + '">Тренировать слабое место →</button>' : '') + '</div>' +
+      '</p></div>' + (next && next.game ? '<button class="primary" data-master-game="' + esc(next.id) + '" data-start-v618-game="' + esc(next.id) + '">Тренировать слабое место →</button>' : '') + '</div>' +
       '<div class="mastery-grid">' + skillCards(rows, p, stats.focusIds) + '</div>' +
       '<div class="mastery-achievements"><div class="mastery-section-title"><b>Достижения</b><span>Без искусственного фарма XP</span></div><div class="mastery-achievement-grid">' +
       achievementCards(stats) + '</div></div>';
