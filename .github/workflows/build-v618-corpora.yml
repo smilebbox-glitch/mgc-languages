@@ -1,0 +1,53 @@
+name: build-v618-corpora
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-v618-corpora.yml'
+      - 'scripts/build_v618_corpora.py'
+      - 'data/shop_expansion_v618_source.psv'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install corpus-generation dependencies
+        run: pip install 'argostranslate==1.9.6' 'pypinyin==0.55.0'
+      - name: Generate parity and shop corpora
+        run: python scripts/build_v618_corpora.py
+      - name: Validate generated payloads
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = Path('data')
+          manifest = json.loads((data/'v618_content_manifest.json').read_text(encoding='utf-8'))
+          assert manifest['generated_english_parallel'] == 1479, manifest
+          assert manifest['shop_expansion_per_language'] == 240, manifest
+          assert manifest['source_terms_per_language'] == 1975, manifest
+          assert manifest['shop_additions']['Окраска'] == 80, manifest
+          assert manifest['shop_additions']['Логистика'] == 80, manifest
+          assert manifest['shop_additions']['Кузов и компоненты'] == 80, manifest
+          print(manifest)
+          PY
+      - name: Commit generated corpora
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/shop_expansion_v618.json data/english_parallel_v618.json data/v618_content_manifest.json
+          if git diff --cached --quiet; then
+            echo 'Generated corpora already current.'
+            exit 0
+          fi
+          git commit -m "content: generate v6.0.18 bilingual parity corpora [skip ci]"
+          git push
