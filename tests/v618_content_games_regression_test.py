@@ -53,8 +53,10 @@ for language in ("chinese", "english"):
 assert runtime.V618_CONTENT_STATUS["release"] == "6.0.18"
 assert runtime.V618_CONTENT_STATUS["parity"] is True
 assert runtime.V618_CONTENT_STATUS["shop_expansion_per_language"] == 240
+assert len(runtime.EXPERIENCE["extra_terms"]) == 54
+assert len(runtime.TERMS["chinese"]) == 2029
+assert len(runtime.TERMS["english"]) == 2029
 assert len(runtime.TERMS["chinese"]) == len(runtime.TERMS["english"])
-assert len(runtime.TERMS["chinese"]) == 1975 + len(runtime.EXPERIENCE["extra_terms"])
 
 chinese_shop = [row for row in runtime.TERMS["chinese"] if str(row["id"]).startswith("zh-v618-")]
 english_shop = [row for row in runtime.TERMS["english"] if str(row["id"]).startswith("en-v618-")]
@@ -72,6 +74,20 @@ for category, topic in {
     assert len(zh_rows) == len(en_rows) == 80
     assert all(row["topic"] == topic for row in zh_rows)
     assert all(row["topic"] == topic for row in en_rows)
+
+# Lock a few automotive terms that generic translation engines commonly mangle.
+parallel_by_ru = {str(row["ru"]).casefold(): str(row["term"]) for row in PARALLEL["items"]}
+for russian, expected in {
+    "саморез": "self-tapping screw",
+    "левый задний фонарь": "left rear tail lamp",
+    "кузов в белом": "body-in-white",
+    "динамометрический ключ": "torque wrench",
+    "канбан": "kanban",
+    "лонжерон": "side member",
+    "перепад поверхностей": "flushness",
+}.items():
+    if russian in parallel_by_ru:
+        assert parallel_by_ru[russian].casefold() == expected.casefold(), (russian, parallel_by_ru[russian], expected)
 
 # Game lab: 20 genuinely named modes, five-answer server cap, visual hotspot
 # mechanic, and frontend routing through the new module.
@@ -101,6 +117,6 @@ assert "frontend.has('game-lab-v618')" in NAV
 assert "GAME_TYPES" in PRACTICE
 
 print(
-    "PASS: v6.0.18 has exact Chinese/English vocabulary parity, "
+    "PASS: v6.0.18 has 2029 terms in each language, exact Chinese/English parity, "
     "80 new terms for each requested shop in both languages, and 20 game modes"
 )
