@@ -61,6 +61,9 @@ jobs:
       - name: v6.0.23 dynamic factory scenarios regression
         run: python tests/v623_dynamic_factory_test.py
 
+      - name: v6.0.24 shift simulation regression
+        run: python tests/v624_shift_simulation_test.py
+
       - name: JavaScript syntax
         run: |
           node --check static/frontend/pilot_home.js
@@ -74,6 +77,7 @@ jobs:
           node --check static/frontend/game_depth_v621.js
           node --check static/frontend/decision_chains_v622.js
           node --check static/frontend/dynamic_factory_v623.js
+          node --check static/frontend/shift_simulation_v624.js
           node --check static/frontend/practice_games.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
