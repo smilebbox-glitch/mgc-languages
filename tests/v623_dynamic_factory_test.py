@@ -29,7 +29,8 @@ for marker in [
 # Decisions create concrete downstream consequences instead of only right/wrong feedback.
 for marker in [
     "ещё 4 автомобиля вошли в suspect window",
-    "ещё 6 автомобилей вошли в suspect window",
+    "const growth = index === 1 ? 6 : 8",
+    "автомобилей вошли в suspect window",
     "Ожидание плановой поставки съело 25 минут",
     "Неутверждённая замена создаёт одновременно логистический, BOM и quality risk",
     "BOM изменён без effective point",
