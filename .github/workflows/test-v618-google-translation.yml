@@ -1,0 +1,32 @@
+name: test-v618-google-translation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/test-v618-google-translation.yml'
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'deep-translator==1.11.4'
+      - name: Compare zh-en and ru-en automotive samples
+        run: |
+          python - <<'PY'
+          from deep_translator import GoogleTranslator
+          zh = GoogleTranslator(source='zh-CN', target='en')
+          ru = GoogleTranslator(source='ru', target='en')
+          samples = [
+              ('自攻螺钉','саморез'),('左后尾灯','левый задний фонарь'),('保险杠','бампер'),
+              ('白车身','кузов в белом'),('扭矩扳手','динамометрический ключ'),('电泳涂装','электрофоретическое покрытие'),
+              ('供应链','цепочка поставок'),('关税','таможенная пошлина'),('型面','профиль поверхности'),
+              ('凹痕','вмятина'),('喷漆室','окрасочная камера'),('看板','канбан'),('纵梁','лонжерон'),('面差','перепад поверхностей')
+          ]
+          for chinese, russian in samples:
+              print(chinese, '/', russian, '=> ZH:', zh.translate(chinese), '| RU:', ru.translate(russian))
+          PY
