@@ -1,8 +1,8 @@
-# MGC Languages — Company Pilot v6.0.25
+# MGC Languages — Company Pilot v6.0.26
 
 Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные производственные ситуации, тесты, курс, игровая практика, связанные производственные сценарии и виртуальные смены.
 
-**Текущий статус:** v6.0.25 Company Pilot на `main`.
+**Текущий статус:** v6.0.26 Company Pilot на `main`.
 
 ## Ключевые возможности
 
@@ -17,7 +17,9 @@
 - Production Decision Chains и Dynamic Factory Scenarios.
 - **Shift Simulation** из пяти связанных производственных эпизодов.
 - **Personal Shift Analytics** с историей результатов под аккаунтом пользователя.
-- Игровая backend-сессия ограничена **5 ответами**; Shift Simulation и аналитика не создают отдельный XP-контур.
+- **Manager / Team Analytics** с department-scoped агрегатами.
+- **Top-10 Leaderboard** после timed игровых заданий: score → время → лучшая попытка сотрудника.
+- Игровая backend-сессия ограничена **5 ответами**; Shift Simulation, аналитика и рейтинг не создают отдельный XP-контур.
 
 ## Automotive Arcade — 20 игр
 
@@ -127,17 +129,9 @@ Supplier Dialogue также ветвится: точные запросы с pa
 4. **14:05** — line stop / sequencing / supplier escalation.
 5. **16:25** — финальные риски и shift handover.
 
-На каждом эпизоде пользователь:
-
-1. выбирает, какой инцидент разбирать первым;
-2. принимает техническое/производственное решение;
-3. выбирает рабочую формулировку на китайском или английском.
-
-Невыбранные инциденты получают delay consequence и меняют Live Shift State.
+На каждом эпизоде пользователь выбирает приоритет, принимает техническое/производственное решение и выбирает рабочую формулировку на китайском или английском. Невыбранные инциденты получают delay consequence и меняют Live Shift State.
 
 ### Live Shift State
-
-В течение смены меняются:
 
 - Стабильность линии;
 - Защита качества;
@@ -147,44 +141,13 @@ Supplier Dialogue также ветвится: точные запросы с pa
 
 ### Shift Review
 
-После пятого эпизода отдельно оцениваются:
-
-- Production control;
-- Prioritization;
-- Production judgement;
-- Language;
-- общий результат смены.
+После пятого эпизода отдельно оцениваются Production control, Prioritization, Production judgement, Language и общий результат смены.
 
 Shift Simulation не добавляет `/api/games/*`, не начисляет отдельный XP и не меняет max-5 / anti-farm.
 
 ## Personal Shift Analytics — v6.0.25
 
-Результат Shift Review теперь не исчезает после завершения одной смены. Он автоматически сохраняется под текущим корпоративным аккаунтом в PostgreSQL.
-
-Для каждой смены фиксируются:
-
-- общий результат;
-- Production control;
-- Prioritization;
-- Production judgement;
-- Language;
-- изучаемый язык;
-- финальные Line / Quality / Material / Supplier / Load;
-- слабейшая компетенция;
-- слабая производственная зона.
-
-### Что видит пользователь
-
-Блок `PERSONAL SHIFT ANALYTICS · v6.0.25` показывает:
-
-- количество завершённых смен;
-- последний результат;
-- динамику относительно предыдущих смен;
-- средние значения четырёх компетенций;
-- повторяющуюся точку роста;
-- производственный сигнал, который систематически проседает;
-- последние смены;
-- следующую рекомендуемую тренировку.
+Результат Shift Review автоматически сохраняется под текущим корпоративным аккаунтом в PostgreSQL. Пользователь видит историю, тренд, четыре средние компетенции, повторяющуюся точку роста, слабую производственную область и следующую рекомендуемую тренировку.
 
 Рекомендации замыкают обучение в цикл:
 
@@ -193,11 +156,7 @@ Shift Simulation не добавляет `/api/games/*`, не начисляет
 - Production judgement → Quality Gate + Spec or NOK? + Shift Incident;
 - Language → Dialogue Duel + Phrase Builder.
 
-### Хранение и отказоустойчивость
-
-v6.0.25 использует существующую таблицу `practice_results`, поэтому новая миграция БД не требуется. Записи user-scoped и доступны после входа с другого рабочего места.
-
-При временной потере связи клиент держит небольшую pending-очередь и синхронизирует результат после восстановления доступа. Основным источником истории остаётся PostgreSQL.
+v6.0.25 использует существующую таблицу `practice_results`; новая миграция БД не требуется. Записи user-scoped и доступны после входа с другого рабочего места.
 
 API:
 
@@ -206,7 +165,41 @@ POST /api/shift-simulations
 GET  /api/shift-simulations/history
 ```
 
-Маршруты аутентифицированы и входят в runtime route contract.
+## Manager / Team Analytics + Top-10 — v6.0.26
+
+В разделе руководителя появился `TEAM ANALYTICS · v6.0.26`.
+
+Manager видит только агрегированную учебную картину собственного подразделения:
+
+- participation rate и число завершённых Shift Simulation;
+- средние Production control / Prioritization / Production judgement / Language;
+- factory health по Line / Quality / Material / Supplier / Team load control;
+- командную точку роста;
+- производственную слабую область;
+- рекомендованный тип следующей тренировки;
+- Chinese / English mix.
+
+Командные значения балансируются по участникам, поэтому один сотрудник с большим количеством попыток не определяет среднее всего подразделения. Эти данные явно не являются HR-рейтингом.
+
+### Top-10 Leaderboard
+
+После завершённого timed игрового задания пользователь видит Top-10 своего подразделения.
+
+Сортировка:
+
+1. выше score;
+2. при равном score — меньшее серверное время прохождения;
+3. на одного сотрудника — одна лучшая попытка.
+
+В таблице показываются место, display name, score / total, время и текущая позиция пользователя. Username, email и другие внутренние идентификаторы не выводятся. Рейтинг не начисляет XP и не меняет anti-farm.
+
+API:
+
+```text
+GET /api/manager/shift-analytics
+GET /api/leaderboards/games/{game_type}
+GET /api/leaderboards/shifts
+```
 
 ## Что входит в актуальный пилот
 
@@ -224,6 +217,8 @@ GET  /api/shift-simulations/history
 - Dynamic Factory Scenarios;
 - Shift Simulation;
 - Personal Shift Analytics;
+- Manager / Team Analytics;
+- Top-10 score/time leaderboard;
 - XP, прогресс и anti-farm;
 - роли User / Manager / Editor / Admin;
 - OIDC/SSO, secure cookies, PostgreSQL, Alembic и RLS;
@@ -248,10 +243,11 @@ tests/v617_pilot_ux_regression_test.py
 
 ## GitHub Actions и тесты
 
-На `main` работают два основных CI-контура:
+На `main` работают основные CI-контуры:
 
 1. `.github/workflows/ci.yml` — quality gate + реальный LAN PostgreSQL/Docker/Nginx smoke.
-2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot gate текущего пользовательского, словарного, игрового и симуляционного слоя.
+2. `.github/workflows/ci-v617-company-pilot.yml` — Company Pilot regression gate.
+3. `.github/workflows/ci-v626-team-leaderboard.yml` — dedicated v6.0.26 route/UI/ranking gate.
 
 Ключевые regressions:
 
@@ -266,9 +262,10 @@ tests/v622_decision_chains_test.py
 tests/v623_dynamic_factory_test.py
 tests/v624_shift_simulation_test.py
 tests/v625_shift_analytics_test.py
+tests/v626_team_leaderboard_test.py
 ```
 
-CI контролирует 2029/2029 vocabulary parity, 20 game types, игровой UX, production depth, decision chains, dynamic factory state, Shift Simulation, Personal Shift Analytics, JavaScript syntax, runtime route contract и LAN runtime.
+CI контролирует 2029/2029 vocabulary parity, 20 game types, игровой UX, production depth, decision chains, dynamic factory state, Shift Simulation, Personal Shift Analytics, Team Analytics, Top-10 ranking, JavaScript syntax, runtime route contract и LAN runtime.
 
 ## One-click запуск Company Pilot
 
@@ -298,5 +295,5 @@ python scripts/company_pilot_preflight.py --strict-corporate
 
 ---
 
-**Pilot:** MGC Languages v6.0.25  
+**Pilot:** MGC Languages v6.0.26  
 **Назначение:** корпоративное изучение китайского и английского языка для задач автомобильной промышленности.
