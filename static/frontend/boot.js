@@ -1,4 +1,4 @@
-/* v6.0.27: validate modular frontend core and publish pilot readiness. */
+/* v6.0.28: validate modular frontend core and publish pilot readiness. */
 (function () {
   'use strict';
 
@@ -38,7 +38,9 @@
       'legacy-retirement',
       'navigation',
       'session-lifecycle',
-      'auth-department'
+      'auth-department',
+      'pilot-ux-hardening',
+      'ux-performance-v628'
     ];
     const missingModules = requiredModules.filter(function (name) { return !frontend.has(name); });
     if (missingModules.length) throw new Error('Frontend modules missing: ' + missingModules.join(', '));
@@ -53,7 +55,7 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.27'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.28'}
     }));
   } catch (error) {
     const message = frontend.fail(error);
