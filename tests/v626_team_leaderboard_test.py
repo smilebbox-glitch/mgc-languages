@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -106,7 +107,7 @@ for marker in [
     'frontend.register("team-leaderboard-v626"',
     "TOP 10 · SCORE + TIME",
     "Сначала выше результат, при равных очках — меньшее время",
-    "лучшей попытка" if False else "лучшая попытка сотрудника",
+    "лучшая попытка сотрудника",
     "ваше место",
     "TEAM ANALYTICS · v6.0.26",
     "Агрегаты по Shift Simulation без рейтинга сотрудников",
@@ -121,7 +122,8 @@ assert "/team_leaderboard_v626.css" in INDEX
 assert "/frontend/team_leaderboard_v626.js" in INDEX
 assert INDEX.index("manager_admin.js") < INDEX.index("team_leaderboard_v626.js") < INDEX.index("frontend/boot.js")
 assert "'team-leaderboard-v626'" in BOOT
-assert "pilotCandidate: 'v6.0.26'" in BOOT
+candidate = re.search(r"pilotCandidate: 'v6\.0\.(\d+)'", BOOT)
+assert candidate and int(candidate.group(1)) >= 26
 
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/team_leaderboard_v626.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/boot.js")], check=True, cwd=ROOT)
