@@ -145,6 +145,24 @@ data/v618_content_manifest.json
 mgc/content_v618.py
 ```
 
+## UX hardening
+
+Сохранены обязательные пользовательские regression guards и UX hardening текущего пилота:
+
+- упрощённая и читаемая pilot UI;
+- Pinyin fallback для основной китайской автомобильной терминологии;
+- локальные/offline SVG для профессиональных topic cards;
+- браузерный TTS предпочитает голоса **Natural / Neural / Online / Premium** и снижает приоритет известных robotic fallback voices;
+- игровые backend-сессии по-прежнему ограничены **5 ответами**;
+- accessibility/performance hardening и `prefers-reduced-motion` остаются активными.
+
+Ключевые guard-файлы:
+
+```text
+static/frontend/pilot_ux_hardening.js
+tests/v617_pilot_ux_regression_test.py
+```
+
 ## Историческая baseline v6.0.29 RC1
 
 `v6.0.29 RC1` зафиксировал предыдущий Pilot Freeze и остаётся архивной baseline для сравнения и regression-control.
