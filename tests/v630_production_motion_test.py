@@ -1,16 +1,15 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
+BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 JS = (ROOT / "static/frontend/production_motion_v630.js").read_text(encoding="utf-8")
 CSS = (ROOT / "static/production_motion_v630.css").read_text(encoding="utf-8")
 
 
-def test_assets_are_loaded_after_factory_digital_thread():
-    assert '/production_motion_v630.css' in INDEX
-    assert '/frontend/production_motion_v630.js' in INDEX
-    assert INDEX.index('/factory_digital_thread_v630.css') < INDEX.index('/production_motion_v630.css')
-    assert INDEX.index('/frontend/factory_digital_thread_v630.js') < INDEX.index('/frontend/production_motion_v630.js')
+def test_assets_are_loaded_by_optional_runtime_loader():
+    assert '/production_motion_v630.css' in BOOT
+    assert '/frontend/production_motion_v630.js' in BOOT
+    assert 'loadProductionSimulationEnhancements' in BOOT
 
 
 def test_all_factory_motion_phases_exist():
