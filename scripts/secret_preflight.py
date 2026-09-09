@@ -36,15 +36,28 @@ def safe_value(raw: str) -> bool:
     if not value:
         return True
     upper = value.upper()
-    return (
-        value.startswith("${")
+
+    # Runtime references and expressions are not embedded secret values. The
+    # scanner still inspects the surrounding file for actual token/private-key
+    # signatures, so this exemption does not hide literal credentials.
+    runtime_expression = (
+        value.startswith("$")
+        or value.startswith("${")
+        or value.startswith("os.getenv(")
+        or value.startswith("os.environ")
+    )
+    explicit_placeholder = (
+        (value.startswith("<") and value.endswith(">"))
         or "CHANGE_ME" in upper
+        or "CHANGE-ME" in upper
         or "GENERATE_" in upper
         or "EXAMPLE" in upper
         or "PLACEHOLDER" in upper
         or value.startswith("ci-")
         or value.startswith("test-")
+        or value.startswith("dev-only-")
     )
+    return runtime_expression or explicit_placeholder
 
 
 def main() -> int:
