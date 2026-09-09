@@ -1,8 +1,27 @@
 name: mgc-languages-pilot
 
 services:
+  wal-init:
+    image: postgres:16.4-alpine
+    user: "0:0"
+    command: ["sh", "-ec", "chown postgres:postgres /wal_archive && chmod 0700 /wal_archive"]
+    volumes:
+      - wal_archive:/wal_archive
+    network_mode: none
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+    restart: "no"
+
   db:
     image: postgres:16.4-alpine
+    depends_on:
+      wal-init:
+        condition: service_completed_successfully
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-mgc_languages}
       POSTGRES_USER: ${POSTGRES_USER:-mgc_languages}
@@ -245,9 +264,16 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
       - SETGID
       - SETUID
     pids_limit: 128
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health/ready >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
     restart: unless-stopped
 
 networks:
