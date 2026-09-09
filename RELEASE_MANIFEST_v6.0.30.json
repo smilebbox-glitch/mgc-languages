@@ -36,7 +36,8 @@
       "static/factory_journey_v2_v630.css",
       "static/frontend/factory_journey_v2_v630.js",
       "static/frontend/game_chinese_localization_v630.js",
-      "static/frontend/chinese_learning_surface_v630.js"
+      "static/frontend/chinese_learning_surface_v630.js",
+      "static/executive_visual_v630.css"
     ],
     "reduced_motion": true,
     "mobile_adaptive": true,
@@ -158,6 +159,22 @@
       ]
     }
   },
+  "executive_visual_system": {
+    "presentation_only": true,
+    "asset": "static/executive_visual_v630.css",
+    "load_order": "last-stylesheet",
+    "surfaces": [
+      "authentication", "topbar", "sidebar", "home-dashboard", "topics", "terms", "quiz",
+      "automotive-arcade", "arcade-mastery", "xp", "factory-journey-v2"
+    ],
+    "design_language": ["automotive-navy", "industrial-blue-cyan", "glass-surfaces", "premium-depth", "executive-spacing"],
+    "reduced_motion": true,
+    "mobile_adaptive": true,
+    "runtime_js": false,
+    "api_contract": "unchanged",
+    "xp_scoring": "unchanged",
+    "database": "unchanged"
+  },
   "learning_content_projection": {
     "raw_terms_per_language_unchanged": 2029,
     "one_visible_term_one_level": true,
@@ -214,6 +231,7 @@
     "static/frontend/factory_journey_v2_v630.js",
     "static/frontend/game_chinese_localization_v630.js",
     "static/frontend/chinese_learning_surface_v630.js",
+    "static/executive_visual_v630.css",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",
