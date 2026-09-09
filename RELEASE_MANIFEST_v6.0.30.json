@@ -113,7 +113,9 @@
       ],
       "interaction_feedback": "neutral-visual-process-cycle",
       "per_answer_correctness_before_finish": false,
-      "chinese_process_labels": true
+      "chinese_process_labels": false,
+      "process_ui_language": "ru",
+      "learning_content_language_in_chinese_track": "zh-pinyin"
     },
     "stage_e": {
       "scope": ["supplier", "logistics", "welding", "paint", "assembly", "quality", "engineering"],
@@ -138,23 +140,21 @@
       "presentation_only": true,
       "canonical_answer_values": "unchanged",
       "scoring_path": "unchanged",
-      "pinyin_game_titles": true,
+      "ui_language": "ru",
+      "descriptions_and_hints_language": "ru",
+      "learning_content_language": "chinese+pinyin",
+      "pinyin_game_titles": false,
       "pinyin_quiz_choices_when_chinese": true,
       "targets": [
-        "game-titles",
-        "quality-statuses",
-        "logistics-sequences",
-        "bom-components",
-        "spec-labels",
-        "production-scene-labels",
-        "mission-ui",
-        "stage-d-process-motion-labels",
-        "stage-e-factory-journey-incidents",
-        "arcade-mastery-profile",
-        "xp-and-progress-ui",
-        "quiz-ui-and-chinese-answer-pinyin",
-        "roleplay-ui",
-        "course30-ui"
+        "russian-game-titles-and-descriptions",
+        "russian-xp-and-progress-ui",
+        "russian-quiz-controls",
+        "russian-roleplay-controls",
+        "russian-course30-controls",
+        "russian-game-and-mission-chrome",
+        "chinese-learning-content-with-pinyin",
+        "quiz-chinese-answer-pinyin",
+        "stage-e-factory-journey-incidents"
       ]
     }
   },
