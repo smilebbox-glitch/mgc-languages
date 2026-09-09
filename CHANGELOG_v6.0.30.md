@@ -67,6 +67,25 @@ Stage D makes the production scenes behave like actual automotive operations ins
 - Process labels are localized in Chinese mode; switching language does not alter canonical answer values.
 - Stage D remains presentation-only and contains no API, XP or alternate answer submission path.
 
+## Stage E — Factory Journey 2.0
+
+Stage E turns the existing factory route into a connected shift simulation instead of another list of exercises. It orchestrates existing canonical games and reads their existing completion/best-score progress; it does not add a second scoring system.
+
+- Seven linked shift stages: **Supplier → Logistics → Welding → Paint → Assembly → Quality → Engineering**.
+- Each stage starts with a realistic automotive production incident and a concrete communication task.
+- Supplier incident covers drawing-revision approval before shipment.
+- Logistics incident covers material shortage and replenishment routing before a line stop.
+- Welding incident covers robot stop, safety interlock and containment language.
+- Paint incident covers surface-defect identification and reporting.
+- Assembly incident covers bumper fastening, tool selection and work-instruction language.
+- Quality incident covers gap measurement, tolerance interpretation and disposition context.
+- Engineering incident covers drawing/BOM mismatch and current revision verification.
+- A **Digital Vehicle** progressively moves through material preparation, BIW, paint, final assembly, quality verification and engineering release based on canonical game completion.
+- A **Factory Twin** status panel shows which journey stages are trained, active, ready or pending.
+- English mode presents English incident language with Russian operational context; Chinese mode presents Chinese incident language with pinyin and Russian operational context.
+- Factory Journey 2.0 launches only existing `game-lab-v618` sessions and reads `game-engagement-v618` progress.
+- No new game type, answer path, XP path, API endpoint or database migration is introduced.
+
 ## Chinese Game Localization Audit
 
 The Chinese Automotive Arcade surface was audited after Stage C because several hard-coded production and engineering labels still appeared in English even when the selected learning language was Chinese.
@@ -78,6 +97,7 @@ The Chinese Automotive Arcade surface was audited after Stage C because several 
 - Spec or NOK? presents 间隙 / 面差 / 扭矩 / 漆膜厚度 / 压力 instead of Gap / Flush / Torque / Film thickness / Pressure.
 - Stage A/B/C visual labels for assembly, welding, paint, logistics, quality, engineering and Mission UI are localized for Chinese mode.
 - Stage D process-motion labels are also localized for Chinese mode.
+- Stage E Factory Journey incidents, route labels and shift-status copy are localized in Chinese and include pinyin for the main learning phrases.
 - The localization layer is presentation-only and reversible when switching back to English; canonical answer values are untouched so order-game and server scoring contracts remain unchanged.
 
 ## Preserved contracts
