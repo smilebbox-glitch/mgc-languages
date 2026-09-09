@@ -53,6 +53,19 @@ def test_mobile_navigation_install_and_network_states_exist():
     assert "URLSearchParams(root.location.search)" in JS
 
 
+def test_mobile_accessibility_and_focus_recovery_are_hardened():
+    for token in (
+        "aria-current','page'", 'aria-labelledby="mgcMobileSheetTitle"',
+        'tabindex="-1"', 'aria-pressed="false"', 'aria-pressed\',\'true',
+        "e.key!=='Escape'", 'resetFocusMode()', 'closeSheet()',
+        "doc.visibilityState==='visible'"
+    ):
+        assert token in JS
+    assert 'lastDialogFocus=doc.activeElement' in JS
+    assert 'lastDialogFocus.focus()' in JS
+    assert "frontend.register('mobile-web-v631',{install,setViewport,scanScenes,proxyView,resetFocusMode,closeSheet})" in JS
+
+
 def test_manifest_has_pwa_shortcuts_without_changing_install_identity():
     assert MANIFEST['name'] == 'MGC Language Lab'
     assert MANIFEST['id'] == '/'
