@@ -1,0 +1,79 @@
+/* v6.0.30 — Art Direction / Executive Showcase.
+ * Presentation-only layer: MGC identity, realistic vehicle treatment and boardroom showcase.
+ */
+:root{
+  --ad-navy:#06131f;
+  --ad-navy-2:#0a2438;
+  --ad-blue:#1877d2;
+  --ad-cyan:#3ab6d4;
+  --ad-teal:#39c5a4;
+  --ad-white:#f7fbff;
+  --ad-line:rgba(116,174,216,.18);
+  --ad-glass:rgba(8,28,45,.72);
+  --ad-shadow:0 38px 110px rgba(3,22,39,.34);
+}
+
+/* MGC identity across the product */
+.brand-button{position:relative}
+.brand-button:after{content:"AUTOMOTIVE LEARNING";position:absolute;left:58px;bottom:3px;font:800 7px/1.1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.16em;color:#6d8aa2;opacity:.72}
+.brand-mark,.brand-mark.small{background:linear-gradient(145deg,#166cc8,#2e9ee7 62%,#48c9cf)!important;box-shadow:0 10px 26px rgba(29,126,211,.24)!important}
+.pilot-kicker,.kicker,.eyebrow{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.14em!important}
+
+/* Cinematic home art direction */
+.pilot-hero{overflow:hidden}
+.pilot-hero .pilot-hero-copy{z-index:4}
+.pilot-hero:before{opacity:.44!important}
+.pilot-hero:after{display:none!important}
+.mgc-hero-visual{position:absolute;right:2.5%;top:50%;width:min(43%,520px);height:78%;transform:translateY(-48%);z-index:2;pointer-events:none;filter:drop-shadow(0 28px 44px rgba(0,0,0,.25))}
+.mgc-hero-visual svg{width:100%;height:100%;overflow:visible}
+.mgc-hero-floor{position:absolute;right:-3%;bottom:-16%;width:54%;height:48%;transform:perspective(560px) rotateX(62deg);transform-origin:center top;background:repeating-linear-gradient(90deg,rgba(99,175,226,.16) 0 1px,transparent 1px 46px),repeating-linear-gradient(0deg,rgba(99,175,226,.13) 0 1px,transparent 1px 46px);mask-image:linear-gradient(#000,transparent 88%);opacity:.72;z-index:1}
+.mgc-hero-beacon{position:absolute;right:8%;top:16%;display:flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid rgba(131,199,238,.16);border-radius:999px;background:rgba(6,28,45,.46);backdrop-filter:blur(10px);font:800 8px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em;color:#bfe8ff;z-index:3}
+.mgc-hero-beacon i{width:7px;height:7px;border-radius:50%;background:#45d6a6;box-shadow:0 0 14px rgba(69,214,166,.9);animation:adPulse 1.8s ease-in-out infinite}
+
+/* Realistic digital vehicle overlay in Factory Journey */
+.fj2-car{min-height:220px!important;background:radial-gradient(circle at 50% 42%,rgba(41,127,191,.14),transparent 38%),linear-gradient(180deg,rgba(19,55,82,.38),rgba(2,11,19,.72))!important}
+.fj2-car .mgc-art-car-overlay{position:absolute;inset:4px 5% 6px;z-index:4;pointer-events:none;opacity:.96;filter:drop-shadow(0 22px 28px rgba(0,0,0,.35))}
+.fj2-car .mgc-art-car-overlay svg{width:100%;height:100%}
+.fj2-car .mgc-art-car-overlay .vehicle-shell{fill:url(#mgcCarPaint);stroke:#8cc8ef;stroke-width:2.2}
+.fj2-car .mgc-art-car-overlay .vehicle-glass{fill:#a9d8f3;fill-opacity:.22;stroke:#88bad8;stroke-width:1.5}
+.fj2-car .mgc-art-car-overlay .vehicle-line{fill:none;stroke:#91b8d1;stroke-width:1.15;stroke-opacity:.72}
+.fj2-car .mgc-art-car-overlay .vehicle-wheel{fill:#07111a;stroke:#45647c;stroke-width:4}
+.fj2-car .mgc-art-car-overlay .vehicle-rim{fill:#698ca5;stroke:#a8c5d7;stroke-width:1.5}
+.fj2-car .mgc-art-car-overlay .vehicle-light{fill:#d9f4ff;filter:drop-shadow(0 0 6px rgba(134,216,255,.75))}
+.fj2-car .mgc-art-car-overlay .vehicle-scan{stroke:#58bfff;stroke-width:1.3;stroke-dasharray:6 7;opacity:.45;animation:adScan 4.8s ease-in-out infinite}
+.fj2-car[data-build-step="0"] .mgc-art-car-overlay,.fj2-car[data-build-step="1"] .mgc-art-car-overlay,.fj2-car[data-build-step="2"] .mgc-art-car-overlay{opacity:.34;filter:grayscale(.7) drop-shadow(0 20px 24px rgba(0,0,0,.28))}
+.fj2-car[data-build-step="3"] .mgc-art-car-overlay{opacity:.62}
+.fj2-car[data-build-step="4"] .mgc-art-car-overlay{opacity:.78}
+.fj2-car[data-build-step="5"] .mgc-art-car-overlay,.fj2-car[data-build-step="6"] .mgc-art-car-overlay,.fj2-car[data-build-step="7"] .mgc-art-car-overlay{opacity:1}
+
+/* Executive showcase trigger */
+.mgc-showcase-trigger{min-height:38px;padding:0 13px;border:1px solid rgba(41,121,183,.18);border-radius:12px;background:linear-gradient(145deg,#0b2f4a,#124b70);color:#e9f7ff;font:800 10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;box-shadow:0 9px 22px rgba(8,46,75,.14);cursor:pointer}
+.mgc-showcase-trigger:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(8,46,75,.2)}
+
+/* Boardroom presentation mode */
+.mgc-showcase{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at 84% 8%,rgba(48,146,215,.16),transparent 26%),radial-gradient(circle at 14% 92%,rgba(49,197,168,.09),transparent 26%),linear-gradient(145deg,#04101a,#071b2b 50%,#0b2940);color:#edf8ff;overflow:auto;isolation:isolate}
+.mgc-showcase.hidden{display:none!important}
+.mgc-showcase:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;background-image:linear-gradient(rgba(117,179,220,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(117,179,220,.09) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 60% 35%,#000,transparent 76%)}
+.mgc-showcase-top{position:sticky;top:0;z-index:8;display:flex;align-items:center;gap:14px;padding:15px 24px;border-bottom:1px solid rgba(139,193,229,.12);background:rgba(3,15,26,.72);backdrop-filter:blur(20px)}
+.mgc-showcase-brand{display:flex;align-items:center;gap:12px}.mgc-showcase-monogram{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#176fcf,#2fa5e7 65%,#45c8c7);font-weight:900;box-shadow:0 12px 28px rgba(22,116,199,.28)}
+.mgc-showcase-brand b{display:block;font-size:12px}.mgc-showcase-brand small{display:block;margin-top:3px;color:#7da6c2;font:800 8px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em}
+.mgc-showcase-nav{margin-left:auto;display:flex;gap:6px}.mgc-showcase-nav button,.mgc-showcase-close{border:1px solid rgba(135,191,228,.13);border-radius:10px;background:rgba(255,255,255,.045);color:#a9c7db;padding:8px 10px;font-size:10px;cursor:pointer}.mgc-showcase-nav button.active{background:#176fcf;color:white;border-color:#2c88dd}.mgc-showcase-close{margin-left:8px;color:#e8f5fd}
+.mgc-showcase-slide{min-height:calc(100vh - 69px);display:none;grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr);gap:42px;align-items:center;padding:54px clamp(28px,6vw,92px)}
+.mgc-showcase-slide.active{display:grid;animation:adReveal .32s cubic-bezier(.2,.8,.2,1)}
+.mgc-showcase-copy{max-width:760px}.mgc-showcase-kicker{font:800 10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.16em;color:#66b5e8}.mgc-showcase-copy h1{margin:14px 0 18px;font-size:clamp(48px,6vw,84px);line-height:.94;letter-spacing:-.058em;text-wrap:balance;color:#fff}.mgc-showcase-copy p{max-width:720px;margin:0;color:#a8c1d3;font-size:16px;line-height:1.65}.mgc-showcase-proof{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}.mgc-showcase-proof span{padding:7px 10px;border:1px solid rgba(130,190,228,.13);border-radius:999px;background:rgba(255,255,255,.045);font-size:9px;color:#bcd5e5}
+.mgc-showcase-visual{min-height:460px;position:relative;border:1px solid rgba(128,188,228,.15);border-radius:30px;background:radial-gradient(circle at 55% 35%,rgba(49,145,215,.13),transparent 33%),rgba(255,255,255,.035);box-shadow:var(--ad-shadow);overflow:hidden;backdrop-filter:blur(13px)}
+.mgc-showcase-visual:before{content:"";position:absolute;inset:0;opacity:.25;background-image:linear-gradient(rgba(126,184,222,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(126,184,222,.09) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(#000,transparent)}
+.mgc-showcase-car{position:absolute;left:8%;right:5%;top:20%;height:56%;filter:drop-shadow(0 35px 42px rgba(0,0,0,.38))}.mgc-showcase-car svg{width:100%;height:100%}
+.mgc-showcase-flow{position:absolute;left:8%;right:8%;bottom:8%;display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.mgc-showcase-flow span{padding:8px 4px;border-radius:8px;border:1px solid rgba(132,189,225,.12);background:rgba(255,255,255,.04);font:800 7px/1 ui-monospace,SFMono-Regular,Consolas,monospace;text-align:center;color:#789bb3}.mgc-showcase-flow span.on{color:#daf2ff;background:rgba(39,127,197,.16);box-shadow:inset 0 0 0 1px rgba(87,175,235,.12)}
+.mgc-showcase-kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:22px}.mgc-showcase-kpi article{min-height:142px;padding:18px;border:1px solid rgba(130,190,228,.13);border-radius:18px;background:rgba(255,255,255,.045)}.mgc-showcase-kpi small{display:block;color:#7199b5;font:800 8px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em}.mgc-showcase-kpi b{display:block;margin:10px 0 5px;font-size:32px}.mgc-showcase-kpi p{font-size:11px;line-height:1.5;color:#94aec1}
+.mgc-showcase-process{padding:24px;display:grid;gap:10px}.mgc-showcase-process article{display:grid;grid-template-columns:52px 1fr auto;gap:13px;align-items:center;padding:13px;border:1px solid rgba(130,190,228,.11);border-radius:14px;background:rgba(255,255,255,.035)}.mgc-showcase-process i{display:grid;place-items:center;width:50px;height:50px;border-radius:13px;background:linear-gradient(145deg,rgba(35,116,184,.24),rgba(45,190,177,.10));font-style:normal;font-weight:900;color:#8fd0f4}.mgc-showcase-process b{display:block;font-size:12px}.mgc-showcase-process small{display:block;margin-top:4px;color:#7f9eb3;font-size:9px}.mgc-showcase-process em{font-style:normal;color:#50d5a8;font:800 8px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em}
+.mgc-showcase-quote{margin-top:24px;padding:16px 18px;border-left:3px solid #38afd0;border-radius:0 14px 14px 0;background:rgba(45,139,200,.08)}.mgc-showcase-quote strong{display:block;font-size:22px}.mgc-showcase-quote span{display:block;margin-top:6px;color:#75b8e5;font-size:12px}.mgc-showcase-quote small{display:block;margin-top:6px;color:#9eb6c8}
+
+@media(max-width:1000px){.mgc-showcase-slide{grid-template-columns:1fr;gap:24px}.mgc-showcase-visual{min-height:390px}.mgc-showcase-copy h1{font-size:58px}.mgc-hero-visual{opacity:.42;right:-8%;width:58%}.pilot-hero-copy{max-width:72%!important}}
+@media(max-width:760px){.mgc-showcase-top{padding:11px 13px}.mgc-showcase-nav{display:none}.mgc-showcase-slide{padding:32px 18px}.mgc-showcase-copy h1{font-size:46px}.mgc-showcase-visual{min-height:330px}.mgc-showcase-kpi{grid-template-columns:1fr}.mgc-hero-visual,.mgc-hero-floor,.mgc-hero-beacon{display:none}.pilot-hero-copy{max-width:100%!important}.mgc-showcase-trigger{padding:0 10px;font-size:9px}}
+@media(max-width:560px){.mgc-showcase-slide{min-height:auto}.mgc-showcase-copy h1{font-size:40px}.mgc-showcase-flow{grid-template-columns:repeat(4,1fr)}.mgc-showcase-flow span:nth-child(n+5){display:none}.fj2-car .mgc-art-car-overlay{inset:10px 1%}}
+
+@keyframes adPulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes adScan{0%,100%{transform:translateX(-13%);opacity:.18}50%{transform:translateX(13%);opacity:.75}}
+@keyframes adReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.mgc-hero-beacon i,.vehicle-scan,.mgc-showcase-slide.active{animation:none!important}.mgc-showcase-trigger{transition:none!important}}
