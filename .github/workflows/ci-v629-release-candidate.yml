@@ -1,4 +1,4 @@
-name: mgc-languages-v629-release-candidate
+name: mgc-languages-v629-archive-contract
 
 on:
   push:
@@ -7,46 +7,31 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: mgc-v629-${{ github.ref }}
+  group: mgc-v629-archive-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  v629-release-candidate-gate:
+  v629-archive-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: v6.0.28 compatibility
-        run: python tests/v628_ux_performance_test.py
-
-      - name: v6.0.29 release candidate regression
+      - name: v6.0.29 archived RC1 baseline
         run: python tests/v629_release_candidate_test.py
 
-      - name: v6.0.29 operability smoke contract
+      - name: v6.0.29 archived operability baseline
         run: python tests/v629_operability_smoke_test.py
 
-      - name: Frozen release manifest guard
-        run: python scripts/release_candidate_guard.py --json
-
-      - name: JavaScript syntax
-        run: node --check static/frontend/boot.js
-
-      - name: RC1 contract
+      - name: Archived manifest identity
         run: |
           grep -q '"release": "6.0.29"' RELEASE_MANIFEST_v6.0.29.json
           grep -q '"candidate": "RC1"' RELEASE_MANIFEST_v6.0.29.json
           grep -q '"status": "pilot-freeze"' RELEASE_MANIFEST_v6.0.29.json
-          grep -q "pilotCandidate: 'v6.0.29'" static/frontend/boot.js
-          grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.29")' mgc/config.py
           grep -q 'Release: v6.0.29' BUILD_INFO_v6.0.29.txt
-          grep -q 'Release Candidate / Pilot Freeze' CHANGELOG_v6.0.29.md
