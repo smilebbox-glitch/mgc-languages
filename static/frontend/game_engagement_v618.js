@@ -1,4 +1,4 @@
-/* v6.0.18: engagement layer for the 20-mode Automotive Arcade. */
+/* v6.0.29 hotfix: engagement layer for the 20-mode Automotive Arcade without observer feedback loops. */
 (function (root) {
   'use strict';
 
@@ -19,6 +19,7 @@
 
   let observer = null;
   let installed = false;
+  let reconcileQueued = false;
 
   function state() { return frontend.get('app-state').current(); }
   function gameLab() { return frontend.get('game-lab-v618'); }
@@ -26,7 +27,7 @@
   function queryAll(selector, scope) { return Array.from((scope || document).querySelectorAll(selector)); }
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
     });
   }
 
@@ -209,6 +210,22 @@
     refreshBadges();
   }
 
+  function setTextIfChanged(node, value) {
+    if (!node) return false;
+    const next = String(value);
+    if (node.textContent === next) return false;
+    node.textContent = next;
+    return true;
+  }
+
+  function setWidthIfChanged(node, value) {
+    if (!node) return false;
+    const next = String(value);
+    if (node.style.width === next) return false;
+    node.style.width = next;
+    return true;
+  }
+
   function refreshBadges() {
     const progress = loadProgress();
     queryAll('[data-start-v618-game]').forEach(function (card) {
@@ -223,7 +240,7 @@
         badge.className = 'arcade-card-progress';
         card.appendChild(badge);
       }
-      badge.textContent = best ? ('BEST ' + best + '/5') : 'ПРОБОВАЛИ';
+      setTextIfChanged(badge, best ? ('BEST ' + best + '/5') : 'ПРОБОВАЛИ');
       badge.classList.toggle('perfect', best >= 5);
     });
 
@@ -232,8 +249,8 @@
       const summary = progressSummary(progress);
       const count = query('b', passport);
       const bar = query('i', passport);
-      if (count) count.textContent = summary.tried + '/20';
-      if (bar) bar.style.width = summary.pct + '%';
+      setTextIfChanged(count, summary.tried + '/20');
+      setWidthIfChanged(bar, summary.pct + '%');
     }
   }
 
@@ -245,19 +262,27 @@
   }
 
   function reconcile() {
+    reconcileQueued = false;
     augmentCatalog();
     captureResult();
+  }
+
+  function queueReconcile() {
+    if (reconcileQueued) return;
+    reconcileQueued = true;
+    if (root.requestAnimationFrame) root.requestAnimationFrame(reconcile);
+    else root.setTimeout(reconcile, 0);
   }
 
   function install() {
     if (installed) return;
     installed = true;
     document.addEventListener('click', onDocumentClick, true);
-    document.addEventListener('mgc:state-change', function () { root.setTimeout(reconcile, 0); });
-    observer = new MutationObserver(function () { reconcile(); });
+    document.addEventListener('mgc:state-change', queueReconcile);
+    observer = new MutationObserver(queueReconcile);
     const main = query('#main');
     if (main) observer.observe(main, {childList:true, subtree:true});
-    reconcile();
+    queueReconcile();
   }
 
   frontend.register('game-engagement-v618', {
