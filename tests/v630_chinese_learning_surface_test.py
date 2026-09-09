@@ -1,10 +1,13 @@
 from collections import Counter
 from pathlib import Path
-
-from mgc.content_v618 import canonical_learning_rows
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from mgc.content_v618 import canonical_learning_rows
 
 
 def test_same_visible_term_is_kept_once_and_at_lowest_existing_level():
