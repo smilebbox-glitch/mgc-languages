@@ -69,6 +69,10 @@ def main() -> None:
     require(contract.get("presentation_only") is True, "Localization must remain presentation-only")
     require(contract.get("canonical_answer_values") == "unchanged", "Canonical answers must remain unchanged")
     require(contract.get("scoring_path") == "unchanged", "Scoring path must remain unchanged")
+    require(contract.get("ui_language") == "ru", "Game/learning UI must stay Russian")
+    require(contract.get("descriptions_and_hints_language") == "ru", "Descriptions and hints must stay Russian")
+    require(contract.get("learning_content_language") == "chinese+pinyin", "Chinese learning material must keep pinyin")
+    require(contract.get("pinyin_game_titles") is False, "Game titles must not receive Chinese pinyin")
     require(contract.get("pinyin_quiz_choices_when_chinese") is True, "Chinese quiz-choice pinyin contract is missing")
 
     print("v6.0.30 Russian UI + Chinese/pinyin learning-content regression: OK")
