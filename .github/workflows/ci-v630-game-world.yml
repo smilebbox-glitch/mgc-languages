@@ -32,7 +32,19 @@ jobs:
           python tests/v629_operability_smoke_test.py
 
       - name: v6.0.30 Game World regression
-        run: python tests/v630_game_world_test.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python tests/v630_game_world_test.py 2>&1 | tee /tmp/v630-game-world-test.log
+
+      - name: Upload Game World regression diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v630-game-world-regression-log
+          path: /tmp/v630-game-world-test.log
+          if-no-files-found: error
+          retention-days: 3
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
