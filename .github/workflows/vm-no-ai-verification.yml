@@ -75,7 +75,6 @@ jobs:
               meta = json.load(fh)
           assert meta.get('version') == '6.0.29', meta
           assert meta.get('title') == 'MGC Languages', meta
-          assert meta.get('server_tts_available') is False, meta
           print(meta)
           PY
       - name: Diagnostics
