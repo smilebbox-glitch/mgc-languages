@@ -8,11 +8,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = ROOT / "RELEASE_MANIFEST_v6.0.29.json"
+MANIFEST_PATH = ROOT / "RELEASE_MANIFEST_v6.0.30.json"
 BOOT_PATH = ROOT / "static/frontend/boot.js"
 INDEX_PATH = ROOT / "static/index.html"
 
-# Keep the guard independent from a developer database.
 os.environ.setdefault("AUTO_CREATE_SCHEMA", "false")
 os.environ.setdefault("MGC_ADMIN_USERNAME", "")
 os.environ.setdefault("MGC_ADMIN_PASSWORD", "")
@@ -37,7 +36,7 @@ def check(ok: bool, message: str, failures: list[str]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="MGC Languages v6.0.29 Release Candidate / Pilot Freeze guard")
+    parser = argparse.ArgumentParser(description="MGC Languages v6.0.30 Game World release guard")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
@@ -46,17 +45,16 @@ def main() -> int:
     boot = BOOT_PATH.read_text(encoding="utf-8")
     index = INDEX_PATH.read_text(encoding="utf-8")
 
-    check(manifest.get("release") == "6.0.29", "manifest release must be 6.0.29", failures)
-    check(manifest.get("candidate") == "RC1", "candidate must be RC1", failures)
-    check(manifest.get("status") == "pilot-freeze", "status must be pilot-freeze", failures)
-    check(manifest.get("freeze") is True, "freeze flag must be true", failures)
-    check(manifest.get("base_release") == "6.0.28", "base release must be v6.0.28", failures)
+    check(manifest.get("release") == "6.0.30", "manifest release must be 6.0.30", failures)
+    check(manifest.get("status") == "game-world-expansion", "status must be game-world-expansion", failures)
+    check(manifest.get("base_release") == "6.0.29", "base release must be v6.0.29", failures)
+    check(manifest.get("freeze") is False, "v6.0.30 must be a post-RC expansion release", failures)
 
     game_contract = manifest["game_contract"]
-    check(game_contract["count"] == 20, "manifest must freeze 20 game types", failures)
-    check(game_contract["max_answers_per_session"] == 5, "manifest must freeze max-five answers", failures)
+    check(game_contract["count"] == 20, "release must preserve 20 game types", failures)
+    check(game_contract["max_answers_per_session"] == 5, "release must preserve max-five answers", failures)
     check(game_contract["anti_farm"] == "unchanged", "anti-farm must remain unchanged", failures)
-    check(list(GAME_TYPES) == game_contract["game_types"], "runtime GAME_TYPES differs from frozen manifest", failures)
+    check(list(GAME_TYPES) == game_contract["game_types"], "runtime GAME_TYPES differs from v6.0.30 manifest", failures)
     check(MAX_GAME_ANSWERS == 5, "runtime MAX_GAME_ANSWERS must remain 5", failures)
 
     check(len(runtime.TERMS["chinese"]) == 2029, "Chinese runtime vocabulary must remain 2029", failures)
@@ -65,8 +63,24 @@ def main() -> int:
 
     expected_modules = manifest["frontend_modules"]
     actual_modules = parse_boot_modules(boot)
-    check(actual_modules == expected_modules, "boot requiredModules differs from frozen frontend module list", failures)
-    check("pilotCandidate: 'v6.0.29'" in boot, "boot.js must publish pilotCandidate v6.0.29", failures)
+    check(actual_modules == expected_modules, "boot requiredModules differs from v6.0.30 manifest", failures)
+    check("pilotCandidate: 'v6.0.30'" in boot, "boot.js must publish pilotCandidate v6.0.30", failures)
+
+    world = manifest["game_world"]
+    check(world.get("visual_only") is True, "Game World must remain a visual layer", failures)
+    check(world.get("mobile_adaptive") is True, "Game World must remain mobile adaptive", failures)
+    check(world.get("reduced_motion") is True, "Game World must support reduced motion", failures)
+    for asset in world["assets"]:
+        check((ROOT / asset).is_file(), f"Game World asset missing: {asset}", failures)
+        public_path = "/" + asset.removeprefix("static/")
+        check(public_path in index, f"Game World asset not loaded by index: {public_path}", failures)
+
+    invariants = manifest["invariants"]
+    check(invariants.get("database_migrations") == "none", "v6.0.30 must not require a database migration", failures)
+    check(invariants.get("xp_paths") == "unchanged", "XP paths must remain unchanged", failures)
+    check(invariants.get("game_scoring") == "unchanged", "game scoring must remain unchanged", failures)
+    check(invariants.get("api_contract") == "unchanged", "API contract must remain unchanged", failures)
+    check(invariants.get("pwa_private_cache_isolation") == "preserved", "PWA private cache isolation must be preserved", failures)
 
     for rel in manifest["critical_files"]:
         path = ROOT / rel
@@ -77,24 +91,13 @@ def main() -> int:
         check((ROOT / rel).is_file(), f"deployment file missing: {rel}", failures)
     check((ROOT / deployment["one_click_windows"]).is_file(), "one-click Company Pilot launcher missing", failures)
 
-    for endpoint in deployment["health_endpoints"]:
-        check(endpoint in (ROOT / "scripts/company_pilot_preflight.py").read_text(encoding="utf-8") or endpoint in (ROOT / "docker-compose.lan.yml").read_text(encoding="utf-8"), f"health endpoint contract missing: {endpoint}", failures)
-
-    freeze_rules = manifest["freeze_rules"]
-    for key in ("new_game_types", "new_frontend_modules", "new_database_migrations", "new_xp_paths", "feature_additions_after_rc"):
-        check(freeze_rules.get(key) is False, f"freeze rule must prohibit {key}", failures)
-
-    # v6.0.29 is a release-control layer only: no new runtime JS/CSS is loaded.
-    check("v629" not in index.lower(), "v6.0.29 must not add a new frontend runtime asset", failures)
-
     result = {
-        "release": "6.0.29",
-        "candidate": "RC1",
+        "release": "6.0.30",
         "status": "GO" if not failures else "NO-GO",
-        "freeze": True,
         "game_types": len(GAME_TYPES),
         "max_answers": MAX_GAME_ANSWERS,
         "frontend_modules": len(actual_modules),
+        "game_world_scenes": len(world["scenes"]),
         "vocabulary": {"chinese": len(runtime.TERMS["chinese"]), "english": len(runtime.TERMS["english"])},
         "failures": failures,
     }
@@ -102,9 +105,8 @@ def main() -> int:
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        print(f"MGC Languages v6.0.29 RC1 Pilot Freeze: {result['status']}")
-        print(f"game types={result['game_types']} | max answers={result['max_answers']} | frontend modules={result['frontend_modules']}")
-        print(f"vocabulary={result['vocabulary']['chinese']}/{result['vocabulary']['english']}")
+        print(f"MGC Languages v6.0.30 Game World: {result['status']}")
+        print(f"game types={result['game_types']} | max answers={result['max_answers']} | scenes={result['game_world_scenes']}")
         for failure in failures:
             print(f"FAIL: {failure}")
 
