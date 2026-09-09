@@ -25,7 +25,7 @@ def test_chinese_english_and_mixed_learning_content():
         '冲压', 'chōngyā', '焊装', 'hànzhuāng', '涂装', 'túzhuāng',
         '总装', 'zǒngzhuāng', '质量与试验', '经销商交付',
         'Stamping', 'Body Welding', 'Paint Shop', 'Final Assembly',
-        'Quality & Testing', 'Dealer Delivery', "language:'mixed'"
+        'Quality & Testing', 'Dealer Delivery', 'data-fps-lang="mixed"'
     ):
         assert token in JS
 
