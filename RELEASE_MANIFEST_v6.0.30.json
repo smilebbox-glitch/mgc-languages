@@ -27,7 +27,9 @@
       "static/game_world_stage_a_v630.css",
       "static/frontend/game_world_stage_a_v630.js",
       "static/game_world_stage_b_v630.css",
-      "static/frontend/game_world_stage_b_v630.js"
+      "static/frontend/game_world_stage_b_v630.js",
+      "static/game_world_stage_c_v630.css",
+      "static/frontend/game_world_stage_c_v630.js"
     ],
     "reduced_motion": true,
     "mobile_adaptive": true,
@@ -61,6 +63,27 @@
         "engineering-drawing-to-bom-digital-thread",
         "engineering-subsystem-classification"
       ]
+    },
+    "stage_c": {
+      "scope": ["all-20-games"],
+      "production_context_only": true,
+      "scoring_path": "unchanged",
+      "answer_controls": "canonical-game-lab",
+      "covered_games": [
+        "match", "listening", "mistake", "phrase", "hotspot",
+        "assembly_order", "shop_route", "tool_select", "defect_detective", "safety_spot",
+        "quality_gate", "logistics_route", "kanban", "bom_builder", "spec_check",
+        "rapid_recall", "memory_pairs", "odd_one_out", "dialogue_choice", "shift_incident"
+      ],
+      "experience_layers": [
+        "mission-briefing-onboarding",
+        "five-step-mission-rail",
+        "neutral-answer-recorded-transition",
+        "server-derived-mission-complete",
+        "mobile-touch-polish"
+      ],
+      "per_answer_correctness_before_finish": false,
+      "result_source": "canonical-server-finish"
     }
   },
   "frontend_modules": [
@@ -101,6 +124,8 @@
     "static/frontend/game_world_stage_a_v630.js",
     "static/game_world_stage_b_v630.css",
     "static/frontend/game_world_stage_b_v630.js",
+    "static/game_world_stage_c_v630.css",
+    "static/frontend/game_world_stage_c_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",
