@@ -35,6 +35,9 @@ jobs:
       - name: Digital Vehicle 3D regression
         run: python tests/v630_digital_vehicle_3d_test.py
 
+      - name: Digital Truck 3D regression
+        run: python tests/v630_digital_truck_3d_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -49,6 +52,7 @@ jobs:
           node --check static/frontend/art_direction_v630.js
           node --check static/frontend/art_direction_scenes_v630.js
           node --check static/frontend/digital_vehicle_3d_v630.js
+          node --check static/frontend/digital_truck_3d_v630.js
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
