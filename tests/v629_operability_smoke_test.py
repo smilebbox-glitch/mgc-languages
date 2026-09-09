@@ -72,10 +72,14 @@ assert "/api/pronunciation/audio" in APP_JS
 assert "python tests/v629_operability_smoke_test.py" in CI
 assert "python tests/v629_operability_smoke_test.py" in RC_GATE
 
+# Temporary test-VM deployment is part of operability: it must remain CPU-only,
+# run on port 8080 next to Okno v Kitai:3000, and explicitly disable server TTS.
+subprocess.run(["python", str(ROOT / "tests/vm_no_ai_deployment_test.py")], check=True, cwd=ROOT)
+
 # Keep source/runtime syntax checks close to the operability contract.
 subprocess.run(["python", "-m", "compileall", "-q", "mgc", "mgc_core", "asgi.py"], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/boot.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/pilot_ux_hardening.js")], check=True, cwd=ROOT)
 subprocess.run(["python", str(ROOT / "scripts/release_candidate_guard.py"), "--json"], check=True, cwd=ROOT)
 
-print("PASS: v6.0.29 operability contract covers runtime, LAN HTTP checks, protected APIs and natural pronunciation fallback")
+print("PASS: v6.0.29 operability contract covers runtime, LAN HTTP checks, protected APIs, natural pronunciation fallback and CPU-only VM deployment")
