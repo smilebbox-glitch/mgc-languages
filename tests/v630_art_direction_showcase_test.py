@@ -53,9 +53,11 @@ def main() -> None:
     for marker in forbidden:
         require(marker not in js, f"Presentation-only showcase contains runtime marker: {marker}")
 
-    # No external web/image/font dependencies; all showcase art is SVG/CSS shipped with the product.
+    # No external web/image/font dependencies. Internal CSS fragment references such as
+    # url(#mgcCarPaint) are allowed because they point to gradients inside the local SVG.
     require('http://' not in css and 'https://' not in css, "Art Direction CSS must stay local")
-    require('url(' not in css, "Art Direction CSS must not add external/background image dependencies")
+    require('url(http://' not in css and 'url(https://' not in css and 'url(data:' not in css,
+            "Art Direction CSS must not add remote or data-URI dependencies")
     require('http://' not in js and 'https://' not in js, "Art Direction JS must stay local")
     require('<svg' in js and '<path' in js and '<circle' in js,
             "Realistic digital vehicle must be represented as local SVG geometry")
