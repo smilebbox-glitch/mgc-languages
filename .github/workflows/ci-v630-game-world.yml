@@ -1,0 +1,57 @@
+name: mgc-languages-v630-game-world
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v630-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  v630-game-world-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: v6.0.29 archived compatibility
+        run: |
+          python tests/v629_release_candidate_test.py
+          python tests/v629_operability_smoke_test.py
+
+      - name: v6.0.30 Game World regression
+        run: python tests/v630_game_world_test.py
+
+      - name: Current release guard
+        run: python scripts/release_candidate_guard.py --json
+
+      - name: PWA security isolation
+        run: python tests/pwa_security_test.py
+
+      - name: JavaScript syntax
+        run: |
+          node --check static/frontend/game_world_v630.js
+          node --check static/frontend/boot.js
+          node --check static/service-worker.js
+          node --check static/pwa-register.js
+
+      - name: v6.0.30 release identity
+        run: |
+          grep -q '"release": "6.0.30"' RELEASE_MANIFEST_v6.0.30.json
+          grep -q '"status": "game-world-expansion"' RELEASE_MANIFEST_v6.0.30.json
+          grep -q "pilotCandidate: 'v6.0.30'" static/frontend/boot.js
+          grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.30")' mgc/config.py
+          grep -q 'Release: v6.0.30' BUILD_INFO_v6.0.30.txt
+          grep -q 'Game World Expansion' CHANGELOG_v6.0.30.md
