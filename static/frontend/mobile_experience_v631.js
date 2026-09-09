@@ -14,7 +14,7 @@
   const compact=()=>root.matchMedia&&root.matchMedia('(max-width:900px)').matches;
   const standalone=()=>!!((root.matchMedia&&root.matchMedia('(display-mode: standalone)').matches)||root.navigator.standalone===true);
   const SIM_SELECTOR='.ab-shell,.ptb-shell,.fps-shell,.f2-shell,.fti-shell,.fdt-shell';
-  let installPrompt=null,observer=null,routeApplied=false;
+  let installPrompt=null,observer=null,routeApplied=false,lastDialogFocus=null;
 
   function emit(name,detail){doc.dispatchEvent(new CustomEvent(name,{detail:detail||{}}))}
   function mobileMode(){return compact()||coarse()||standalone()}
@@ -45,7 +45,7 @@
     nav.id='mgcMobileDock';nav.className='mgc-mobile-dock';nav.setAttribute('aria-label','Мобильная навигация');
     nav.innerHTML=[
       ['home','⌂','Главная'],['topics','▤','Темы'],['games','◇','Игры'],['roleplay','◉','Сценарии'],['more','☰','Ещё']
-    ].map(i=>'<button type="button" data-mobile-view="'+i[0]+'"><span>'+i[1]+'</span>'+i[2]+'</button>').join('');
+    ].map(i=>'<button type="button" data-mobile-view="'+i[0]+'"><span aria-hidden="true">'+i[1]+'</span>'+i[2]+'</button>').join('');
     app.appendChild(nav);
     qa('[data-mobile-view]',nav).forEach(btn=>btn.addEventListener('click',function(){
       const view=btn.dataset.mobileView;
@@ -61,7 +61,11 @@
     const dock=q('#mgcMobileDock');if(!dock)return;
     const active=q('.sidebar .nav-item.active[data-view]');
     const view=active&&active.dataset.view;
-    qa('[data-mobile-view]',dock).forEach(b=>b.classList.toggle('active',b.dataset.mobileView===view));
+    qa('[data-mobile-view]',dock).forEach(b=>{
+      const selected=b.dataset.mobileView===view;
+      b.classList.toggle('active',selected);
+      if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    });
   }
 
   function networkPill(){
@@ -73,12 +77,21 @@
     if(online){root.setTimeout(()=>{if(root.navigator.onLine)el.classList.add('online')},1500)}
   }
 
+  function closeSheet(){
+    const sheet=q('#mgcMobileSheet');
+    if(sheet)sheet.remove();
+    if(lastDialogFocus&&doc.contains(lastDialogFocus))lastDialogFocus.focus();
+    lastDialogFocus=null;
+  }
+
   function openSheet(title,copy,primary){
-    const old=q('#mgcMobileSheet');if(old)old.remove();
+    closeSheet();
+    lastDialogFocus=doc.activeElement;
     const wrap=doc.createElement('div');wrap.id='mgcMobileSheet';wrap.className='mgc-mobile-sheet';
-    wrap.innerHTML='<div class="mgc-mobile-sheet-card" role="dialog" aria-modal="true" aria-label="'+title.replace(/"/g,'')+'"><h3>'+title+'</h3><p>'+copy+'</p><div class="mgc-mobile-sheet-actions">'+(primary||'')+'<button type="button" class="ghost" data-close-sheet>Закрыть</button></div></div>';
+    wrap.innerHTML='<div class="mgc-mobile-sheet-card" role="dialog" aria-modal="true" aria-labelledby="mgcMobileSheetTitle" tabindex="-1"><h3 id="mgcMobileSheetTitle">'+title+'</h3><p>'+copy+'</p><div class="mgc-mobile-sheet-actions">'+(primary||'')+'<button type="button" class="ghost" data-close-sheet>Закрыть</button></div></div>';
     doc.body.appendChild(wrap);
-    wrap.addEventListener('click',e=>{if(e.target===wrap||e.target.closest('[data-close-sheet]'))wrap.remove()});
+    wrap.addEventListener('click',e=>{if(e.target===wrap||e.target.closest('[data-close-sheet]'))closeSheet()});
+    const card=q('.mgc-mobile-sheet-card',wrap);if(card)card.focus();
     return wrap;
   }
 
@@ -115,19 +128,28 @@
     if(!mobileMode()||!shell||shell.dataset.mobileTools==='1')return;
     shell.dataset.mobileTools='1';
     const tools=doc.createElement('div');tools.className='mgc-mobile-scene-tools';
-    tools.innerHTML='<button type="button" data-sim-focus>⛶ Режим тренажёра</button><button type="button" data-sim-top>↑ К началу</button>';
+    tools.innerHTML='<button type="button" data-sim-focus aria-pressed="false">⛶ Режим тренажёра</button><button type="button" data-sim-top>↑ К началу</button>';
     const note=doc.createElement('div');note.className='mgc-orientation-note';note.textContent='Для 3D-сцен удобнее альбомная ориентация. Поверните телефон — интерфейс перестроится автоматически.';
     shell.insertBefore(tools,shell.firstChild);shell.insertBefore(note,tools.nextSibling);
     q('[data-sim-focus]',tools).onclick=()=>toggleFocus(shell);
     q('[data-sim-top]',tools).onclick=()=>shell.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
+  function resetFocusMode(){
+    qa('.mgc-sim-focused').forEach(shell=>{
+      shell.classList.remove('mgc-sim-focused');
+      const b=q('[data-sim-focus]',shell);if(b){b.textContent='⛶ Режим тренажёра';b.setAttribute('aria-pressed','false')}
+    });
+    doc.body.classList.remove('mgc-sim-focus');
+  }
+
   function toggleFocus(shell){
     const active=doc.body.classList.contains('mgc-sim-focus')&&shell.classList.contains('mgc-sim-focused');
-    qa('.mgc-sim-focused').forEach(x=>x.classList.remove('mgc-sim-focused'));
-    doc.body.classList.remove('mgc-sim-focus');
-    if(!active){doc.body.classList.add('mgc-sim-focus');shell.classList.add('mgc-sim-focused');const b=q('[data-sim-focus]',shell);if(b)b.textContent='✕ Свернуть тренажёр'}
-    else{const b=q('[data-sim-focus]',shell);if(b)b.textContent='⛶ Режим тренажёра'}
+    resetFocusMode();
+    if(!active){
+      doc.body.classList.add('mgc-sim-focus');shell.classList.add('mgc-sim-focused');
+      const b=q('[data-sim-focus]',shell);if(b){b.textContent='✕ Свернуть тренажёр';b.setAttribute('aria-pressed','true');b.focus()}
+    }
   }
 
   function scanScenes(){qa(SIM_SELECTOR).forEach(addSceneTools)}
@@ -158,8 +180,14 @@
     root.addEventListener('online',networkPill);root.addEventListener('offline',networkPill);
     if(root.visualViewport){root.visualViewport.addEventListener('resize',setViewport,{passive:true});root.visualViewport.addEventListener('scroll',setViewport,{passive:true})}
     doc.addEventListener('click',e=>{const n=e.target.closest('.nav-item[data-view]');if(n)root.setTimeout(syncDock,0)});
+    doc.addEventListener('keydown',e=>{
+      if(e.key!=='Escape')return;
+      if(q('#mgcMobileSheet')){e.preventDefault();closeSheet();return}
+      if(doc.body.classList.contains('mgc-sim-focus')){e.preventDefault();resetFocusMode()}
+    });
+    doc.addEventListener('visibilitychange',()=>{if(doc.visibilityState==='visible'){markEnvironment();setViewport();syncDock()}});
   }
 
-  frontend.register('mobile-web-v631',{install,setViewport,scanScenes,proxyView});
+  frontend.register('mobile-web-v631',{install,setViewport,scanScenes,proxyView,resetFocusMode,closeSheet});
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })(window);
