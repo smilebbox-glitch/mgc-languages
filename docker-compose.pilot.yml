@@ -142,7 +142,7 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    networks: [backend]
+    networks: [backend, app-proxy]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"]
       interval: 20s
@@ -234,7 +234,7 @@ services:
       - "127.0.0.1:${MGC_PORT:-8080}:8080"
     volumes:
       - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    networks: [edge, backend]
+    networks: [edge, app-proxy]
     read_only: true
     tmpfs:
       - /var/cache/nginx:size=16m,mode=0755
@@ -244,11 +244,16 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    cap_add:
+      - SETGID
+      - SETUID
     pids_limit: 128
     restart: unless-stopped
 
 networks:
   edge: {}
+  app-proxy:
+    internal: true
   backend:
     internal: true
 
