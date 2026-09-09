@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import os
 from dataclasses import dataclass
 from types import ModuleType
 
@@ -67,6 +68,7 @@ def bind_auth_router(module: ModuleType, application: FastAPI) -> AuthRouterBind
         "current_user",
         "make_password_hash",
         "verify_password",
+        "password_hash_needs_upgrade",
         "token_digest",
         "rate_limit",
         "audit_event",
@@ -100,6 +102,7 @@ def bind_auth_router(module: ModuleType, application: FastAPI) -> AuthRouterBind
         current_user=module.current_user,
         make_password_hash=module.make_password_hash,
         verify_password=module.verify_password,
+        password_hash_needs_upgrade=module.password_hash_needs_upgrade,
         token_digest=module.token_digest,
         rate_limit=module.rate_limit,
         audit_event=module.audit_event,
@@ -114,6 +117,7 @@ def bind_auth_router(module: ModuleType, application: FastAPI) -> AuthRouterBind
         oidc_display_name_claim=str(module.OIDC_DISPLAY_NAME_CLAIM),
         oidc_groups_claim=str(module.OIDC_GROUPS_CLAIM),
         oidc_department_claim=str(module.OIDC_DEPARTMENT_CLAIM),
+        oidc_allowed_group=os.getenv("OIDC_ALLOWED_GROUP", "").strip(),
     )
     new_routes = {_key(route): route for route in extracted.routes if isinstance(route, APIRoute)}
     if set(new_routes) != AUTH_ROUTE_CONTRACT:
