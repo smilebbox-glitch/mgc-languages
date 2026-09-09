@@ -25,8 +25,12 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    # Keep the host TLS private key at 0600. The nginx master needs read-only
+    # DAC bypass for a bind-mounted key owned by the host runtime user; this
+    # avoids making the private key group/world-readable.
     cap_add:
       - CHOWN
+      - DAC_READ_SEARCH
       - SETGID
       - SETUID
     pids_limit: 128
