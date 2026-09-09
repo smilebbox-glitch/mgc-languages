@@ -27,9 +27,6 @@
 
     const items = Array.isArray(session.items) ? session.items : [];
     const index = Number(snapshot.gameIndexV618 || 0);
-
-    // A completed session may be left in client state when /finish was interrupted.
-    // Never let the next visit to Games block on that old network operation.
     if (!items.length || index >= items.length) {
       state.patch({
         gameSessionV618: null,
@@ -42,40 +39,40 @@
   }
 
   function setView(view) {
-    const target = String(view || 'home');
+    view = String(view || 'home');
 
-    if (target === 'games' && frontend.has('game-lab-v618')) {
+    if (view === 'games' && frontend.has('game-lab-v618')) {
       normalizeGamesState();
       return frontend.get('game-lab-v618').navigate('games');
     }
-    if (frontend.has('pilot-home') && frontend.get('pilot-home').owns(target)) {
-      return frontend.get('pilot-home').navigate(target);
+    if (frontend.has('pilot-home') && frontend.get('pilot-home').owns(view)) {
+      return frontend.get('pilot-home').navigate(view);
     }
-    if (frontend.has('learning') && frontend.get('learning').owns(target)) {
-      return frontend.get('learning').navigate(target);
+    if (frontend.has('learning') && frontend.get('learning').owns(view)) {
+      return frontend.get('learning').navigate(view);
     }
-    if (frontend.has('game-lab-v618') && frontend.get('game-lab-v618').owns(target)) {
-      return frontend.get('game-lab-v618').navigate(target);
+    if (frontend.has('game-lab-v618') && frontend.get('game-lab-v618').owns(view)) {
+      return frontend.get('game-lab-v618').navigate(view);
     }
-    if (frontend.has('practice-games') && frontend.get('practice-games').owns(target)) {
-      return frontend.get('practice-games').navigate(target);
+    if (frontend.has('practice-games') && frontend.get('practice-games').owns(view)) {
+      return frontend.get('practice-games').navigate(view);
     }
-    if (frontend.has('support-notifications') && frontend.get('support-notifications').owns(target)) {
-      return frontend.get('support-notifications').navigate(target);
+    if (frontend.has('support-notifications') && frontend.get('support-notifications').owns(view)) {
+      return frontend.get('support-notifications').navigate(view);
     }
-    if (frontend.has('assistant-knowledge') && frontend.get('assistant-knowledge').owns(target)) {
-      return frontend.get('assistant-knowledge').navigate(target);
+    if (frontend.has('assistant-knowledge') && frontend.get('assistant-knowledge').owns(view)) {
+      return frontend.get('assistant-knowledge').navigate(view);
     }
-    if (frontend.has('final-assessment') && frontend.get('final-assessment').owns(target)) {
-      return frontend.get('final-assessment').navigate(target);
+    if (frontend.has('final-assessment') && frontend.get('final-assessment').owns(view)) {
+      return frontend.get('final-assessment').navigate(view);
     }
-    if (frontend.has('chinese-reference') && frontend.get('chinese-reference').owns(target)) {
-      return frontend.get('chinese-reference').navigate(target);
+    if (frontend.has('chinese-reference') && frontend.get('chinese-reference').owns(view)) {
+      return frontend.get('chinese-reference').navigate(view);
     }
-    if (frontend.has('manager-admin') && frontend.get('manager-admin').owns(target)) {
-      return frontend.get('manager-admin').navigate(target);
+    if (frontend.has('manager-admin') && frontend.get('manager-admin').owns(view)) {
+      return frontend.get('manager-admin').navigate(view);
     }
-    return legacy().setView(target);
+    return legacy().setView(view);
   }
 
   function interceptGamesNavigation(event) {
