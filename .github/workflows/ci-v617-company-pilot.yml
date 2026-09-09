@@ -70,10 +70,13 @@ jobs:
       - name: v6.0.28 UX performance regression
         run: python tests/v628_ux_performance_test.py
 
-      - name: v6.0.29 release candidate freeze regression
+      - name: v6.0.29 archived baseline
         run: python tests/v629_release_candidate_test.py
 
-      - name: Frozen release manifest guard
+      - name: v6.0.30 Game World regression
+        run: python tests/v630_game_world_test.py
+
+      - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
 
       - name: JavaScript syntax
@@ -95,6 +98,7 @@ jobs:
           node --check static/frontend/adaptive_training_v627.js
           node --check static/frontend/ux_performance_v628.js
           node --check static/frontend/practice_games.js
+          node --check static/frontend/game_world_v630.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
 
@@ -139,6 +143,8 @@ jobs:
           grep -q "team_leaderboard_v626.js" static/index.html
           grep -q "adaptive_training_v627.js" static/index.html
           grep -q "ux_performance_v628.js" static/index.html
+          grep -q "game_world_v630.js" static/index.html
+          grep -q "game_world_v630.css" static/index.html
           grep -q "MGC AUTOMOTIVE ARCADE · 20 ИГР" static/frontend/game_lab_v618.js
           grep -q "Пройдите автомобиль через весь завод" static/frontend/factory_journey_v619.js
           grep -q "Три короткие миссии на сегодня" static/frontend/arcade_missions_v620.js
@@ -163,7 +169,9 @@ jobs:
           grep -q "ADAPTIVE TRAINING LOOP · v6.0.27" static/frontend/adaptive_training_v627.js
           grep -q "v628-skip-link" static/index.html
           grep -q "frontend.register('ux-performance-v628'" static/frontend/ux_performance_v628.js
-          grep -q "pilotCandidate: 'v6.0.29'" static/frontend/boot.js
+          grep -q "pilotCandidate: 'v6.0.30'" static/frontend/boot.js
+          grep -q "const GAME_WORLD = Object.freeze" static/frontend/game_world_v630.js
+          grep -q "prefers-reduced-motion" static/game_world_v630.css
           ! grep -q "About English" static/index.html
           ! grep -q "Сценарий смены" static/frontend/pilot_home.js
           ! grep -q "Новая сегодня" static/frontend/pilot_home.js
