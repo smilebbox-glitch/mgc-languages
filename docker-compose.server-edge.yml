@@ -1,4 +1,8 @@
 services:
+  wal-init:
+    cap_add:
+      - FOWNER
+
   secure-gateway:
     image: nginx:1.27-alpine
     depends_on:
