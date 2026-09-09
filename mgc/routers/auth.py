@@ -148,6 +148,11 @@ def build_auth_router(
         db.commit()
         response.delete_cookie("mgc_session", path="/")
         response.delete_cookie("mgc_csrf", path="/")
+        # Managed/shared phones should not retain authenticated application data
+        # after logout. This clears only this application's origin, not the
+        # corporate identity provider on another origin.
+        response.headers["Clear-Site-Data"] = '"cache", "cookies", "storage"'
+        response.headers["Cache-Control"] = "no-store, max-age=0"
         return {"ok": True}
 
     @router.get("/api/auth/oidc/login")
