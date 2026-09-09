@@ -13,6 +13,9 @@ compose = (ROOT / "docker-compose.pilot.yml").read_text(encoding="utf-8")
 server_edge = (ROOT / "docker-compose.server-edge.yml").read_text(encoding="utf-8")
 env = (ROOT / ".env.company-pilot.example").read_text(encoding="utf-8")
 entrypoint = (ROOT / "scripts/entrypoint.sh").read_text(encoding="utf-8")
+server_preflight = (ROOT / "scripts/server_security_preflight.py").read_text(encoding="utf-8")
+secure_start = (ROOT / "scripts/start-secure-server.sh").read_text(encoding="utf-8")
+gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
 requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
 
 # Password/CSRF/browser hardening.
@@ -108,7 +111,30 @@ assert "MGC_HTTPS_PORT=443" in env
 assert "TLS_CERT_FILE=./deploy/tls/tls.crt" in env
 assert "TLS_KEY_FILE=./deploy/tls/tls.key" in env
 
-# Uvicorn proxy trust is configurable; production must narrow this to the actual proxy.
+# Secure startup fails closed on weak identity/TLS configuration before Docker is started.
+for required_contract in (
+    'AUTH_MODE", "").lower() == "oidc"',
+    'REGISTRATION_ENABLED", "").lower() == "false"',
+    'COOKIE_SECURE", "").lower() == "true"',
+    'READY_REQUIRE_OIDC", "").lower() == "true"',
+    'READY_REQUIRE_SECURE_COOKIE", "").lower() == "true"',
+    'OIDC_ALLOWED_GROUP',
+    'OIDC_DISCOVERY_URL',
+    'TLS_CERT_FILE',
+    'TLS_KEY_FILE',
+    'openssl", "x509"',
+    'TLS certificate and private key do not match',
+):
+    assert required_contract in server_preflight
+assert 'python3 scripts/server_security_preflight.py "$ENV_FILE"' in secure_start
+assert "docker-compose.server-edge.yml" in secure_start
+assert "config --quiet" in secure_start
+
+# TLS private material must never be accidentally committed with normal Git usage.
+assert "deploy/tls/*" in gitignore
+assert "!deploy/tls/README.md" in gitignore
+
+# Uvicorn proxy trust is configurable; production exposure is shielded behind isolated reverse proxies.
 assert 'FORWARDED_ALLOW_IPS:-*' in entrypoint
 
 print("OK: server/mobile security baseline is protected")
