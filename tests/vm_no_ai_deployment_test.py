@@ -27,6 +27,18 @@ def main() -> None:
     assert "mem_limit:" in override
     assert "cpus:" in override
 
+    nginx = override.split("  nginx:", 1)[1]
+    assert "read_only: true" in nginx
+    assert "no-new-privileges:true" in nginx
+    assert "cap_drop:\n      - ALL" in nginx
+    for capability in ("CHOWN", "SETGID", "SETUID"):
+        assert f"      - {capability}" in nginx
+    assert "/var/cache/nginx:rw,noexec,nosuid" in nginx
+    assert "/var/run:rw,noexec,nosuid" in nginx
+    assert "/tmp:rw,noexec,nosuid" in nginx
+    for forbidden in ("SYS_ADMIN", "NET_ADMIN", "SYS_PTRACE", "DAC_OVERRIDE"):
+        assert forbidden not in nginx
+
     for source in (linux, windows):
         assert ".env.vm" in source
         assert "docker-compose.lan.yml" in source
@@ -38,7 +50,10 @@ def main() -> None:
     assert "Get-NetIPAddress" in windows
     assert "Get-VmIPv4" in windows
     assert "scripts\\start-vm.ps1" in bat
-    print("PASS: VM CPU-only / no-server-AI deployment contract with readiness-safe trusted hosts")
+    print(
+        "PASS: VM CPU-only / no-server-AI deployment contract with readiness-safe trusted hosts "
+        "and hardened exposed nginx gateway"
+    )
 
 
 if __name__ == "__main__":
