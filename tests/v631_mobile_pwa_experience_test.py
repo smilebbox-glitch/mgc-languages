@@ -56,7 +56,7 @@ def test_mobile_navigation_install_and_network_states_exist():
 def test_mobile_accessibility_and_focus_recovery_are_hardened():
     for token in (
         "aria-current','page'", 'aria-labelledby="mgcMobileSheetTitle"',
-        'tabindex="-1"', 'aria-pressed="false"', 'aria-pressed\',\'true',
+        'tabindex="-1"', 'aria-pressed="false"', "b.setAttribute('aria-pressed','true')",
         "e.key!=='Escape'", 'resetFocusMode()', 'closeSheet()',
         "doc.visibilityState==='visible'"
     ):
