@@ -1,0 +1,113 @@
+name: mgc-languages-v631-vm-deployment-kit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'VM_IT_DIRECTOR.md'
+      - '.env.vm.example'
+      - 'docker-compose.vm.prod.yml'
+      - 'deploy/vm/**'
+      - 'deploy/nginx/vm-https.conf'
+      - 'tests/v631_vm_deployment_kit_test.py'
+      - '.github/workflows/ci-v631-vm-deployment-kit.yml'
+  pull_request:
+    paths:
+      - 'VM_IT_DIRECTOR.md'
+      - '.env.vm.example'
+      - 'docker-compose.vm.prod.yml'
+      - 'deploy/vm/**'
+      - 'deploy/nginx/vm-https.conf'
+      - 'tests/v631_vm_deployment_kit_test.py'
+      - '.github/workflows/ci-v631-vm-deployment-kit.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: vm-deployment-kit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vm-kit-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: VM kit static regression
+        run: python tests/v631_vm_deployment_kit_test.py
+
+      - name: Shell syntax
+        run: bash -n deploy/vm/*.sh
+
+      - name: Prepare disposable VM configuration and TLS
+        shell: bash
+        run: |
+          cp .env.vm.example .env.vm.ci
+          sed -i 's/CHANGE_ME_VM_IP_OR_DNS/127.0.0.1/g' .env.vm.ci
+          sed -i 's/CHANGE_ME_DB_PASSWORD/ci_db_secret_97eca3d0/g' .env.vm.ci
+          sed -i 's/CHANGE_ME_OIDC_SECRET/ci_oidc_secret_97eca3d0/g' .env.vm.ci
+          sed -i 's/CHANGE_ME_ADMIN_PASSWORD/ci_admin_secret_97eca3d0/g' .env.vm.ci
+          sed -i 's/CHANGE_ME_METRICS_TOKEN/ci_metrics_secret_97eca3d0/g' .env.vm.ci
+          sed -i 's/^MGC_HTTPS_PORT=.*/MGC_HTTPS_PORT=18443/' .env.vm.ci
+          mkdir -p deploy/vm/runtime/certs
+          openssl req -x509 -newkey rsa:2048 -nodes -sha256 \
+            -keyout deploy/vm/runtime/certs/server.key \
+            -out deploy/vm/runtime/certs/server.crt \
+            -days 2 -subj '/CN=127.0.0.1' \
+            -addext 'subjectAltName=IP:127.0.0.1' >/dev/null 2>&1
+          chmod 600 deploy/vm/runtime/certs/server.key
+
+      - name: Validate production VM compose
+        run: docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml config --quiet
+
+      - name: Start production VM stack
+        run: docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml up -d --build
+
+      - name: Wait for HTTPS readiness
+        shell: bash
+        run: |
+          for i in $(seq 1 90); do
+            if curl -kfsS https://127.0.0.1:18443/health/ready > /tmp/vm-ready.json; then
+              cat /tmp/vm-ready.json
+              exit 0
+            fi
+            if docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml ps --status exited --services | grep -Eq '^(app|nginx|db)$'; then
+              docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml logs --no-color --tail 200 app nginx db
+              exit 1
+            fi
+            sleep 2
+          done
+          echo 'VM stack did not become ready in time.'
+          exit 1
+
+      - name: Verify HTTPS web/PWA and protected runtime
+        shell: bash
+        run: |
+          curl -kfsS https://127.0.0.1:18443/health/live > /tmp/vm-live.json
+          curl -kfsS https://127.0.0.1:18443/api/meta > /tmp/vm-meta.json
+          curl -kfsS https://127.0.0.1:18443/ > /tmp/vm-index.html
+          grep -q '/frontend/boot.js' /tmp/vm-index.html
+          curl -kfsS https://127.0.0.1:18443/manifest.webmanifest > /tmp/vm-manifest.json
+          docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml exec -T db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+          test -z "$(docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml port db 5432 2>/dev/null || true)"
+          test -z "$(docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml port app 8000 2>/dev/null || true)"
+          for endpoint in /api/adaptive-training/plan /api/manager/shift-analytics; do
+            status="$(curl -ksS -o /dev/null -w '%{http_code}' "https://127.0.0.1:18443${endpoint}")"
+            case "$status" in
+              401|403) ;;
+              *) echo "Protected endpoint ${endpoint} returned ${status}"; exit 1 ;;
+            esac
+          done
+
+      - name: VM runtime diagnostics
+        if: failure()
+        run: |
+          docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml ps -a || true
+          docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml logs --no-color --tail 250 app nginx db || true
+
+      - name: Stop disposable VM stack
+        if: always()
+        run: docker compose --env-file .env.vm.ci -f docker-compose.vm.prod.yml down -v --remove-orphans || true
