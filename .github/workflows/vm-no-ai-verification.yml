@@ -17,6 +17,9 @@ on:
       - 'mgc/**'
       - 'mgc_core/**'
       - 'asgi.py'
+      - 'static/frontend/boot.js'
+      - 'static/frontend/game_world_v630.js'
+      - 'static/game_world_v630.css'
   pull_request:
     branches: [main]
     paths:
@@ -32,6 +35,9 @@ on:
       - 'mgc/**'
       - 'mgc_core/**'
       - 'asgi.py'
+      - 'static/frontend/boot.js'
+      - 'static/frontend/game_world_v630.js'
+      - 'static/game_world_v630.css'
 
 permissions:
   contents: read
@@ -88,14 +94,16 @@ jobs:
           test -z "$(docker port "$APP_CID")"
           test -z "$(docker port "$DB_CID")"
           docker port "$NGINX_CID" 8080/tcp | grep -q ':8080'
-      - name: Verify frozen pilot metadata
+      - name: Verify current pilot metadata and Game World assets
         run: |
           curl -fsS http://127.0.0.1:8080/api/meta > /tmp/meta.json
+          curl -fsS http://127.0.0.1:8080/frontend/game_world_v630.js > /dev/null
+          curl -fsS http://127.0.0.1:8080/game_world_v630.css > /dev/null
           python - <<'PY'
           import json
           with open('/tmp/meta.json', encoding='utf-8') as fh:
               meta = json.load(fh)
-          assert meta.get('version') == '6.0.29', meta
+          assert meta.get('version') == '6.0.30', meta
           assert meta.get('title') == 'MGC Languages', meta
           print(meta)
           PY
