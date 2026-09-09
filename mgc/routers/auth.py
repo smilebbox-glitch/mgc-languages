@@ -31,6 +31,7 @@ def build_auth_router(
     current_user: Callable[..., Any],
     make_password_hash: Callable[[str], str],
     verify_password: Callable[[str, str], bool],
+    password_hash_needs_upgrade: Callable[[str], bool],
     token_digest: Callable[[str], str],
     rate_limit: Callable[..., Any],
     audit_event: Callable[..., Any],
@@ -45,9 +46,11 @@ def build_auth_router(
     oidc_display_name_claim: str,
     oidc_groups_claim: str,
     oidc_department_claim: str,
+    oidc_allowed_group: str = "",
 ) -> APIRouter:
     """Build the authentication router without importing the historical app module."""
     router = APIRouter()
+    required_oidc_group = oidc_allowed_group.strip()
 
     @router.post("/api/register")
     def register(
@@ -106,6 +109,8 @@ def build_auth_router(
             actual_department = _normalized_department(getattr(user, "department", "")) or "General"
             if supplied_department.casefold() != actual_department.casefold():
                 raise HTTPException(401, "Неверный логин, пароль или отдел")
+        if password_hash_needs_upgrade(user.password_hash):
+            user.password_hash = make_password_hash(payload.password)
         audit_event(
             db,
             "auth.login",
@@ -195,6 +200,8 @@ def build_auth_router(
             if isinstance(groups_raw, (list, tuple, set))
             else [str(groups_raw)]
         )
+        if required_oidc_group and required_oidc_group not in groups:
+            raise HTTPException(403, "Нет доступа к корпоративному приложению")
         role = oidc_role(groups)
         department = str(claims.get(oidc_department_claim) or "General").strip()[:160] or "General"
         user = db.scalar(select(user_model).where(user_model.username == username))
