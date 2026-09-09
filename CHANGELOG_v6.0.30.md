@@ -39,6 +39,19 @@ Stage B deepens the professional engineering side of the arcade while retaining 
 - **Odd One Out:** engineering classification context for functional-group vocabulary.
 - Stage B covers 5 existing game types without adding a second answer, API, XP or scoring path.
 
+## Stage C — Final Game Polish
+
+Stage C closes the Game World UX loop across all 20 game types while preserving server-authoritative scoring.
+
+- Per-game **Mission Briefing** onboarding before the first operation of a new session.
+- Five-step **Mission Flow** rail that makes the max-five session visible at all times.
+- Neutral **«Ответ зафиксирован»** transition between operations; it never claims per-answer correctness before the server finishes scoring.
+- Server-derived **Mission Complete** result hero with perfect / strong / developing presentation based only on the canonical final score.
+- Stronger press, focus and question-entry micro-interactions.
+- Mobile sticky progress, larger touch targets and compact result composition.
+- `prefers-reduced-motion` remains supported.
+- Stage C covers all 20 game types without adding a second answer, API, XP or scoring path.
+
 ## Preserved contracts
 
 - 20 game types.

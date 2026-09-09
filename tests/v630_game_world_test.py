@@ -21,6 +21,8 @@ STAGE_A_JS = (STATIC / "frontend/game_world_stage_a_v630.js").read_text(encoding
 STAGE_A_CSS = (STATIC / "game_world_stage_a_v630.css").read_text(encoding="utf-8")
 STAGE_B_JS = (STATIC / "frontend/game_world_stage_b_v630.js").read_text(encoding="utf-8")
 STAGE_B_CSS = (STATIC / "game_world_stage_b_v630.css").read_text(encoding="utf-8")
+STAGE_C_JS = (STATIC / "frontend/game_world_stage_c_v630.js").read_text(encoding="utf-8")
+STAGE_C_CSS = (STATIC / "game_world_stage_c_v630.css").read_text(encoding="utf-8")
 
 from mgc.services.practice_games import GAME_TYPES, MAX_GAME_ANSWERS
 
@@ -36,12 +38,13 @@ assert MAX_GAME_ANSWERS == 5, MAX_GAME_ANSWERS
 
 assert 'APP_VERSION = os.getenv("APP_VERSION", "6.0.30").strip() or "6.0.30"' in CONFIG, "config version"
 assert "pilotCandidate: 'v6.0.30'" in BOOT, "boot version"
-assert '<link rel="stylesheet" href="/game_world_v630.css">' in INDEX, "Game World CSS not loaded"
-assert '<script src="/frontend/game_world_v630.js" defer></script>' in INDEX, "Game World JS not loaded"
-assert '<link rel="stylesheet" href="/game_world_stage_a_v630.css">' in INDEX, "Stage A CSS not loaded"
-assert '<script src="/frontend/game_world_stage_a_v630.js" defer></script>' in INDEX, "Stage A JS not loaded"
-assert '<link rel="stylesheet" href="/game_world_stage_b_v630.css">' in INDEX, "Stage B CSS not loaded"
-assert '<script src="/frontend/game_world_stage_b_v630.js" defer></script>' in INDEX, "Stage B JS not loaded"
+for asset in (
+    "game_world_v630.css", "frontend/game_world_v630.js",
+    "game_world_stage_a_v630.css", "frontend/game_world_stage_a_v630.js",
+    "game_world_stage_b_v630.css", "frontend/game_world_stage_b_v630.js",
+    "game_world_stage_c_v630.css", "frontend/game_world_stage_c_v630.js",
+):
+    assert asset in INDEX, f"Game World asset not loaded: {asset}"
 
 world_block = re.search(r"const GAME_WORLD = Object\.freeze\(\{(.*?)\}\);", WORLD_JS, flags=re.S)
 assert world_block, "GAME_WORLD mapping not found"
@@ -53,14 +56,8 @@ for scene in MANIFEST["game_world"]["scenes"]:
     assert scene in WORLD_JS or scene in WORLD_CSS, f"missing scene: {scene}"
 
 for marker in (
-    "prefers-reduced-motion",
-    "gw30-conveyor",
-    "gw30-car",
-    "gw30-robot",
-    "gw30-hud",
-    "Базовый",
-    "Средний",
-    "Продвинутый",
+    "prefers-reduced-motion", "gw30-conveyor", "gw30-car", "gw30-robot", "gw30-hud",
+    "Базовый", "Средний", "Продвинутый",
 ):
     assert marker in WORLD_CSS or marker in WORLD_JS, f"missing Game World marker: {marker}"
 
@@ -70,26 +67,16 @@ assert stage_a["production_context_only"] is True
 assert stage_a["scoring_path"] == "unchanged"
 assert stage_a["answer_controls"] == "canonical-game-lab"
 assert len(stage_a["covered_games"]) == 12
-
 stage_a_block = re.search(r"const STAGE_A = Object\.freeze\(\{(.*?)\}\);", STAGE_A_JS, flags=re.S)
 assert stage_a_block, "STAGE_A mapping not found"
 stage_a_source = stage_a_block.group(1)
 for game_type in stage_a["covered_games"]:
     assert re.search(rf"(?:^|\s|,)['\"]?{re.escape(game_type)}['\"]?\s*:", stage_a_source), f"missing Stage A mapping: {game_type}"
-
 for marker in (
-    "gw30a-assembly-line",
-    "gw30a-weld-cell",
-    "gw30a-paint-panel",
-    "gw30a-flow-map",
-    "gw30a-hotspot-enhanced",
-    "gw30a-order-enhanced",
-    "gw30a-tools-enhanced",
-    "gw30a-defect-enhanced",
-    "gw30a-safety-enhanced",
-    "gw30a-route-enhanced",
-    "gw30a-kanban-enhanced",
-    "prefers-reduced-motion",
+    "gw30a-assembly-line", "gw30a-weld-cell", "gw30a-paint-panel", "gw30a-flow-map",
+    "gw30a-hotspot-enhanced", "gw30a-order-enhanced", "gw30a-tools-enhanced",
+    "gw30a-defect-enhanced", "gw30a-safety-enhanced", "gw30a-route-enhanced",
+    "gw30a-kanban-enhanced", "prefers-reduced-motion",
 ):
     assert marker in STAGE_A_JS or marker in STAGE_A_CSS, f"missing Stage A marker: {marker}"
 
@@ -99,39 +86,40 @@ assert stage_b["production_context_only"] is True
 assert stage_b["scoring_path"] == "unchanged"
 assert stage_b["answer_controls"] == "canonical-game-lab"
 assert stage_b["covered_games"] == ["mistake", "quality_gate", "spec_check", "bom_builder", "odd_one_out"]
-
 stage_b_block = re.search(r"const STAGE_B = Object\.freeze\(\{(.*?)\}\);", STAGE_B_JS, flags=re.S)
 assert stage_b_block, "STAGE_B mapping not found"
 stage_b_source = stage_b_block.group(1)
 for game_type in stage_b["covered_games"]:
     assert re.search(rf"(?:^|\s|,)['\"]?{re.escape(game_type)}['\"]?\s*:", stage_b_source), f"missing Stage B mapping: {game_type}"
-
 for marker in (
-    "gw30b-quality-cell",
-    "gw30b-cmm",
-    "gw30b-tolerance",
-    "gw30b-status-stack",
-    "gw30b-engineering-board",
-    "gw30b-drawing",
-    "gw30b-bom-tree",
-    "gw30b-thread",
-    "gw30b-quality-gauge-enhanced",
-    "gw30b-spec-enhanced",
-    "gw30b-bom-enhanced",
+    "gw30b-quality-cell", "gw30b-cmm", "gw30b-tolerance", "gw30b-status-stack",
+    "gw30b-engineering-board", "gw30b-drawing", "gw30b-bom-tree", "gw30b-thread",
+    "gw30b-quality-gauge-enhanced", "gw30b-spec-enhanced", "gw30b-bom-enhanced",
     "prefers-reduced-motion",
 ):
     assert marker in STAGE_B_JS or marker in STAGE_B_CSS, f"missing Stage B marker: {marker}"
 
-# Stage A/B are visual/context layers. They may observe canonical controls, but they must
+stage_c = MANIFEST["game_world"]["stage_c"]
+assert stage_c["scope"] == ["all-20-games"]
+assert stage_c["production_context_only"] is True
+assert stage_c["scoring_path"] == "unchanged"
+assert stage_c["answer_controls"] == "canonical-game-lab"
+assert stage_c["covered_games"] == MANIFEST["game_contract"]["game_types"]
+assert stage_c["per_answer_correctness_before_finish"] is False
+assert stage_c["result_source"] == "canonical-server-finish"
+for game_type in stage_c["covered_games"]:
+    assert re.search(rf"\b{re.escape(game_type)}\s*:\s*\{{brief:", STAGE_C_JS), f"missing Stage C briefing: {game_type}"
+for marker in (
+    "gw30c-onboarding", "gw30c-rail", "gw30c-recorded", "gw30c-result-hero",
+    "MISSION BRIEFING", "MISSION COMPLETE", "Ответ зафиксирован", "prefers-reduced-motion",
+):
+    assert marker in STAGE_C_JS or marker in STAGE_C_CSS, f"missing Stage C marker: {marker}"
+
+# Stages A/B/C are visual/context layers. They may observe canonical controls, but they must
 # not create alternate answer/scoring/API paths.
-for layer_name, source in (("Stage A", STAGE_A_JS), ("Stage B", STAGE_B_JS)):
+for layer_name, source in (("Stage A", STAGE_A_JS), ("Stage B", STAGE_B_JS), ("Stage C", STAGE_C_JS)):
     for forbidden in (
-        "submitAnswer(",
-        "/api/games/",
-        "spendable_xp",
-        "awarded_xp",
-        "MAX_GAME_ANSWERS =",
-        "fetch(",
+        "submitAnswer(", "/api/games/", "spendable_xp", "awarded_xp", "MAX_GAME_ANSWERS =", "fetch(",
     ):
         assert forbidden not in source, f"{layer_name} must not own gameplay/scoring path: {forbidden}"
 
@@ -139,9 +127,10 @@ for rel in MANIFEST["critical_files"]:
     path = ROOT / rel
     assert path.is_file() and path.stat().st_size > 0, f"critical file missing: {rel}"
 
-subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_v630.js")], check=True, cwd=ROOT)
-subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_stage_a_v630.js")], check=True, cwd=ROOT)
-subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_stage_b_v630.js")], check=True, cwd=ROOT)
-subprocess.run(["node", "--check", str(STATIC / "frontend/boot.js")], check=True, cwd=ROOT)
+for script in (
+    "frontend/game_world_v630.js", "frontend/game_world_stage_a_v630.js",
+    "frontend/game_world_stage_b_v630.js", "frontend/game_world_stage_c_v630.js", "frontend/boot.js",
+):
+    subprocess.run(["node", "--check", str(STATIC / script)], check=True, cwd=ROOT)
 
-print("PASS: v6.0.30 Game World Stages A+B deepen production scenes while preserving 20 games, max-five, anti-farm and canonical scoring/API boundaries")
+print("PASS: v6.0.30 Game World Stages A+B+C deepen and polish all 20 games while preserving max-five, anti-farm and canonical scoring/API boundaries")
