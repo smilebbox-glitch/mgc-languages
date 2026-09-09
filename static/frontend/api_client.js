@@ -1,9 +1,11 @@
-/* v6.0.0: canonical CSRF-aware API client for modular frontend code. */
+/* v6.0.29 hotfix: canonical CSRF-aware API client with bounded fetch time. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
   if (!frontend) throw new Error('MGCFrontend runtime is missing');
   if (frontend.has('api-client')) return;
+
+  const DEFAULT_TIMEOUT_MS = 12000;
 
   function cookieValue(name) {
     const prefix = String(name) + '=';
@@ -14,6 +16,9 @@
 
   async function request(url, options) {
     const opts = Object.assign({credentials: 'same-origin'}, options || {});
+    const timeoutMs = Math.max(0, Number(opts.timeoutMs == null ? DEFAULT_TIMEOUT_MS : opts.timeoutMs));
+    delete opts.timeoutMs;
+
     opts.headers = Object.assign({}, opts.headers || {});
     if (opts.body && !(opts.body instanceof FormData)) {
       opts.headers = Object.assign({'Content-Type': 'application/json'}, opts.headers || {});
@@ -24,7 +29,26 @@
       if (csrf) opts.headers['X-CSRF-Token'] = csrf;
     }
 
-    const response = await fetch(url, opts);
+    let timer = null;
+    let controller = null;
+    if (!opts.signal && timeoutMs > 0 && typeof AbortController === 'function') {
+      controller = new AbortController();
+      opts.signal = controller.signal;
+      timer = window.setTimeout(function () { controller.abort(); }, timeoutMs);
+    }
+
+    let response;
+    try {
+      response = await fetch(url, opts);
+    } catch (error) {
+      if (error && error.name === 'AbortError') {
+        throw new Error('Сервер не ответил вовремя. Повторите действие.');
+      }
+      throw error;
+    } finally {
+      if (timer) window.clearTimeout(timer);
+    }
+
     let data = {};
     try { data = await response.json(); } catch (_) {}
 
@@ -46,6 +70,7 @@
 
   frontend.register('api-client', {
     request: request,
-    cookieValue: cookieValue
+    cookieValue: cookieValue,
+    defaultTimeoutMs: DEFAULT_TIMEOUT_MS
   });
 })();
