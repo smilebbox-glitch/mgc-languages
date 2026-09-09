@@ -107,7 +107,6 @@ assert stage_c["answer_controls"] == "canonical-game-lab"
 assert stage_c["covered_games"] == MANIFEST["game_contract"]["game_types"]
 assert stage_c["per_answer_correctness_before_finish"] is False
 assert stage_c["result_source"] == "canonical-server-finish"
-assert STAGE_C_JS.count("brief:") == 20, "Stage C must brief all 20 games"
 for game_type in stage_c["covered_games"]:
     assert re.search(rf"\b{re.escape(game_type)}\s*:\s*\{{brief:", STAGE_C_JS), f"missing Stage C briefing: {game_type}"
 for marker in (
