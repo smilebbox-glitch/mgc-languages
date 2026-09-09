@@ -72,6 +72,7 @@ def test_manifest_has_pwa_shortcuts_without_changing_install_identity():
     assert MANIFEST['start_url'] == '/'
     assert MANIFEST['scope'] == '/'
     assert MANIFEST['display'] == 'standalone'
+    assert MANIFEST['display_override'][:2] == ['window-controls-overlay', 'standalone']
     assert MANIFEST['launch_handler']['client_mode'] == 'navigate-existing'
     urls = {item['url'] for item in MANIFEST['shortcuts']}
     assert {'/?view=games', '/?view=topics', '/?view=roleplay'} <= urls
@@ -82,6 +83,12 @@ def test_service_worker_precaches_only_public_mobile_shell_assets_and_remains_pr
     assert "'/mobile_experience_v631.css'" in SW
     assert "'/frontend/mobile_experience_v631.js'" in SW
     assert "request.headers.has('authorization')" in SW
+    assert "request.headers.has('cookie')" in SW
+    assert "request.headers.has('range')" in SW
+    assert "cacheControl.includes('no-store')" in SW
+    assert "cacheControl.includes('private')" in SW
+    assert "response.headers.has('set-cookie')" in SW
+    assert "isCacheableStaticResponse(response)" in SW
     assert "request.mode === 'navigate'" in SW
     assert "fetch(request, {cache: 'no-store'})" in SW
     assert "'/index.html'" not in SW
@@ -90,6 +97,7 @@ def test_service_worker_precaches_only_public_mobile_shell_assets_and_remains_pr
 
 def test_pwa_update_lifecycle_and_ios_standalone_detection_are_present():
     assert "navigator.standalone === true" in PWA
+    assert "(display-mode: window-controls-overlay)" in PWA
     assert "registration.addEventListener('updatefound'" in PWA
     assert "navigator.serviceWorker.addEventListener('controllerchange'" in PWA
     assert "emit('mgc:pwa-update'" in PWA
