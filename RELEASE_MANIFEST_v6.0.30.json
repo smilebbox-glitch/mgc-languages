@@ -33,6 +33,8 @@
       "static/game_world_stage_d_v630.css",
       "static/frontend/game_world_stage_d_v630.js",
       "static/frontend/game_world_stage_d_i18n_v630.js",
+      "static/factory_journey_v2_v630.css",
+      "static/frontend/factory_journey_v2_v630.js",
       "static/frontend/game_chinese_localization_v630.js"
     ],
     "reduced_motion": true,
@@ -114,8 +116,28 @@
       "per_answer_correctness_before_finish": false,
       "chinese_process_labels": true
     },
+    "stage_e": {
+      "scope": ["supplier", "logistics", "welding", "paint", "assembly", "quality", "engineering"],
+      "journey_orchestration_only": true,
+      "scoring_path": "unchanged",
+      "launch_path": "canonical-game-lab-startGame",
+      "progress_source": "canonical-game-engagement-progress",
+      "stage_count": 7,
+      "covered_games": [
+        "dialogue_choice", "logistics_route", "shift_incident", "defect_detective", "tool_select", "spec_check", "bom_builder"
+      ],
+      "experience_layers": [
+        "shift-simulation-route",
+        "production-incident-briefings",
+        "digital-vehicle-build-progress",
+        "factory-twin-station-status",
+        "english-and-chinese-incident-copy"
+      ],
+      "per_answer_correctness_before_finish": false,
+      "chinese_incident_labels": true
+    },
     "chinese_localization": {
-      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d"],
+      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d", "stage-e"],
       "presentation_only": true,
       "canonical_answer_values": "unchanged",
       "scoring_path": "unchanged",
@@ -128,7 +150,8 @@
         "spec-labels",
         "production-scene-labels",
         "mission-ui",
-        "stage-d-process-motion-labels"
+        "stage-d-process-motion-labels",
+        "stage-e-factory-journey-incidents"
       ]
     }
   },
@@ -175,6 +198,8 @@
     "static/game_world_stage_d_v630.css",
     "static/frontend/game_world_stage_d_v630.js",
     "static/frontend/game_world_stage_d_i18n_v630.js",
+    "static/factory_journey_v2_v630.css",
+    "static/frontend/factory_journey_v2_v630.js",
     "static/frontend/game_chinese_localization_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
