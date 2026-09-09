@@ -62,6 +62,9 @@ jobs:
       - name: Factory Training Intelligence regression
         run: python tests/v631_factory_training_intelligence_test.py
 
+      - name: PWA + Mobile Experience regression
+        run: python tests/v631_mobile_pwa_experience_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -87,6 +90,9 @@ jobs:
           node --check static/frontend/factory_process_simulator_v630.js
           node --check static/frontend/factory_simulator_stage2_v630.js
           node --check static/frontend/factory_training_intelligence_v631.js
+          node --check static/frontend/mobile_experience_v631.js
+          node --check static/pwa-register.js
+          node --check static/service-worker.js
           node --check static/frontend/boot.js
 
       - name: Current release guard
