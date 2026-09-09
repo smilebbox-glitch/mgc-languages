@@ -1,0 +1,79 @@
+name: MGC Languages VM no-AI verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vm-no-ai-verification.yml'
+      - '.env.vm.example'
+      - 'docker-compose.lan.yml'
+      - 'docker-compose.vm.yml'
+      - 'Dockerfile'
+      - 'scripts/start-vm.sh'
+      - 'scripts/start-vm.ps1'
+      - 'START_VM.bat'
+      - 'tests/vm_no_ai_deployment_test.py'
+      - 'mgc/**'
+      - 'mgc_core/**'
+      - 'asgi.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/vm-no-ai-verification.yml'
+      - '.env.vm.example'
+      - 'docker-compose.lan.yml'
+      - 'docker-compose.vm.yml'
+      - 'Dockerfile'
+      - 'scripts/start-vm.sh'
+      - 'scripts/start-vm.ps1'
+      - 'START_VM.bat'
+      - 'tests/vm_no_ai_deployment_test.py'
+      - 'mgc/**'
+      - 'mgc_core/**'
+      - 'asgi.py'
+
+permissions:
+  contents: read
+
+jobs:
+  vm-no-ai-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify VM deployment contract
+        run: python tests/vm_no_ai_deployment_test.py
+      - name: Start CPU-only VM profile
+        run: |
+          chmod +x scripts/start-vm.sh scripts/entrypoint.sh
+          ./scripts/start-vm.sh
+      - name: Verify no-server-AI/TTS environment and readiness
+        shell: bash
+        run: |
+          curl -fsS http://127.0.0.1:8080/health/live
+          curl -fsS http://127.0.0.1:8080/health/ready
+          CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q app)"
+          test -n "$CID"
+          test "$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID" | sed -n 's/^TTS_ENABLED=//p')" = "false"
+          test "$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID" | sed -n 's/^TTS_DISK_CACHE_ENABLED=//p')" = "false"
+      - name: Verify frozen pilot metadata
+        run: |
+          curl -fsS http://127.0.0.1:8080/api/meta > /tmp/meta.json
+          python - <<'PY'
+          import json
+          with open('/tmp/meta.json', encoding='utf-8') as fh:
+              meta = json.load(fh)
+          assert meta.get('version') == '6.0.29', meta
+          assert meta.get('title') == 'MGC Languages', meta
+          print(meta)
+          PY
+      - name: Diagnostics
+        if: failure()
+        run: docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml logs --no-color --tail=220 app db nginx || true
+      - name: Stop VM stack
+        if: always()
+        run: docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml down -v --remove-orphans || true
