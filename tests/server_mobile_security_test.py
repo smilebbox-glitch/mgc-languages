@@ -69,6 +69,17 @@ assert "read_only: true" in compose
 assert "no-new-privileges:true" in compose
 assert "cap_drop:" in compose and "- ALL" in compose
 assert "backend:\n    internal: true" in compose
+assert "app-proxy:\n    internal: true" in compose
+assert "networks: [backend, app-proxy]" in compose
+assert "networks: [edge, app-proxy]" in compose
+
+# The user-facing nginx is never attached to the database network. The app is the only bridge.
+nginx_block = compose.split("\n  nginx:\n", 1)[1].split("\nnetworks:\n", 1)[0]
+assert "networks: [edge, app-proxy]" in nginx_block
+assert "backend" not in nginx_block
+app_block = compose.split("\n  app:\n", 1)[1].split("\n  backup:\n", 1)[0]
+assert "networks: [backend, app-proxy]" in app_block
+
 # Plain HTTP is diagnostic-only and cannot be reached from employee phones/LAN.
 assert '"127.0.0.1:${MGC_PORT:-8080}:8080"' in compose
 
