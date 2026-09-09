@@ -5,10 +5,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 security = (ROOT / "mgc/security.py").read_text(encoding="utf-8")
+auth_router = (ROOT / "mgc/routers/auth.py").read_text(encoding="utf-8")
+auth_bridge = (ROOT / "mgc_core/auth_router_bridge.py").read_text(encoding="utf-8")
 nginx = (ROOT / "deploy/nginx/default.conf").read_text(encoding="utf-8")
 compose = (ROOT / "docker-compose.pilot.yml").read_text(encoding="utf-8")
 env = (ROOT / ".env.company-pilot.example").read_text(encoding="utf-8")
 entrypoint = (ROOT / "scripts/entrypoint.sh").read_text(encoding="utf-8")
+requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
 
 # Password/CSRF/browser hardening.
 assert "PASSWORD_PBKDF2_ITERATIONS = 600_000" in security
@@ -18,6 +21,25 @@ assert "form-action 'self'" in security
 assert '"X-Permitted-Cross-Domain-Policies": "none"' in security
 assert '"Cross-Origin-Opener-Policy": "same-origin"' in security
 assert '"Cache-Control"] = "no-store, max-age=0"' in security
+
+# Successful legacy local logins transparently migrate to the stronger password work factor.
+assert "password_hash_needs_upgrade(user.password_hash)" in auth_router
+assert "user.password_hash = make_password_hash(payload.password)" in auth_router
+assert '"password_hash_needs_upgrade"' in auth_bridge
+
+# Corporate OIDC access is not granted merely because the directory account exists.
+assert "required_oidc_group and required_oidc_group not in groups" in auth_router
+assert 'os.getenv("OIDC_ALLOWED_GROUP", "").strip()' in auth_bridge
+assert "OIDC_ALLOWED_GROUP: ${OIDC_ALLOWED_GROUP:-}" in compose
+assert "OIDC_ALLOWED_GROUP=mgc-language-users" in env
+assert "OIDC_SCOPE=openid profile email groups" in env
+assert "SESSION_TTL_HOURS=8" in env
+
+# Vulnerable packages discovered by the security gate must stay on remediated branches.
+assert "fastapi==0.141.1" in requirements
+assert "starlette==1.3.1" in requirements
+assert "python-multipart==0.0.31" in requirements
+assert "authlib==1.6.12" in requirements
 
 # Reverse proxy anti-abuse and information-disclosure controls.
 assert "server_tokens off" in nginx
