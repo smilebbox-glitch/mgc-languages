@@ -22,6 +22,19 @@
   function query(sel,scope){return (scope||document).querySelector(sel)}
   function queryAll(sel,scope){return Array.from((scope||document).querySelectorAll(sel))}
 
+  function loadSceneRealismAssets(){
+    if(!query('link[data-ad2-scenes]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';link.href='/art_direction_scenes_v630.css';link.dataset.ad2Scenes='css';
+      document.head.appendChild(link);
+    }
+    if(!query('script[data-ad2-scenes]')&&!frontend.has('art-direction-scenes-v630')){
+      const script=document.createElement('script');
+      script.src='/frontend/art_direction_scenes_v630.js';script.defer=true;script.dataset.ad2Scenes='js';
+      document.body.appendChild(script);
+    }
+  }
+
   function injectHeroVisual(){
     const hero=query('.pilot-hero');
     if(!hero||query('.mgc-hero-visual',hero)) return;
@@ -78,7 +91,7 @@
 
   function refresh(){injectHeroVisual();injectJourneyVehicle()}
   function install(){
-    installShowcase();refresh();
+    installShowcase();refresh();loadSceneRealismAssets();
     const observer=new MutationObserver(function(){refresh()});observer.observe(document.body,{subtree:true,childList:true});
   }
 
