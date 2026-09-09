@@ -1,0 +1,90 @@
+name: repository-integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: repository-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-policy:
+    name: repository-policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install application dependencies
+        run: pip install -r requirements.txt
+
+      - name: Reject tracked secrets
+        run: python scripts/secret_preflight.py
+
+      - name: Preserve v6.0.29 RC1 freeze
+        run: python scripts/release_candidate_guard.py --json
+
+      - name: Verify PWA private-cache isolation
+        run: python tests/pwa_security_test.py
+
+      - name: Validate PWA JavaScript syntax
+        run: |
+          node --check static/service-worker.js
+          node --check static/pwa-register.js
+
+      - name: Reject dangerous workflow privileges
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -nE --include='*.yml' --include='*.yaml' '^[[:space:]]*pull_request_target:' .github/workflows; then
+            echo 'pull_request_target is prohibited for this repository.'
+            exit 1
+          fi
+          if grep -R -nE --include='*.yml' --include='*.yaml' '^[[:space:]]*permissions:[[:space:]]*write-all[[:space:]]*$' .github/workflows; then
+            echo 'permissions: write-all is prohibited for this repository.'
+            exit 1
+          fi
+
+  main-pr-association:
+    name: main-pr-association
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify main commit came through a merged pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: pulls } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: context.sha,
+            });
+            const mergedToMain = pulls.filter((pr) => pr.merged_at && pr.base && pr.base.ref === 'main');
+            if (mergedToMain.length === 0) {
+              core.setFailed(
+                'Integrity alarm: this main commit is not associated with a merged pull request. ' +
+                'True prevention requires a GitHub branch ruleset/branch protection.'
+              );
+            } else {
+              core.info(`main commit is associated with merged PR #${mergedToMain[0].number}`);
+            }
