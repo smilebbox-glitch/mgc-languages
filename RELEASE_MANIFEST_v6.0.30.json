@@ -35,7 +35,8 @@
       "static/frontend/game_world_stage_d_i18n_v630.js",
       "static/factory_journey_v2_v630.css",
       "static/frontend/factory_journey_v2_v630.js",
-      "static/frontend/game_chinese_localization_v630.js"
+      "static/frontend/game_chinese_localization_v630.js",
+      "static/frontend/chinese_learning_surface_v630.js"
     ],
     "reduced_motion": true,
     "mobile_adaptive": true,
@@ -60,9 +61,7 @@
       "production_context_only": true,
       "scoring_path": "unchanged",
       "answer_controls": "canonical-game-lab",
-      "covered_games": [
-        "mistake", "quality_gate", "spec_check", "bom_builder", "odd_one_out"
-      ],
+      "covered_games": ["mistake", "quality_gate", "spec_check", "bom_builder", "odd_one_out"],
       "visual_processes": [
         "quality-cmm-tolerance-station",
         "quality-disposition-pass-rework-hold",
@@ -123,9 +122,7 @@
       "launch_path": "canonical-game-lab-startGame",
       "progress_source": "canonical-game-engagement-progress",
       "stage_count": 7,
-      "covered_games": [
-        "dialogue_choice", "logistics_route", "shift_incident", "defect_detective", "tool_select", "spec_check", "bom_builder"
-      ],
+      "covered_games": ["dialogue_choice", "logistics_route", "shift_incident", "defect_detective", "tool_select", "spec_check", "bom_builder"],
       "experience_layers": [
         "shift-simulation-route",
         "production-incident-briefings",
@@ -137,11 +134,12 @@
       "chinese_incident_labels": true
     },
     "chinese_localization": {
-      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d", "stage-e"],
+      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d", "stage-e", "arcade-mastery", "xp", "quiz", "roleplay", "course30"],
       "presentation_only": true,
       "canonical_answer_values": "unchanged",
       "scoring_path": "unchanged",
       "pinyin_game_titles": true,
+      "pinyin_quiz_choices_when_chinese": true,
       "targets": [
         "game-titles",
         "quality-statuses",
@@ -151,9 +149,23 @@
         "production-scene-labels",
         "mission-ui",
         "stage-d-process-motion-labels",
-        "stage-e-factory-journey-incidents"
+        "stage-e-factory-journey-incidents",
+        "arcade-mastery-profile",
+        "xp-and-progress-ui",
+        "quiz-ui-and-chinese-answer-pinyin",
+        "roleplay-ui",
+        "course30-ui"
       ]
     }
+  },
+  "learning_content_projection": {
+    "raw_terms_per_language_unchanged": 2029,
+    "one_visible_term_one_level": true,
+    "duplicate_key": "normalized-visible-term",
+    "canonical_level_policy": "lowest-existing-level-A1-to-C1",
+    "duplicate_row_policy": "richest-row-within-canonical-level",
+    "stable_raw_ids_preserved": true,
+    "applies_to": ["topics", "terms", "quiz", "course30", "final-exam", "games", "assistant", "review"]
   },
   "frontend_modules": [
     "error-boundary", "legacy-app", "service-status", "api-client", "app-state",
@@ -201,6 +213,7 @@
     "static/factory_journey_v2_v630.css",
     "static/frontend/factory_journey_v2_v630.js",
     "static/frontend/game_chinese_localization_v630.js",
+    "static/frontend/chinese_learning_surface_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",
