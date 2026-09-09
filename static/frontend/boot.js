@@ -27,8 +27,10 @@
   function loadProductionSimulationEnhancements() {
     loadOptionalStyle('/production_motion_v630.css');
     loadOptionalStyle('/factory_process_simulator_v630.css');
+    loadOptionalStyle('/factory_simulator_stage2_v630.css');
     loadOptionalScript('/frontend/production_motion_v630.js');
     loadOptionalScript('/frontend/factory_process_simulator_v630.js');
+    loadOptionalScript('/frontend/factory_simulator_stage2_v630.js');
   }
 
   try {

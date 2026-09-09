@@ -56,6 +56,9 @@ jobs:
       - name: Factory Process Simulator regression
         run: python tests/v630_factory_process_simulator_test.py
 
+      - name: Factory Simulator Stage 2 regression
+        run: python tests/v630_factory_simulator_stage2_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -79,6 +82,7 @@ jobs:
           node --check static/frontend/factory_digital_thread_v630.js
           node --check static/frontend/production_motion_v630.js
           node --check static/frontend/factory_process_simulator_v630.js
+          node --check static/frontend/factory_simulator_stage2_v630.js
           node --check static/frontend/boot.js
 
       - name: Current release guard
