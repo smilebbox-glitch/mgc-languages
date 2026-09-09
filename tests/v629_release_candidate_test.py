@@ -58,6 +58,7 @@ assert (ROOT / MANIFEST["deployment_contract"]["one_click_windows"]).is_file()
 
 subprocess.run(["python", str(ROOT / "scripts/release_candidate_guard.py")], check=True, cwd=ROOT)
 subprocess.run(["python", str(ROOT / "scripts/release_candidate_guard.py"), "--json"], check=True, cwd=ROOT)
+subprocess.run(["python", str(ROOT / "tests/pwa_security_test.py")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(ROOT / "static/frontend/boot.js")], check=True, cwd=ROOT)
 
 print("PASS: v6.0.29 RC1 freezes the pilot feature set, 20-game/max-five contract, frontend modules and deployment readiness")
