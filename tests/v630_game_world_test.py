@@ -19,6 +19,8 @@ WORLD_JS = (STATIC / "frontend/game_world_v630.js").read_text(encoding="utf-8")
 WORLD_CSS = (STATIC / "game_world_v630.css").read_text(encoding="utf-8")
 STAGE_A_JS = (STATIC / "frontend/game_world_stage_a_v630.js").read_text(encoding="utf-8")
 STAGE_A_CSS = (STATIC / "game_world_stage_a_v630.css").read_text(encoding="utf-8")
+STAGE_B_JS = (STATIC / "frontend/game_world_stage_b_v630.js").read_text(encoding="utf-8")
+STAGE_B_CSS = (STATIC / "game_world_stage_b_v630.css").read_text(encoding="utf-8")
 
 from mgc.services.practice_games import GAME_TYPES, MAX_GAME_ANSWERS
 
@@ -38,6 +40,8 @@ assert '<link rel="stylesheet" href="/game_world_v630.css">' in INDEX, "Game Wor
 assert '<script src="/frontend/game_world_v630.js" defer></script>' in INDEX, "Game World JS not loaded"
 assert '<link rel="stylesheet" href="/game_world_stage_a_v630.css">' in INDEX, "Stage A CSS not loaded"
 assert '<script src="/frontend/game_world_stage_a_v630.js" defer></script>' in INDEX, "Stage A JS not loaded"
+assert '<link rel="stylesheet" href="/game_world_stage_b_v630.css">' in INDEX, "Stage B CSS not loaded"
+assert '<script src="/frontend/game_world_stage_b_v630.js" defer></script>' in INDEX, "Stage B JS not loaded"
 
 world_block = re.search(r"const GAME_WORLD = Object\.freeze\(\{(.*?)\}\);", WORLD_JS, flags=re.S)
 assert world_block, "GAME_WORLD mapping not found"
@@ -89,17 +93,47 @@ for marker in (
 ):
     assert marker in STAGE_A_JS or marker in STAGE_A_CSS, f"missing Stage A marker: {marker}"
 
-# Stage A is a visual/context layer. It may observe canonical controls, but it must not
-# create an alternate answer/scoring/API path.
-for forbidden in (
-    "submitAnswer(",
-    "/api/games/",
-    "spendable_xp",
-    "awarded_xp",
-    "MAX_GAME_ANSWERS =",
-    "fetch(",
+stage_b = MANIFEST["game_world"]["stage_b"]
+assert stage_b["scope"] == ["quality", "engineering"]
+assert stage_b["production_context_only"] is True
+assert stage_b["scoring_path"] == "unchanged"
+assert stage_b["answer_controls"] == "canonical-game-lab"
+assert stage_b["covered_games"] == ["mistake", "quality_gate", "spec_check", "bom_builder", "odd_one_out"]
+
+stage_b_block = re.search(r"const STAGE_B = Object\.freeze\(\{(.*?)\}\);", STAGE_B_JS, flags=re.S)
+assert stage_b_block, "STAGE_B mapping not found"
+stage_b_source = stage_b_block.group(1)
+for game_type in stage_b["covered_games"]:
+    assert re.search(rf"(?:^|\s|,)['\"]?{re.escape(game_type)}['\"]?\s*:", stage_b_source), f"missing Stage B mapping: {game_type}"
+
+for marker in (
+    "gw30b-quality-cell",
+    "gw30b-cmm",
+    "gw30b-tolerance",
+    "gw30b-status-stack",
+    "gw30b-engineering-board",
+    "gw30b-drawing",
+    "gw30b-bom-tree",
+    "gw30b-thread",
+    "gw30b-quality-gauge-enhanced",
+    "gw30b-spec-enhanced",
+    "gw30b-bom-enhanced",
+    "prefers-reduced-motion",
 ):
-    assert forbidden not in STAGE_A_JS, f"Stage A must not own gameplay/scoring path: {forbidden}"
+    assert marker in STAGE_B_JS or marker in STAGE_B_CSS, f"missing Stage B marker: {marker}"
+
+# Stage A/B are visual/context layers. They may observe canonical controls, but they must
+# not create alternate answer/scoring/API paths.
+for layer_name, source in (("Stage A", STAGE_A_JS), ("Stage B", STAGE_B_JS)):
+    for forbidden in (
+        "submitAnswer(",
+        "/api/games/",
+        "spendable_xp",
+        "awarded_xp",
+        "MAX_GAME_ANSWERS =",
+        "fetch(",
+    ):
+        assert forbidden not in source, f"{layer_name} must not own gameplay/scoring path: {forbidden}"
 
 for rel in MANIFEST["critical_files"]:
     path = ROOT / rel
@@ -107,6 +141,7 @@ for rel in MANIFEST["critical_files"]:
 
 subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_v630.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_stage_a_v630.js")], check=True, cwd=ROOT)
+subprocess.run(["node", "--check", str(STATIC / "frontend/game_world_stage_b_v630.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(STATIC / "frontend/boot.js")], check=True, cwd=ROOT)
 
-print("PASS: v6.0.30 Game World Stage A deepens production scenes while preserving 20 games, max-five, anti-farm and canonical scoring/API boundaries")
+print("PASS: v6.0.30 Game World Stages A+B deepen production scenes while preserving 20 games, max-five, anti-farm and canonical scoring/API boundaries")
