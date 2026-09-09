@@ -55,11 +55,17 @@ jobs:
         shell: bash
         run: |
           curl -fsS http://127.0.0.1:8080/health/live
-          curl -fsS http://127.0.0.1:8080/health/ready
+          curl -fsS http://127.0.0.1:8080/health/ready | tee /tmp/vm-ready.json
           CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q app)"
           test -n "$CID"
-          test "$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID" | sed -n 's/^TTS_ENABLED=//p')" = "false"
-          test "$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID" | sed -n 's/^TTS_DISK_CACHE_ENABLED=//p')" = "false"
+          ENV_DUMP="$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID")"
+          test "$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TTS_ENABLED=//p')" = "false"
+          test "$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TTS_DISK_CACHE_ENABLED=//p')" = "false"
+          TRUSTED="$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TRUSTED_HOSTS=//p')"
+          test -n "$TRUSTED"
+          case "$TRUSTED" in *'*'*) echo "Wildcard trusted host is forbidden in pilot VM: $TRUSTED"; exit 1;; esac
+          printf '%s' "$TRUSTED" | grep -q 'localhost'
+          printf '%s' "$TRUSTED" | grep -q '127.0.0.1'
       - name: Verify frozen pilot metadata
         run: |
           curl -fsS http://127.0.0.1:8080/api/meta > /tmp/meta.json
@@ -69,6 +75,7 @@ jobs:
               meta = json.load(fh)
           assert meta.get('version') == '6.0.29', meta
           assert meta.get('title') == 'MGC Languages', meta
+          assert meta.get('server_tts_available') is False, meta
           print(meta)
           PY
       - name: Diagnostics
