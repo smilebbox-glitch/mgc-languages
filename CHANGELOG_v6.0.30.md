@@ -112,6 +112,20 @@ The Chinese track is now consistent beyond the game scene itself.
 - A learning-content projection enforces **one visible term = one CEFR level**. If the same visible term exists in several levels, the lowest existing level (A1 → C1) becomes canonical and the richest row in that level is shown.
 - Duplicate filtering happens only in the learning projection. The raw 2029/2029 corpus, stable term IDs, archived release parity, XP/scoring and database schema are unchanged.
 
+## Executive Visual System
+
+The product now receives a final presentation-only design layer intended for leadership demos and day-to-day corporate use.
+
+- Unified premium visual language across login, shell/navigation, home dashboard, topics, terms, tests, Automotive Arcade, XP/mastery and Factory Journey 2.0.
+- Glass-like top navigation, deep automotive sidebar, stronger spacing/typography hierarchy and a restrained blue/cyan industrial palette.
+- Leadership-facing hero redesigned as a dark executive automotive surface with controlled grid/light effects and a stronger product focal point.
+- Cards, topic tiles, term cards and analytical panels share one radius, border, depth and hover system instead of looking like separate modules.
+- Automotive Arcade cards receive clearer hierarchy, stronger game identity and more premium interaction states without changing game content.
+- Factory Journey 2.0 receives deeper contrast and richer digital-twin framing while keeping the existing journey logic unchanged.
+- Authentication gets the same corporate visual language so the first impression matches the product after login.
+- Responsive behavior and `prefers-reduced-motion` remain first-class requirements.
+- The layer is CSS-only: no API, scoring, XP, language, database or business-logic path is changed.
+
 ## Preserved contracts
 
 - 20 game types.
