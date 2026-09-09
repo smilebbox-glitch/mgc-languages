@@ -29,6 +29,9 @@ jobs:
       - name: Art Direction / Executive Showcase regression
         run: python tests/v630_art_direction_showcase_test.py
 
+      - name: Art Direction Scene Realism regression
+        run: python tests/v630_art_direction_scene_realism_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -39,7 +42,9 @@ jobs:
         run: python tests/v630_chinese_learning_surface_test.py
 
       - name: JavaScript syntax
-        run: node --check static/frontend/art_direction_v630.js
+        run: |
+          node --check static/frontend/art_direction_v630.js
+          node --check static/frontend/art_direction_scenes_v630.js
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
