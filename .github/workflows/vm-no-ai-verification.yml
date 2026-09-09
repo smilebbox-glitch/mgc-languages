@@ -51,14 +51,20 @@ jobs:
         run: |
           chmod +x scripts/start-vm.sh scripts/entrypoint.sh
           ./scripts/start-vm.sh
-      - name: Verify no-server-AI/TTS environment and readiness
+      - name: Verify no-server-AI/TTS environment, readiness and gateway isolation
         shell: bash
         run: |
           curl -fsS http://127.0.0.1:8080/health/live
           curl -fsS http://127.0.0.1:8080/health/ready | tee /tmp/vm-ready.json
-          CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q app)"
-          test -n "$CID"
-          ENV_DUMP="$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CID")"
+
+          APP_CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q app)"
+          DB_CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q db)"
+          NGINX_CID="$(docker compose --env-file .env.vm -f docker-compose.lan.yml -f docker-compose.vm.yml ps -q nginx)"
+          test -n "$APP_CID"
+          test -n "$DB_CID"
+          test -n "$NGINX_CID"
+
+          ENV_DUMP="$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$APP_CID")"
           test "$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TTS_ENABLED=//p')" = "false"
           test "$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TTS_DISK_CACHE_ENABLED=//p')" = "false"
           TRUSTED="$(printf '%s\n' "$ENV_DUMP" | sed -n 's/^TRUSTED_HOSTS=//p')"
@@ -66,6 +72,22 @@ jobs:
           case "$TRUSTED" in *'*'*) echo "Wildcard trusted host is forbidden in pilot VM: $TRUSTED"; exit 1;; esac
           printf '%s' "$TRUSTED" | grep -q 'localhost'
           printf '%s' "$TRUSTED" | grep -q '127.0.0.1'
+
+          test "$(docker inspect --format '{{.HostConfig.ReadonlyRootfs}}' "$NGINX_CID")" = "true"
+          docker inspect --format '{{json .HostConfig.SecurityOpt}}' "$NGINX_CID" | grep -q 'no-new-privileges'
+          docker inspect --format '{{json .HostConfig.CapDrop}}' "$NGINX_CID" | grep -q 'ALL'
+          CAP_ADD="$(docker inspect --format '{{json .HostConfig.CapAdd}}' "$NGINX_CID")"
+          printf '%s' "$CAP_ADD" | grep -q 'CHOWN'
+          printf '%s' "$CAP_ADD" | grep -q 'SETGID'
+          printf '%s' "$CAP_ADD" | grep -q 'SETUID'
+          if printf '%s' "$CAP_ADD" | grep -Eq 'SYS_ADMIN|NET_ADMIN|SYS_PTRACE|DAC_OVERRIDE'; then
+            echo "Forbidden gateway capability detected: $CAP_ADD"
+            exit 1
+          fi
+
+          test -z "$(docker port "$APP_CID")"
+          test -z "$(docker port "$DB_CID")"
+          docker port "$NGINX_CID" 8080/tcp | grep -q ':8080'
       - name: Verify frozen pilot metadata
         run: |
           curl -fsS http://127.0.0.1:8080/api/meta > /tmp/meta.json
