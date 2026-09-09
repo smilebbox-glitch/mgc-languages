@@ -16,6 +16,7 @@ on:
       - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
+      - 'scripts/secret_preflight.py'
       - 'scripts/server_security_preflight.py'
       - 'scripts/start-secure-server.sh'
       - 'tests/v574_security_primitives_test.py'
@@ -33,6 +34,7 @@ on:
       - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
+      - 'scripts/secret_preflight.py'
       - 'scripts/server_security_preflight.py'
       - 'scripts/start-secure-server.sh'
       - 'tests/v574_security_primitives_test.py'
@@ -57,6 +59,8 @@ jobs:
           cache: pip
       - name: Install application dependencies
         run: pip install -r requirements.txt
+      - name: Reject tracked secrets and private keys
+        run: python scripts/secret_preflight.py
       - name: Verify security primitives
         run: python tests/v574_security_primitives_test.py
       - name: Verify server and mobile security contracts
@@ -105,6 +109,22 @@ jobs:
           grep -q 'secure-gateway' /tmp/mgc-secure-server-compose.yml
           grep -q 'host_ip: 127.0.0.1' /tmp/mgc-secure-server-compose.yml
           grep -q 'target: /etc/nginx/tls/tls.crt' /tmp/mgc-secure-server-compose.yml
+          python - <<'PY'
+          import yaml
+          with open('/tmp/mgc-secure-server-compose.yml', encoding='utf-8') as f:
+              data = yaml.safe_load(f)
+          services = data['services']
+          nginx_networks = set(services['nginx']['networks'])
+          app_networks = set(services['app']['networks'])
+          db_networks = set(services['db']['networks'])
+          assert 'backend' not in nginx_networks, nginx_networks
+          assert 'app-proxy' in nginx_networks, nginx_networks
+          assert {'backend', 'app-proxy'} <= app_networks, app_networks
+          assert db_networks == {'backend'}, db_networks
+          assert data['networks']['backend']['internal'] is True
+          assert data['networks']['app-proxy']['internal'] is True
+          print('OK: reverse proxy has no Docker route to PostgreSQL network')
+          PY
       - name: Audit Python dependencies for known vulnerabilities
         run: |
           python -m pip install pip-audit
