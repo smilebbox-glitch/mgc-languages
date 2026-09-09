@@ -28,10 +28,21 @@
   let decorating = false;
   let scheduled = false;
 
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function activeGamesView() {
     const active = root.document.querySelector('.nav-item.active[data-view="games"]');
-    return Boolean(active || main.querySelector('[data-start-game]') ||
-      (main.querySelector('.question-card') && main.querySelector('.page-head .kicker')));
+    if (active || main.querySelector('[data-start-game]')) return true;
+    const kicker = main.querySelector('.page-head .kicker');
+    const text = kicker ? kicker.textContent.trim() : '';
+    return Object.prototype.hasOwnProperty.call(KICKER_SCENES, text);
   }
 
   function currentSnapshot() {
@@ -76,12 +87,13 @@
     const info = SCENES[scene] || SCENES.factory;
     const snapshot = currentSnapshot() || {};
     const lang = snapshot.language === 'chinese' ? '中文 · Putonghua' : 'English';
-    const indexText = main.querySelector('.page-head p') ? main.querySelector('.page-head p').textContent.trim() : '';
+    const subtitle = main.querySelector('.page-head p');
+    const indexText = subtitle ? subtitle.textContent.trim() : '';
     return '<div class="game-world-hud" aria-label="Игровая производственная сцена">' +
-      '<div class="gw-hud-title"><span class="gw-live-dot"></span><span>' + info.label + ' · ' + info.detail + '</span></div>' +
-      '<span class="gw-hud-chip"><b>Язык</b> ' + lang + '</span>' +
+      '<div class="gw-hud-title"><span class="gw-live-dot"></span><span>' + esc(info.label) + ' · ' + esc(info.detail) + '</span></div>' +
+      '<span class="gw-hud-chip"><b>Язык</b> ' + esc(lang) + '</span>' +
       '<span class="gw-hud-chip"><b>Режим</b> Adaptive</span>' +
-      '<span class="gw-hud-chip"><b>Миссия</b> ' + (indexText || 'выберите станцию') + '</span></div>';
+      '<span class="gw-hud-chip"><b>Миссия</b> ' + esc(indexText || 'выберите станцию') + '</span></div>';
   }
 
   function decorateCards() {
@@ -152,6 +164,5 @@
     }
   });
   root.addEventListener('popstate', schedule);
-  root.addEventListener('resize', schedule, {passive: true});
   schedule();
 })(window);
