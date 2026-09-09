@@ -26,6 +26,19 @@ The first production-depth layer keeps canonical answer controls and server scor
 - Stage A covers 12 existing game types without adding a second answer, API, XP or scoring path.
 - Scene interaction feedback is visual only and observes the canonical game controls.
 
+## Stage B — Quality + Engineering
+
+Stage B deepens the professional engineering side of the arcade while retaining the same canonical game session and scoring path.
+
+- **Quality:** digital CMM-style inspection station, animated probe, nominal/tolerance visualization and PASS / REWORK / HOLD disposition context.
+- **Precision Check:** quality-lab context around exact terminology and decision accuracy.
+- **Quality Gate:** visual disposition station tied to the existing measurement game.
+- **Spec or NOK?:** tolerance-centered presentation around the existing spec comparison mechanic.
+- **Engineering:** drawing → BOM → subsystem digital-thread scene with revision status and structured component hierarchy.
+- **Build the BOM:** existing BOM mechanic receives engineering drawing and hierarchy context without changing answers.
+- **Odd One Out:** engineering classification context for functional-group vocabulary.
+- Stage B covers 5 existing game types without adding a second answer, API, XP or scoring path.
+
 ## Preserved contracts
 
 - 20 game types.
