@@ -25,6 +25,7 @@ STAGE_C_JS = (STATIC / "frontend/game_world_stage_c_v630.js").read_text(encoding
 STAGE_C_CSS = (STATIC / "game_world_stage_c_v630.css").read_text(encoding="utf-8")
 STAGE_D_JS = (STATIC / "frontend/game_world_stage_d_v630.js").read_text(encoding="utf-8")
 STAGE_D_CSS = (STATIC / "game_world_stage_d_v630.css").read_text(encoding="utf-8")
+STAGE_D_I18N_JS = (STATIC / "frontend/game_world_stage_d_i18n_v630.js").read_text(encoding="utf-8")
 
 from mgc.services.practice_games import GAME_TYPES, MAX_GAME_ANSWERS
 
@@ -46,6 +47,7 @@ for asset in (
     "game_world_stage_b_v630.css", "frontend/game_world_stage_b_v630.js",
     "game_world_stage_c_v630.css", "frontend/game_world_stage_c_v630.js",
     "game_world_stage_d_v630.css", "frontend/game_world_stage_d_v630.js",
+    "frontend/game_world_stage_d_i18n_v630.js",
 ):
     assert asset in INDEX, f"Game World asset not loaded: {asset}"
 
@@ -125,6 +127,7 @@ assert stage_d["scoring_path"] == "unchanged"
 assert stage_d["answer_controls"] == "canonical-game-lab"
 assert stage_d["covered_games"] == MANIFEST["game_contract"]["game_types"]
 assert stage_d["per_answer_correctness_before_finish"] is False
+assert stage_d["chinese_process_labels"] is True
 assert stage_d["motion_families"] == ["assembly", "welding", "paint", "logistics", "quality", "engineering", "factory"]
 stage_d_block = re.search(r"const PROCESS_BY_GAME = Object\.freeze\(\{(.*?)\}\);", STAGE_D_JS, flags=re.S)
 assert stage_d_block, "Stage D PROCESS_BY_GAME mapping not found"
@@ -138,10 +141,15 @@ for marker in (
     "gw30d-data-link", "gw30d-andon", "prefers-reduced-motion",
 ):
     assert marker in STAGE_D_JS or marker in STAGE_D_CSS, f"missing Stage D marker: {marker}"
+for marker in ("生产过程 · 运行中", "扭矩确认", "安全联锁", "AGV 路线", "三坐标测头", "控制室"):
+    assert marker in STAGE_D_I18N_JS, f"missing Stage D Chinese process label: {marker}"
 
-# Stages A/B/C/D are visual/context layers. They may observe canonical controls, but they must
-# not create alternate answer/scoring/API paths.
-for layer_name, source in (("Stage A", STAGE_A_JS), ("Stage B", STAGE_B_JS), ("Stage C", STAGE_C_JS), ("Stage D", STAGE_D_JS)):
+# Stages A/B/C/D and Stage D i18n are presentation layers. They may observe canonical controls,
+# but they must not create alternate answer/scoring/API paths.
+for layer_name, source in (
+    ("Stage A", STAGE_A_JS), ("Stage B", STAGE_B_JS), ("Stage C", STAGE_C_JS),
+    ("Stage D", STAGE_D_JS), ("Stage D i18n", STAGE_D_I18N_JS),
+):
     for forbidden in (
         "submitAnswer(", "/api/games/", "spendable_xp", "awarded_xp", "MAX_GAME_ANSWERS =", "fetch(",
     ):
@@ -154,8 +162,8 @@ for rel in MANIFEST["critical_files"]:
 for script in (
     "frontend/game_world_v630.js", "frontend/game_world_stage_a_v630.js",
     "frontend/game_world_stage_b_v630.js", "frontend/game_world_stage_c_v630.js",
-    "frontend/game_world_stage_d_v630.js", "frontend/boot.js",
+    "frontend/game_world_stage_d_v630.js", "frontend/game_world_stage_d_i18n_v630.js", "frontend/boot.js",
 ):
     subprocess.run(["node", "--check", str(STATIC / script)], check=True, cwd=ROOT)
 
-print("PASS: v6.0.30 Game World Stages A+B+C+D deepen all 20 games with process motion while preserving max-five, anti-farm and canonical scoring/API boundaries")
+print("PASS: v6.0.30 Game World Stages A+B+C+D deepen all 20 games with localized process motion while preserving max-five, anti-farm and canonical scoring/API boundaries")
