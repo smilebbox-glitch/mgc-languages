@@ -6,30 +6,58 @@ import secrets
 from collections.abc import Iterable
 
 
-PASSWORD_PBKDF2_ITERATIONS = 260_000
+# New local-account password hashes use the current OWASP PBKDF2-HMAC-SHA256
+# work factor. Existing hashes remain verifiable because their iteration count is
+# embedded in the stored representation and read by verify_password().
+PASSWORD_PBKDF2_ITERATIONS = 600_000
 PASSWORD_SALT_BYTES = 16
 CSRF_EXEMPT_PATHS = frozenset({"/api/login", "/api/register", "/api/auth/oidc/callback"})
 STATE_CHANGING_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 CONTENT_SECURITY_POLICY = (
     "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
     "script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; "
-    "base-uri 'self'; frame-ancestors 'none'"
+    "base-uri 'self'; form-action 'self'; frame-ancestors 'none'; manifest-src 'self'; "
+    "worker-src 'self' blob:"
 )
 
 
 def make_password_hash(password: str) -> str:
-    """Create the historical MGC PBKDF2-SHA256 password representation."""
+    """Create the MGC PBKDF2-SHA256 password representation."""
     salt = secrets.token_bytes(PASSWORD_SALT_BYTES)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, PASSWORD_PBKDF2_ITERATIONS)
     return "$".join([str(PASSWORD_PBKDF2_ITERATIONS), salt.hex(), digest.hex()])
 
 
 def verify_password(password: str, stored: str) -> bool:
-    """Verify an existing MGC password hash without changing its storage contract."""
+    """Verify existing MGC password hashes, including older work factors."""
     try:
         iterations_s, salt_s, digest_s = stored.split("$", 2)
-        digest = hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt_s), int(iterations_s))
-        return hmac.compare_digest(digest.hex(), digest_s)
+        iterations = int(iterations_s)
+        if iterations < 100_000 or iterations > 5_000_000:
+            return False
+        salt = bytes.fromhex(salt_s)
+        expected = bytes.fromhex(digest_s)
+        if len(salt) < 16 or len(expected) != hashlib.sha256().digest_size:
+            return False
+        digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, iterations)
+        return hmac.compare_digest(digest, expected)
+    except (ValueError, TypeError):
+        return False
+
+
+def password_hash_needs_upgrade(stored: str) -> bool:
+    """Return True when a valid legacy PBKDF2 representation uses a weaker work factor."""
+    try:
+        iterations_s, salt_s, digest_s = stored.split("$", 2)
+        iterations = int(iterations_s)
+        salt = bytes.fromhex(salt_s)
+        digest = bytes.fromhex(digest_s)
+        return (
+            iterations < PASSWORD_PBKDF2_ITERATIONS
+            and iterations >= 100_000
+            and len(salt) >= 16
+            and len(digest) == hashlib.sha256().digest_size
+        )
     except (ValueError, TypeError):
         return False
 
@@ -85,14 +113,18 @@ def security_headers(*, cookie_secure: bool, api_path: bool) -> dict[str, str]:
     headers = {
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "DENY",
+        "X-Permitted-Cross-Domain-Policies": "none",
+        "Origin-Agent-Cluster": "?1",
+        "Cross-Origin-Opener-Policy": "same-origin",
         "Referrer-Policy": "no-referrer",
-        "Permissions-Policy": "camera=(), geolocation=(), microphone=()",
+        "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
         "Content-Security-Policy": CONTENT_SECURITY_POLICY,
     }
     if cookie_secure:
         headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     if api_path:
-        headers["Cache-Control"] = "no-store"
+        headers["Cache-Control"] = "no-store, max-age=0"
+        headers["Pragma"] = "no-cache"
     return headers
 
 
@@ -104,6 +136,7 @@ __all__ = [
     "CONTENT_SECURITY_POLICY",
     "make_password_hash",
     "verify_password",
+    "password_hash_needs_upgrade",
     "token_digest",
     "client_fingerprint",
     "csrf_required",
