@@ -4,3 +4,8 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 *.md text eol=lf
+
+# Native Windows launchers must stay stable on Windows checkouts.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
