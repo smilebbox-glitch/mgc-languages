@@ -9,6 +9,7 @@ def read(path: str) -> str:
 
 def main() -> None:
     env = read(".env.vm.example")
+    lan = read("docker-compose.lan.yml")
     override = read("docker-compose.vm.yml")
     linux = read("scripts/start-vm.sh")
     windows = read("scripts/start-vm.ps1")
@@ -27,9 +28,11 @@ def main() -> None:
     assert "mem_limit:" in override
     assert "cpus:" in override
 
+    lan_nginx = lan.split("  nginx:", 1)[1]
     nginx = override.split("  nginx:", 1)[1]
+    assert "no-new-privileges:true" in lan_nginx
+    assert "security_opt:" not in nginx, "VM override must not duplicate the base security_opt list"
     assert "read_only: true" in nginx
-    assert "no-new-privileges:true" in nginx
     assert "cap_drop:\n      - ALL" in nginx
     for capability in ("CHOWN", "SETGID", "SETUID"):
         assert f"      - {capability}" in nginx
