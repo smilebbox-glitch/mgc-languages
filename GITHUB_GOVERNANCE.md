@@ -51,6 +51,12 @@ The frozen-pilot and deployment-specific workflows should still be run where app
 - Workflows should default to `contents: read`; add only the narrow write permission needed by a specific job.
 - Secrets must never be exposed to untrusted pull-request code.
 
+## PR-only operating baseline
+
+The repository-integrity alarm is already active. From this governance baseline onward, routine code, deployment and governance changes must be prepared on a branch and merged through a pull request, even before the GitHub admin ruleset is enabled. A direct `main` commit should be treated as a control failure, not as a normal deployment method.
+
+This detection layer does not replace the ruleset: until GitHub branch protection is activated by a repository administrator, a direct push is still technically possible and will be detected only after it occurs.
+
 ## Expected operating model after enforcement
 
 1. Create a branch.
