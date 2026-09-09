@@ -1,4 +1,4 @@
-/* v6.0.18: automotive game lab — 20 distinct, data-driven learning games. */
+/* v6.0.29 hotfix: automotive game lab — resilient Games navigation with 20 distinct learning games. */
 (function (root) {
   'use strict';
 
@@ -40,6 +40,14 @@
   function query(selector, scope) { return legacy().query(selector, scope); }
   function queryAll(selector, scope) { return legacy().queryAll(selector, scope); }
   function toast(message) { legacy().toast(String(message || '')); }
+  function reportError(scope, error) {
+    if (!frontend.has('error-boundary')) return;
+    frontend.get('error-boundary').record(
+      String(scope || 'game-lab'),
+      error && error.message ? error.message : error,
+      '', 0, 0
+    );
+  }
 
   function owns(view) { return String(view || '') === 'games'; }
 
@@ -123,7 +131,7 @@
       await renderSession();
     } catch (error) {
       toast(error && error.message ? error.message : error);
-      if (frontend.has('error-boundary')) frontend.get('error-boundary').record('game-lab-start', error && error.message ? error.message : error, '', 0, 0);
+      reportError('game-lab-start', error);
     }
   }
 
@@ -368,7 +376,34 @@
     queryAll('[data-view]').forEach(function (button) { button.classList.toggle('active', button.dataset.view === 'games'); });
     const main = query('#main');
     if (main) main.innerHTML = '<div class="loading-card"><span class="spinner"></span><p>Загрузка игровых механик</p></div>';
-    await render();
+
+    try {
+      await render();
+    } catch (error) {
+      clearRapidTimer();
+      reportError('game-lab-navigation', error);
+
+      if (featureEnabled()) {
+        state().patch({gameSessionV618:null, gameAnswersV618:[], gameIndexV618:0, gameSelectionV618:[]});
+        try {
+          renderCatalog();
+          try { legacy().ensureChineseStandardBanner(); } catch (bannerError) { reportError('game-lab-banner', bannerError); }
+          toast('Раздел «Игры» восстановлен после ошибки загрузки');
+          return;
+        } catch (fallbackError) {
+          reportError('game-lab-fallback', fallbackError);
+        }
+      }
+
+      if (main) {
+        main.innerHTML = '<div class="empty"><h2>Не удалось открыть игры</h2><p>' +
+          esc(error && error.message ? error.message : error) +
+          '</p><button class="primary" data-game-retry>Повторить</button></div>';
+        const retry = query('[data-game-retry]', main);
+        if (retry) retry.addEventListener('click', function () { void navigate('games'); });
+      }
+      toast(error && error.message ? error.message : error);
+    }
   }
 
   function install() {
@@ -379,7 +414,7 @@
       if (!button) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      navigate('games').catch(function (error) { toast(error && error.message ? error.message : error); });
+      void navigate('games');
     }, true);
   }
 
