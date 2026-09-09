@@ -173,13 +173,13 @@
     ['PASS / REWORK / HOLD','合格 / 返工 / 暂停'],
     ['Dock → Supermarket → Line side','卸货区 → 物料超市 → 线边'],
     ['Vehicle → System → Component','整车 → 系统 → 部件'],
-    ['BOM / subsystem','物料清单 / 子系统'],
-    ['BOM DIGITAL THREAD','物料清单数字线程'],
     ['QUALITY LAB · QUALITY GATE','质量实验室 · 质量关'],
     ['QUALITY LAB · SPEC CHECK','质量实验室 · 规格检查'],
     ['QUALITY LAB · PRECISION','质量实验室 · 精准检查'],
     ['ENGINEERING · ENGINEERING CLASSIFICATION','工程 · 工程分类'],
     ['ENGINEERING · BOM DIGITAL THREAD','工程 · 物料清单数字线程'],
+    ['BOM DIGITAL THREAD','物料清单数字线程'],
+    ['BOM / subsystem','物料清单 / 子系统'],
     ['takt 60 s','节拍 60 秒'],
     ['Near miss','险情'],
     ['Gap:','间隙：'],
@@ -187,6 +187,9 @@
     ['Torque:','扭矩：'],
     ['Film thickness:','漆膜厚度：'],
     ['Pressure:','压力：'],
+    ['BODY','车身'],
+    ['MODULE','模块'],
+    ['COMPONENT','部件'],
     ['Kanban','看板'],
     ['BOM','物料清单']
   ]);
@@ -247,7 +250,7 @@
       pinyin.className = 'question-pinyin gw30-zh-title-pinyin';
       container.appendChild(pinyin);
     }
-    pinyin.textContent = title.py;
+    if (pinyin.textContent !== title.py) pinyin.textContent = title.py;
   }
 
   function localizeCatalogTitles() {
@@ -256,7 +259,8 @@
       const title = card.querySelector('h3');
       if (!title || !GAME_TITLES[type]) return;
       if (!title.dataset.gw30ZhOriginal) title.dataset.gw30ZhOriginal = title.textContent || '';
-      title.textContent = isChinese() ? GAME_TITLES[type].zh : title.dataset.gw30ZhOriginal;
+      const target = isChinese() ? GAME_TITLES[type].zh : title.dataset.gw30ZhOriginal;
+      if (title.textContent !== target) title.textContent = target;
       const copy = card.querySelector('.game-lab-copy') || title.parentElement;
       addPinyinLabel(copy, type);
     });
@@ -267,7 +271,8 @@
     const title = main.querySelector('.page-head h1');
     if (!title || !type || !GAME_TITLES[type]) return;
     if (!title.dataset.gw30ZhOriginal) title.dataset.gw30ZhOriginal = title.textContent || '';
-    title.textContent = isChinese() ? GAME_TITLES[type].zh : title.dataset.gw30ZhOriginal;
+    const target = isChinese() ? GAME_TITLES[type].zh : title.dataset.gw30ZhOriginal;
+    if (title.textContent !== target) title.textContent = target;
     addPinyinLabel(title.parentElement, type);
   }
 
