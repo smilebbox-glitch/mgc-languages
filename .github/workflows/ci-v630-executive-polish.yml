@@ -1,0 +1,35 @@
+name: mgc-languages-v630-executive-polish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v630-executive-polish-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  executive-polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Executive visual base regression
+        run: python tests/v630_executive_visual_test.py
+      - name: Executive polish Stage 2 regression
+        run: python tests/v630_executive_polish_test.py
+      - name: Russian UI + Chinese learning-content regression
+        run: |
+          python tests/v630_chinese_games_localization_test.py
+          python tests/v630_chinese_learning_surface_test.py
+      - name: Current release guard
+        run: python scripts/release_candidate_guard.py --json
+      - name: PWA security isolation
+        run: python tests/pwa_security_test.py
