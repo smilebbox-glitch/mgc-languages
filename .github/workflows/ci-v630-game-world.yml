@@ -49,6 +49,9 @@ jobs:
       - name: v6.0.30 Chinese learning surface and level uniqueness
         run: python tests/v630_chinese_learning_surface_test.py
 
+      - name: v6.0.30 Executive Visual System
+        run: python tests/v630_executive_visual_test.py
+
       - name: Upload Game World regression diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
@@ -91,6 +94,7 @@ jobs:
           grep -q '"stage_d"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"stage_e"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"chinese_localization"' RELEASE_MANIFEST_v6.0.30.json
+          grep -q '"executive_visual_system"' RELEASE_MANIFEST_v6.0.30.json
           grep -q 'game_world_stage_a_v630.css' static/index.html
           grep -q 'game_world_stage_a_v630.js' static/index.html
           grep -q 'game_world_stage_b_v630.css' static/index.html
@@ -104,6 +108,7 @@ jobs:
           grep -q 'factory_journey_v2_v630.js' static/index.html
           grep -q 'game_chinese_localization_v630.js' static/index.html
           grep -q 'chinese_learning_surface_v630.js' static/index.html
+          grep -q 'executive_visual_v630.css' static/index.html
           grep -q "pilotCandidate: 'v6.0.30'" static/frontend/boot.js
           grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.30")' mgc/config.py
           grep -q 'Release: v6.0.30' BUILD_INFO_v6.0.30.txt
@@ -111,3 +116,4 @@ jobs:
           grep -q 'Stage D — Process-Specific Motion' CHANGELOG_v6.0.30.md
           grep -q 'Stage E — Factory Journey 2.0' CHANGELOG_v6.0.30.md
           grep -q 'Chinese Game Localization Audit' CHANGELOG_v6.0.30.md
+          grep -q 'Executive Visual System' CHANGELOG_v6.0.30.md
