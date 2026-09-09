@@ -1,4 +1,4 @@
-/* v6.0.29 hotfix: canonical navigation with a single Games owner and runtime-safe recovery telemetry. */
+/* v6.0.29 hotfix: canonical navigation with a single Games owner and deadlock-free catalog entry. */
 (function () {
   'use strict';
   const frontend = window.MGCFrontend;
@@ -7,9 +7,6 @@
 
   function legacy() { return frontend.get('legacy-app'); }
 
-  // game_lab_v618.js recovery paths call reportError(). Keep one global,
-  // dependency-safe reporter so a render failure cannot trigger a second
-  // ReferenceError and leave the Games view stuck on its loading state.
   if (typeof window.reportError !== 'function') {
     window.reportError = function (scope, error) {
       if (!frontend.has('error-boundary')) return;
@@ -21,12 +18,34 @@
     };
   }
 
+  function normalizeGamesState() {
+    if (!frontend.has('app-state')) return;
+    const state = frontend.get('app-state');
+    const snapshot = state.current() || {};
+    const session = snapshot.gameSessionV618;
+    if (!session) return;
+
+    const items = Array.isArray(session.items) ? session.items : [];
+    const index = Number(snapshot.gameIndexV618 || 0);
+
+    // A completed session may be left in client state when /finish was interrupted.
+    // Never let the next visit to Games block on that old network operation.
+    if (!items.length || index >= items.length) {
+      state.patch({
+        gameSessionV618: null,
+        gameAnswersV618: [],
+        gameIndexV618: 0,
+        gameSelectionV618: []
+      });
+      window.reportError('games-stale-session-reset', 'Completed or empty cached session was cleared before catalog render');
+    }
+  }
+
   function setView(view) {
     const target = String(view || 'home');
 
-    // Games has exactly one canonical owner. practice-games retains its legacy
-    // implementation only as a compatibility module for other owned views.
     if (target === 'games' && frontend.has('game-lab-v618')) {
+      normalizeGamesState();
       return frontend.get('game-lab-v618').navigate('games');
     }
     if (frontend.has('pilot-home') && frontend.get('pilot-home').owns(target)) {
@@ -65,9 +84,6 @@
       : null;
     if (!button) return;
 
-    // Run at window capture phase, before the older document-level listeners in
-    // game-lab/practice-games. This prevents two modules from racing to render
-    // the same route.
     event.preventDefault();
     event.stopImmediatePropagation();
     Promise.resolve(setView('games')).catch(function (error) {
@@ -86,9 +102,6 @@
     });
   }
 
-  // Window is earlier than document in the capture path, so this becomes the
-  // authoritative click route even though legacy modules still register their
-  // own document-level listeners for backwards compatibility.
   window.addEventListener('click', interceptGamesNavigation, true);
 
   frontend.register('navigation', {
