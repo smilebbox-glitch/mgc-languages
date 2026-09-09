@@ -29,7 +29,8 @@
       "static/game_world_stage_b_v630.css",
       "static/frontend/game_world_stage_b_v630.js",
       "static/game_world_stage_c_v630.css",
-      "static/frontend/game_world_stage_c_v630.js"
+      "static/frontend/game_world_stage_c_v630.js",
+      "static/frontend/game_chinese_localization_v630.js"
     ],
     "reduced_motion": true,
     "mobile_adaptive": true,
@@ -84,6 +85,22 @@
       ],
       "per_answer_correctness_before_finish": false,
       "result_source": "canonical-server-finish"
+    },
+    "chinese_localization": {
+      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c"],
+      "presentation_only": true,
+      "canonical_answer_values": "unchanged",
+      "scoring_path": "unchanged",
+      "pinyin_game_titles": true,
+      "targets": [
+        "game-titles",
+        "quality-statuses",
+        "logistics-sequences",
+        "bom-components",
+        "spec-labels",
+        "production-scene-labels",
+        "mission-ui"
+      ]
     }
   },
   "frontend_modules": [
@@ -126,6 +143,7 @@
     "static/frontend/game_world_stage_b_v630.js",
     "static/game_world_stage_c_v630.css",
     "static/frontend/game_world_stage_c_v630.js",
+    "static/frontend/game_chinese_localization_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",
