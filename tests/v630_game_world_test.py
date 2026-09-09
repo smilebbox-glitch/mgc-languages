@@ -3,10 +3,14 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = ROOT / "static"
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 MANIFEST = json.loads((ROOT / "RELEASE_MANIFEST_v6.0.30.json").read_text(encoding="utf-8"))
 INDEX = (STATIC / "index.html").read_text(encoding="utf-8")
 BOOT = (STATIC / "frontend/boot.js").read_text(encoding="utf-8")
@@ -30,7 +34,6 @@ assert "pilotCandidate: 'v6.0.30'" in BOOT, "boot version"
 assert '<link rel="stylesheet" href="/game_world_v630.css">' in INDEX, "Game World CSS not loaded"
 assert '<script src="/frontend/game_world_v630.js" defer></script>' in INDEX, "Game World JS not loaded"
 
-# Parse the declared GAME_WORLD object keys rather than depending on one formatting style.
 world_block = re.search(r"const GAME_WORLD = Object\.freeze\(\{(.*?)\}\);", WORLD_JS, flags=re.S)
 assert world_block, "GAME_WORLD mapping not found"
 world_source = world_block.group(1)
