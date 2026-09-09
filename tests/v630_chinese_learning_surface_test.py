@@ -1,3 +1,4 @@
+from collections import Counter
 from pathlib import Path
 
 from mgc.content_v618 import canonical_learning_rows
@@ -26,6 +27,20 @@ def test_english_duplicate_matching_is_case_and_whitespace_insensitive():
     visible = canonical_learning_rows("english", rows)
     assert len(visible) == 1
     assert visible[0]["level"] == "A2"
+
+
+def test_real_release_corpus_has_no_visible_cross_level_duplicates_and_keeps_exam_capacity():
+    import app
+
+    for language in ("chinese", "english"):
+        raw = list(app.TERMS[language])
+        assert len(raw) == 2029
+        visible = canonical_learning_rows(language, raw)
+        terms = [str(row.get("term", "")).strip().casefold() if language == "english" else str(row.get("term", "")).strip() for row in visible]
+        assert len(terms) == len(set(terms))
+        counts = Counter(str(row.get("level", "")) for row in visible)
+        for level in ("A1", "A2", "B1", "B2", "C1"):
+            assert counts[level] >= 10, (language, level, counts[level])
 
 
 def test_chinese_learning_surface_is_loaded_after_game_localization():
