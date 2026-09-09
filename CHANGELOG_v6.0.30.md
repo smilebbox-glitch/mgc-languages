@@ -52,6 +52,18 @@ Stage C closes the Game World UX loop across all 20 game types while preserving 
 - `prefers-reduced-motion` remains supported.
 - Stage C covers all 20 game types without adding a second answer, API, XP or scoring path.
 
+## Chinese Game Localization Audit
+
+The Chinese Automotive Arcade surface was audited after Stage C because several hard-coded production and engineering labels still appeared in English even when the selected learning language was Chinese.
+
+- All 20 game titles now receive a Chinese primary title with pinyin on the Chinese game surface.
+- Quality statuses are presented as 合格 / 返工 / 暂停 instead of PASS / REWORK / HOLD.
+- Logistics Flow sequences are presented in Chinese, including receiving, scanning, put-away, replenishment, picking, customs, transport and shortage-response steps.
+- Build the BOM presents automotive components in Chinese instead of leaking English component names.
+- Spec or NOK? presents 间隙 / 面差 / 扭矩 / 漆膜厚度 / 压力 instead of Gap / Flush / Torque / Film thickness / Pressure.
+- Stage A/B/C visual labels for assembly, welding, paint, logistics, quality, engineering and Mission UI are localized for Chinese mode.
+- The localization layer is presentation-only and reversible when switching back to English; canonical answer values are untouched so order-game and server scoring contracts remain unchanged.
+
 ## Preserved contracts
 
 - 20 game types.
