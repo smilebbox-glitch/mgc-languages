@@ -6,27 +6,35 @@ on:
     paths:
       - '.github/workflows/security-hardening.yml'
       - '.github/dependabot.yml'
+      - '.gitignore'
       - 'mgc/security.py'
       - 'mgc/auth_core.py'
       - 'mgc/routers/auth.py'
       - 'deploy/nginx/**'
+      - 'deploy/tls/**'
       - 'docker-compose.pilot.yml'
       - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
+      - 'scripts/server_security_preflight.py'
+      - 'scripts/start-secure-server.sh'
       - 'tests/v574_security_primitives_test.py'
       - 'tests/server_mobile_security_test.py'
       - 'requirements.txt'
   pull_request:
     paths:
+      - '.gitignore'
       - 'mgc/security.py'
       - 'mgc/auth_core.py'
       - 'mgc/routers/auth.py'
       - 'deploy/nginx/**'
+      - 'deploy/tls/**'
       - 'docker-compose.pilot.yml'
       - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
+      - 'scripts/server_security_preflight.py'
+      - 'scripts/start-secure-server.sh'
       - 'tests/v574_security_primitives_test.py'
       - 'tests/server_mobile_security_test.py'
       - 'requirements.txt'
@@ -53,29 +61,49 @@ jobs:
         run: python tests/v574_security_primitives_test.py
       - name: Verify server and mobile security contracts
         run: python tests/server_mobile_security_test.py
-      - name: Validate HTTPS gateway and composed server profile
+      - name: Validate HTTPS gateway and fail-closed server profile
         run: |
           mkdir -p .ci-tls
           openssl req -x509 -nodes -newkey rsa:2048 \
             -keyout .ci-tls/tls.key \
             -out .ci-tls/tls.crt \
-            -days 1 \
+            -days 30 \
             -subj '/CN=mgc-language-ci.example.internal' \
             -addext 'subjectAltName=DNS:mgc-language-ci.example.internal'
+          chmod 600 .ci-tls/tls.key
+          cat > .ci-secure.env <<'EOF'
+          APP_ENV=pilot
+          AUTH_MODE=oidc
+          REGISTRATION_ENABLED=false
+          COOKIE_SECURE=true
+          READY_REQUIRE_OIDC=true
+          READY_REQUIRE_SECURE_COOKIE=true
+          MGC_SERVER_NAME=mgc-language-ci.example.internal
+          TRUSTED_HOSTS=mgc-language-ci.example.internal
+          CORS_ORIGINS=
+          OIDC_DISCOVERY_URL=https://sso.example.invalid/.well-known/openid-configuration
+          OIDC_CLIENT_ID=ci-client
+          OIDC_CLIENT_SECRET=ci-client-secret-0123456789
+          OIDC_ALLOWED_GROUP=mgc-language-users
+          OIDC_STATE_SECRET=ci-state-secret-012345678901234567890123456789
+          METRICS_TOKEN=ci-metrics-token-0123456789012345
+          POSTGRES_PASSWORD=ci-database-password-0123456789
+          TLS_CERT_FILE=./.ci-tls/tls.crt
+          TLS_KEY_FILE=./.ci-tls/tls.key
+          EOF
+          python scripts/server_security_preflight.py .ci-secure.env
           docker run --rm \
             --add-host nginx:127.0.0.1 \
             -v "$PWD/deploy/nginx/secure-gateway.conf:/etc/nginx/conf.d/default.conf:ro" \
             -v "$PWD/.ci-tls/tls.crt:/etc/nginx/tls/tls.crt:ro" \
             -v "$PWD/.ci-tls/tls.key:/etc/nginx/tls/tls.key:ro" \
             nginx:1.27-alpine nginx -t
-          POSTGRES_PASSWORD=ci-database-password \
-          OIDC_STATE_SECRET=ci-state-secret-012345678901234567890123456789 \
-          METRICS_TOKEN=ci-metrics-token \
-          TLS_CERT_FILE=./.ci-tls/tls.crt \
-          TLS_KEY_FILE=./.ci-tls/tls.key \
-          docker compose -f docker-compose.pilot.yml -f docker-compose.server-edge.yml config > /tmp/mgc-secure-server-compose.yml
+          docker compose --env-file .ci-secure.env \
+            -f docker-compose.pilot.yml \
+            -f docker-compose.server-edge.yml \
+            config > /tmp/mgc-secure-server-compose.yml
           grep -q 'secure-gateway' /tmp/mgc-secure-server-compose.yml
-          grep -q '127.0.0.1:8080:8080' /tmp/mgc-secure-server-compose.yml
+          grep -q 'host_ip: 127.0.0.1' /tmp/mgc-secure-server-compose.yml
           grep -q 'target: /etc/nginx/tls/tls.crt' /tmp/mgc-secure-server-compose.yml
       - name: Audit Python dependencies for known vulnerabilities
         run: |
