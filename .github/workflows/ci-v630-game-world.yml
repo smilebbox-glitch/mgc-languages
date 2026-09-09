@@ -37,6 +37,9 @@ jobs:
           set -o pipefail
           python tests/v630_game_world_test.py 2>&1 | tee /tmp/v630-game-world-test.log
 
+      - name: v6.0.30 Chinese games localization
+        run: python tests/v630_chinese_games_localization_test.py
+
       - name: Upload Game World regression diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
@@ -58,6 +61,7 @@ jobs:
           node --check static/frontend/game_world_stage_a_v630.js
           node --check static/frontend/game_world_stage_b_v630.js
           node --check static/frontend/game_world_stage_c_v630.js
+          node --check static/frontend/game_chinese_localization_v630.js
           node --check static/frontend/boot.js
           node --check static/service-worker.js
           node --check static/pwa-register.js
@@ -69,14 +73,16 @@ jobs:
           grep -q '"stage_a"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"stage_b"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"stage_c"' RELEASE_MANIFEST_v6.0.30.json
+          grep -q '"chinese_localization"' RELEASE_MANIFEST_v6.0.30.json
           grep -q 'game_world_stage_a_v630.css' static/index.html
           grep -q 'game_world_stage_a_v630.js' static/index.html
           grep -q 'game_world_stage_b_v630.css' static/index.html
           grep -q 'game_world_stage_b_v630.js' static/index.html
           grep -q 'game_world_stage_c_v630.css' static/index.html
           grep -q 'game_world_stage_c_v630.js' static/index.html
+          grep -q 'game_chinese_localization_v630.js' static/index.html
           grep -q "pilotCandidate: 'v6.0.30'" static/frontend/boot.js
           grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.30")' mgc/config.py
           grep -q 'Release: v6.0.30' BUILD_INFO_v6.0.30.txt
           grep -q 'Game World Expansion' CHANGELOG_v6.0.30.md
-          grep -q 'Stage C — Final Game Polish' CHANGELOG_v6.0.30.md
+          grep -q 'Chinese Game Localization Audit' CHANGELOG_v6.0.30.md
