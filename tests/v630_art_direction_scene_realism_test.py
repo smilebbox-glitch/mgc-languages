@@ -25,11 +25,13 @@ def main() -> None:
     require("/art_direction_scenes_v630.css" in base_js, "Scene Realism CSS path is missing")
     require("/frontend/art_direction_scenes_v630.js" in base_js, "Scene Realism JS path is missing")
 
-    for scene in ["assembly", "welding", "paint", "logistics", "quality", "engineering"]:
+    scenes = ["assembly", "welding", "paint", "logistics", "quality", "engineering"]
+    for scene in scenes:
         require(f"id:'{scene}'" in scene_js, f"Production Theatre scene missing: {scene}")
         require(f"ad2-env-{scene}" in scene_css, f"Scene environment CSS missing: {scene}")
-        require(f"ad2-theatre-{scene}" in scene_js or f"ad2-theatre-{scene}" in scene_css,
-                f"Theatre scene marker missing: {scene}")
+
+    require("'ad2-theatre-'+scene" in scene_js,
+            "Production Theatre must derive scene classes from the canonical scene id")
 
     js_markers = [
         "frontend.register('art-direction-scenes-v630'",
