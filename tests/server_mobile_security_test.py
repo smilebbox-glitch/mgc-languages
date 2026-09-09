@@ -8,7 +8,9 @@ security = (ROOT / "mgc/security.py").read_text(encoding="utf-8")
 auth_router = (ROOT / "mgc/routers/auth.py").read_text(encoding="utf-8")
 auth_bridge = (ROOT / "mgc_core/auth_router_bridge.py").read_text(encoding="utf-8")
 nginx = (ROOT / "deploy/nginx/default.conf").read_text(encoding="utf-8")
+gateway = (ROOT / "deploy/nginx/secure-gateway.conf").read_text(encoding="utf-8")
 compose = (ROOT / "docker-compose.pilot.yml").read_text(encoding="utf-8")
+server_edge = (ROOT / "docker-compose.server-edge.yml").read_text(encoding="utf-8")
 env = (ROOT / ".env.company-pilot.example").read_text(encoding="utf-8")
 entrypoint = (ROOT / "scripts/entrypoint.sh").read_text(encoding="utf-8")
 requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
@@ -41,7 +43,7 @@ assert "starlette==1.3.1" in requirements
 assert "python-multipart==0.0.31" in requirements
 assert "authlib==1.6.12" in requirements
 
-# Reverse proxy anti-abuse and information-disclosure controls.
+# Inner reverse proxy anti-abuse and information-disclosure controls.
 assert "server_tokens off" in nginx
 assert "limit_req_zone" in nginx
 assert "limit_conn_zone" in nginx
@@ -50,6 +52,9 @@ assert "proxy_hide_header X-Powered-By" in nginx
 assert "location ~ /\\." in nginx
 assert "X-Permitted-Cross-Domain-Policies" in nginx
 assert "Permissions-Policy" in nginx
+assert "map $http_x_forwarded_proto $mgc_forwarded_proto" in nginx
+assert "https https;" in nginx
+assert "proxy_set_header X-Forwarded-Proto $mgc_forwarded_proto" in nginx
 
 # Company server profile remains fail-closed around identity, cookies and DB exposure.
 assert "AUTH_MODE: ${AUTH_MODE:-local}" in compose
@@ -61,8 +66,35 @@ assert "read_only: true" in compose
 assert "no-new-privileges:true" in compose
 assert "cap_drop:" in compose and "- ALL" in compose
 assert "backend:\n    internal: true" in compose
+# Plain HTTP is diagnostic-only and cannot be reached from employee phones/LAN.
+assert '"127.0.0.1:${MGC_PORT:-8080}:8080"' in compose
 
-# The approved company-pilot template forces corporate auth and secure cookies.
+# The external phone/server edge terminates TLS and only forwards HTTPS semantics inward.
+assert "return 308 https://$host$request_uri" in gateway
+assert "ssl_protocols TLSv1.2 TLSv1.3" in gateway
+assert "ssl_session_tickets off" in gateway
+assert 'Strict-Transport-Security "max-age=31536000"' in gateway
+assert "server_tokens off" in gateway
+assert "limit_req_zone" in gateway
+assert "limit_conn_zone" in gateway
+assert "proxy_pass http://mgc_inner_gateway" in gateway
+assert "proxy_set_header X-Forwarded-Proto https" in gateway
+assert "proxy_set_header Proxy \"\"" in gateway
+assert "location ~ /\\." in gateway
+
+# Only the HTTPS gateway publishes server-facing 80/443; TLS material is mounted read-only.
+assert '"${MGC_BIND_ADDRESS:-0.0.0.0}:${MGC_HTTP_PORT:-80}:8080"' in server_edge
+assert '"${MGC_BIND_ADDRESS:-0.0.0.0}:${MGC_HTTPS_PORT:-443}:8443"' in server_edge
+assert "TLS_CERT_FILE:?Set TLS_CERT_FILE" in server_edge
+assert "TLS_KEY_FILE:?Set TLS_KEY_FILE" in server_edge
+assert "/etc/nginx/tls/tls.crt:ro" in server_edge
+assert "/etc/nginx/tls/tls.key:ro" in server_edge
+assert "read_only: true" in server_edge
+assert "no-new-privileges:true" in server_edge
+assert "cap_drop:" in server_edge and "- ALL" in server_edge
+assert "networks: [edge]" in server_edge
+
+# The approved company-pilot template forces corporate auth, secure cookies and trusted HTTPS.
 assert "AUTH_MODE=oidc" in env
 assert "REGISTRATION_ENABLED=false" in env
 assert "COOKIE_SECURE=true" in env
@@ -70,6 +102,11 @@ assert "READY_REQUIRE_OIDC=true" in env
 assert "READY_REQUIRE_SECURE_COOKIE=true" in env
 assert "TRUSTED_HOSTS=mgc-language-pilot.company.local" in env
 assert "CORS_ORIGINS=\n" in env
+assert "MGC_SERVER_NAME=mgc-language-pilot.company.local" in env
+assert "MGC_HTTP_PORT=80" in env
+assert "MGC_HTTPS_PORT=443" in env
+assert "TLS_CERT_FILE=./deploy/tls/tls.crt" in env
+assert "TLS_KEY_FILE=./deploy/tls/tls.key" in env
 
 # Uvicorn proxy trust is configurable; production must narrow this to the actual proxy.
 assert 'FORWARDED_ALLOW_IPS:-*' in entrypoint
