@@ -26,9 +26,11 @@ Expected schema head: `c57d0a31f570`.
 The application DB role must not be PostgreSQL superuser and must not have `BYPASSRLS`. Verify cross-department denial with real pilot identities after OIDC mapping is configured.
 
 ## 3. Runtime acceptance
+Provide `METRICS_TOKEN` to the process from the approved runtime secret store before running acceptance. Do not paste the token into documentation, Git, or shell command history.
+
+Then run:
 ```bash
 MGC_BASE_URL=https://<pilot-host> \
-METRICS_TOKEN=<token> \
 AUTH_MODE=oidc \
 python scripts/it_acceptance_v57.py --report docs/IT_ACCEPTANCE_REPORT_v5.7.md
 ```
