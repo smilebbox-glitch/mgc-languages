@@ -14,3 +14,8 @@ __pycache__/
 runtime/
 backups/
 *.zip
+
+# Never copy deployment or CI TLS/private runtime material into application images.
+deploy/tls/
+.ci-*/
+.ci-*.env
