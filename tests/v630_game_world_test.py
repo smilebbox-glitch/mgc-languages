@@ -127,7 +127,9 @@ assert stage_d["scoring_path"] == "unchanged"
 assert stage_d["answer_controls"] == "canonical-game-lab"
 assert stage_d["covered_games"] == MANIFEST["game_contract"]["game_types"]
 assert stage_d["per_answer_correctness_before_finish"] is False
-assert stage_d["chinese_process_labels"] is True
+assert stage_d["chinese_process_labels"] is False
+assert stage_d["process_ui_language"] == "ru"
+assert stage_d["learning_content_language_in_chinese_track"] == "zh-pinyin"
 assert stage_d["motion_families"] == ["assembly", "welding", "paint", "logistics", "quality", "engineering", "factory"]
 stage_d_block = re.search(r"const PROCESS_BY_GAME = Object\.freeze\(\{(.*?)\}\);", STAGE_D_JS, flags=re.S)
 assert stage_d_block, "Stage D PROCESS_BY_GAME mapping not found"
@@ -141,8 +143,10 @@ for marker in (
     "gw30d-data-link", "gw30d-andon", "prefers-reduced-motion",
 ):
     assert marker in STAGE_D_JS or marker in STAGE_D_CSS, f"missing Stage D marker: {marker}"
+# Legacy Stage D i18n data remains loadable for compatibility, but the final v6.0.30
+# presentation layer restores Russian process chrome and keeps Chinese only in learning material.
 for marker in ("生产过程 · 运行中", "扭矩确认", "安全联锁", "AGV 路线", "三坐标测头", "控制室"):
-    assert marker in STAGE_D_I18N_JS, f"missing Stage D Chinese process label: {marker}"
+    assert marker in STAGE_D_I18N_JS, f"missing legacy Stage D i18n marker: {marker}"
 
 # Stages A/B/C/D and Stage D i18n are presentation layers. They may observe canonical controls,
 # but they must not create alternate answer/scoring/API paths.
@@ -166,4 +170,4 @@ for script in (
 ):
     subprocess.run(["node", "--check", str(STATIC / script)], check=True, cwd=ROOT)
 
-print("PASS: v6.0.30 Game World Stages A+B+C+D deepen all 20 games with localized process motion while preserving max-five, anti-farm and canonical scoring/API boundaries")
+print("PASS: v6.0.30 Game World Stages A+B+C+D deepen all 20 games with Russian UI, Chinese+pinyin learning content and canonical max-five/scoring/API boundaries")

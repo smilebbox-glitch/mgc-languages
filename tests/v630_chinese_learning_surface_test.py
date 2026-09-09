@@ -2,7 +2,6 @@ from collections import Counter
 from pathlib import Path
 import sys
 
-
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -18,8 +17,7 @@ def test_same_visible_term_is_kept_once_and_at_lowest_existing_level():
     ]
     visible = canonical_learning_rows("chinese", rows)
     assert [row["term"] for row in visible] == ["扭矩", "公差"]
-    torque = next(row for row in visible if row["term"] == "扭矩")
-    assert torque["level"] == "A1"
+    assert next(row for row in visible if row["term"] == "扭矩")["level"] == "A1"
 
 
 def test_english_duplicate_matching_is_case_and_whitespace_insensitive():
@@ -34,7 +32,6 @@ def test_english_duplicate_matching_is_case_and_whitespace_insensitive():
 
 def test_real_release_corpus_has_no_visible_cross_level_duplicates_and_keeps_exam_capacity():
     import app
-
     for language in ("chinese", "english"):
         raw = list(app.TERMS[language])
         assert len(raw) == 2029
@@ -50,21 +47,20 @@ def test_chinese_learning_surface_is_loaded_after_game_localization():
     index = (ROOT / "static" / "index.html").read_text(encoding="utf-8")
     game = '/frontend/game_chinese_localization_v630.js'
     surface = '/frontend/chinese_learning_surface_v630.js'
-    assert game in index
-    assert surface in index
+    assert game in index and surface in index
     assert index.index(game) < index.index(surface)
 
 
-def test_chinese_learning_surface_covers_requested_views_and_pinyin():
+def test_chinese_mode_keeps_ui_russian_and_only_learning_content_gets_pinyin():
     source = (ROOT / "static" / "frontend" / "chinese_learning_surface_v630.js").read_text(encoding="utf-8")
-    for view in ("games", "xp", "quiz", "roleplay", "course30"):
-        assert f"'{view}'" in source
+    assert "data-learning-ui-language', 'ru'" in source
+    assert "data-learning-content-language" in source
     assert "option_pronunciations" in source
     assert "v630-option-pinyin" in source
-    assert "游戏能力 · 技能图谱" in source
-    assert "XP 学习积分" in source
-    assert "沟通训练" in source
-    assert "学习计划" in source
+    assert "v630-game-learning-pinyin" in source
+    # Regression: these UI labels must NOT be translated into Chinese anymore.
+    for forbidden_ui_translation in ("下一题", "学习计划", "沟通训练", "XP 学习积分", "游戏能力 · 技能图谱"):
+        assert forbidden_ui_translation not in source
 
 
 def test_content_projection_enriches_chinese_question_options_without_raw_corpus_mutation():
