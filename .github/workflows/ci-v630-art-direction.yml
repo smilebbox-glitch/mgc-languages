@@ -47,6 +47,9 @@ jobs:
       - name: Animation & Interaction Stage regression
         run: python tests/v630_animation_interaction_test.py
 
+      - name: Factory Digital Production Thread regression
+        run: python tests/v630_factory_digital_thread_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -67,6 +70,7 @@ jobs:
           node --check static/frontend/assembly_operations_v630.js
           node --check static/frontend/powertrain_builder_v630.js
           node --check static/frontend/animation_interaction_v630.js
+          node --check static/frontend/factory_digital_thread_v630.js
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
