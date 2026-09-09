@@ -6,6 +6,7 @@
 /.github/CODEOWNERS @smilebbox-glitch
 /.github/pull_request_template.md @smilebbox-glitch
 /SECURITY.md @smilebbox-glitch
+/GITHUB_GOVERNANCE.md @smilebbox-glitch
 
 # Authentication / authorization / security
 /mgc/security.py @smilebbox-glitch
