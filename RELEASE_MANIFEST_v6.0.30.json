@@ -25,7 +25,9 @@
       "static/game_world_v630.css",
       "static/frontend/game_world_v630.js",
       "static/game_world_stage_a_v630.css",
-      "static/frontend/game_world_stage_a_v630.js"
+      "static/frontend/game_world_stage_a_v630.js",
+      "static/game_world_stage_b_v630.css",
+      "static/frontend/game_world_stage_b_v630.js"
     ],
     "reduced_motion": true,
     "mobile_adaptive": true,
@@ -43,6 +45,21 @@
         "welding-robot-cell",
         "paint-optical-inspection",
         "intralogistics-material-flow"
+      ]
+    },
+    "stage_b": {
+      "scope": ["quality", "engineering"],
+      "production_context_only": true,
+      "scoring_path": "unchanged",
+      "answer_controls": "canonical-game-lab",
+      "covered_games": [
+        "mistake", "quality_gate", "spec_check", "bom_builder", "odd_one_out"
+      ],
+      "visual_processes": [
+        "quality-cmm-tolerance-station",
+        "quality-disposition-pass-rework-hold",
+        "engineering-drawing-to-bom-digital-thread",
+        "engineering-subsystem-classification"
       ]
     }
   },
@@ -82,6 +99,8 @@
     "static/frontend/game_world_v630.js",
     "static/game_world_stage_a_v630.css",
     "static/frontend/game_world_stage_a_v630.js",
+    "static/game_world_stage_b_v630.css",
+    "static/frontend/game_world_stage_b_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",

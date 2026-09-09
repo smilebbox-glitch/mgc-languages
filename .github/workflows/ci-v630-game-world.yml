@@ -56,6 +56,7 @@ jobs:
         run: |
           node --check static/frontend/game_world_v630.js
           node --check static/frontend/game_world_stage_a_v630.js
+          node --check static/frontend/game_world_stage_b_v630.js
           node --check static/frontend/boot.js
           node --check static/service-worker.js
           node --check static/pwa-register.js
@@ -65,9 +66,13 @@ jobs:
           grep -q '"release": "6.0.30"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"status": "game-world-expansion"' RELEASE_MANIFEST_v6.0.30.json
           grep -q '"stage_a"' RELEASE_MANIFEST_v6.0.30.json
+          grep -q '"stage_b"' RELEASE_MANIFEST_v6.0.30.json
           grep -q 'game_world_stage_a_v630.css' static/index.html
           grep -q 'game_world_stage_a_v630.js' static/index.html
+          grep -q 'game_world_stage_b_v630.css' static/index.html
+          grep -q 'game_world_stage_b_v630.js' static/index.html
           grep -q "pilotCandidate: 'v6.0.30'" static/frontend/boot.js
           grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.30")' mgc/config.py
           grep -q 'Release: v6.0.30' BUILD_INFO_v6.0.30.txt
           grep -q 'Game World Expansion' CHANGELOG_v6.0.30.md
+          grep -q 'Stage B — Quality + Engineering' CHANGELOG_v6.0.30.md
