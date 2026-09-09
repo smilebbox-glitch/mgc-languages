@@ -10,6 +10,7 @@ from mgc.security import (
     make_password_hash,
     manager_target_allowed,
     oidc_role,
+    password_hash_needs_upgrade,
     token_digest,
     verify_password,
 )
@@ -42,6 +43,7 @@ def bind_legacy_security(module: ModuleType) -> SecurityBindingReport:
 
     module.make_password_hash = make_password_hash
     module.verify_password = verify_password
+    module.password_hash_needs_upgrade = password_hash_needs_upgrade
     module.token_digest = token_digest
     module.CSRF_EXEMPT = expected_csrf
     module._client_key = _request_client_key
@@ -62,6 +64,7 @@ def bind_legacy_security(module: ModuleType) -> SecurityBindingReport:
     bound = (
         "make_password_hash",
         "verify_password",
+        "password_hash_needs_upgrade",
         "token_digest",
         "CSRF_EXEMPT",
         "_client_key",
