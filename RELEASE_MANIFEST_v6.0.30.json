@@ -1,0 +1,68 @@
+{
+  "release": "6.0.30",
+  "status": "game-world-expansion",
+  "base_release": "6.0.29",
+  "freeze": false,
+  "scope": "Company Pilot",
+  "languages": ["chinese", "english"],
+  "vocabulary_terms_per_language": 2029,
+  "game_contract": {
+    "count": 20,
+    "max_answers_per_session": 5,
+    "anti_farm": "unchanged",
+    "game_types": [
+      "match", "listening", "mistake", "phrase", "hotspot",
+      "assembly_order", "shop_route", "tool_select", "defect_detective", "safety_spot",
+      "quality_gate", "logistics_route", "kanban", "bom_builder", "spec_check",
+      "rapid_recall", "memory_pairs", "odd_one_out", "dialogue_choice", "shift_incident"
+    ]
+  },
+  "game_world": {
+    "visual_only": true,
+    "scenes": ["factory", "assembly", "welding", "paint", "logistics", "quality", "engineering"],
+    "difficulty_labels": ["Базовый", "Средний", "Продвинутый"],
+    "assets": ["static/game_world_v630.css", "static/frontend/game_world_v630.js"],
+    "reduced_motion": true,
+    "mobile_adaptive": true
+  },
+  "frontend_modules": [
+    "error-boundary", "legacy-app", "service-status", "api-client", "app-state",
+    "pilot-home", "learning", "game-lab-v618", "game-engagement-v618",
+    "factory-journey-v619", "arcade-missions-v620", "arcade-mastery-v620",
+    "game-depth-v621", "decision-chains-v622", "dynamic-factory-v623",
+    "shift-simulation-v624", "shift-analytics-v625", "practice-games",
+    "support-notifications", "assistant-knowledge", "final-assessment",
+    "chinese-reference", "content-governance", "admin-ops", "admin-analytics",
+    "manager-admin", "team-leaderboard-v626", "adaptive-training-v627",
+    "legacy-retirement", "navigation", "session-lifecycle", "auth-department",
+    "pilot-ux-hardening", "ux-performance-v628"
+  ],
+  "deployment_contract": {
+    "compose_files": ["docker-compose.lan.yml", "docker-compose.pilot.yml"],
+    "environment_templates": [".env.lan.example", ".env.company-pilot.example"],
+    "health_endpoints": ["/health/live", "/health/ready", "/api/meta"],
+    "database": "PostgreSQL",
+    "reverse_proxy": "Nginx",
+    "one_click_windows": "START_COMPANY_PILOT.bat"
+  },
+  "invariants": {
+    "database_migrations": "none",
+    "xp_paths": "unchanged",
+    "game_scoring": "unchanged",
+    "api_contract": "unchanged",
+    "pwa_private_cache_isolation": "preserved"
+  },
+  "critical_files": [
+    "static/index.html",
+    "static/frontend/boot.js",
+    "static/frontend/game_lab_v618.js",
+    "static/frontend/practice_games.js",
+    "static/game_world_v630.css",
+    "static/frontend/game_world_v630.js",
+    "static/service-worker.js",
+    "static/pwa-register.js",
+    "mgc/services/practice_games.py",
+    "docker-compose.lan.yml",
+    "docker-compose.pilot.yml"
+  ]
+}
