@@ -100,6 +100,18 @@ The Chinese Automotive Arcade surface was audited after Stage C because several 
 - Stage E Factory Journey incidents, route labels and shift-status copy are localized in Chinese and include pinyin for the main learning phrases.
 - The localization layer is presentation-only and reversible when switching back to English; canonical answer values are untouched so order-game and server scoring contracts remain unchanged.
 
+## Chinese Learning Surface + Level Uniqueness
+
+The Chinese track is now consistent beyond the game scene itself.
+
+- Arcade Mastery / game profile labels and tier names are localized for Chinese mode.
+- XP and progress surfaces no longer leak English labels while Chinese is selected.
+- Quiz questions continue to show pinyin, and Chinese answer choices now receive server-derived pinyin where the choice itself is Chinese.
+- Role Play keeps Chinese questions/options as the primary learning text with pinyin and Russian meaning support.
+- The 30-day course keeps Chinese terms and pronunciation visible throughout the Chinese track.
+- A learning-content projection enforces **one visible term = one CEFR level**. If the same visible term exists in several levels, the lowest existing level (A1 → C1) becomes canonical and the richest row in that level is shown.
+- Duplicate filtering happens only in the learning projection. The raw 2029/2029 corpus, stable term IDs, archived release parity, XP/scoring and database schema are unchanged.
+
 ## Preserved contracts
 
 - 20 game types.

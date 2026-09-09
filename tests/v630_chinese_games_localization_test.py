@@ -131,21 +131,30 @@ def main() -> None:
     require(localization > stage_e_pos, "General Chinese localization must remain last among Game World presentation layers")
 
     contract = manifest["game_world"].get("chinese_localization") or {}
-    require(contract.get("scope") == ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d", "stage-e"], "Localization scope drifted")
+    expected_scope = {
+        "all-20-games", "stage-a", "stage-b", "stage-c", "stage-d", "stage-e",
+        "arcade-mastery", "xp", "quiz", "roleplay", "course30",
+    }
+    require(set(contract.get("scope", [])) == expected_scope, "Localization scope drifted")
     require(contract.get("presentation_only") is True, "Localization must remain presentation-only")
     require(contract.get("canonical_answer_values") == "unchanged", "Canonical answers must remain unchanged")
     require(contract.get("scoring_path") == "unchanged", "Scoring path must remain unchanged")
     require(contract.get("pinyin_game_titles") is True, "Pinyin title contract is missing")
+    require(contract.get("pinyin_quiz_choices_when_chinese") is True, "Chinese quiz-choice pinyin contract is missing")
     require("stage-d-process-motion-labels" in contract.get("targets", []), "Stage D localization target missing")
     require("stage-e-factory-journey-incidents" in contract.get("targets", []), "Stage E localization target missing")
+    for target in ("arcade-mastery-profile", "xp-and-progress-ui", "quiz-ui-and-chinese-answer-pinyin", "roleplay-ui", "course30-ui"):
+        require(target in contract.get("targets", []), f"Chinese learning localization target missing: {target}")
     require("static/frontend/game_chinese_localization_v630.js" in manifest["game_world"]["assets"], "Localization asset missing from manifest")
     require("static/frontend/game_world_stage_d_i18n_v630.js" in manifest["game_world"]["assets"], "Stage D localization asset missing from manifest")
     require("static/frontend/factory_journey_v2_v630.js" in manifest["game_world"]["assets"], "Stage E asset missing from manifest")
+    require("static/frontend/chinese_learning_surface_v630.js" in manifest["game_world"]["assets"], "Chinese learning-surface asset missing from manifest")
     require("Chinese Game Localization Audit" in changelog, "Localization audit is missing from changelog")
+    require("Chinese Learning Surface + Level Uniqueness" in changelog, "Learning-surface changelog entry is missing")
     require("Stage D — Process-Specific Motion" in changelog, "Stage D changelog entry is missing")
     require("Stage E — Factory Journey 2.0" in changelog, "Stage E changelog entry is missing")
 
-    print("v6.0.30 Chinese games localization regression through Stage E: OK")
+    print("v6.0.30 Chinese games + learning-surface localization regression: OK")
 
 
 if __name__ == "__main__":
