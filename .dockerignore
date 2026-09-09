@@ -17,5 +17,6 @@ backups/
 
 # Never copy deployment or CI TLS/private runtime material into application images.
 deploy/tls/
+deploy/vm/runtime/
 .ci-*/
 .ci-*.env

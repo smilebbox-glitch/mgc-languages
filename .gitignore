@@ -4,10 +4,12 @@
 !.env.example
 !.env.pilot.example
 !.env.lan.example
+!.env.vm.example
 
 # Server TLS material must stay local to the deployment host.
 deploy/tls/*
 !deploy/tls/README.md
+deploy/vm/runtime/
 
 # Python
 __pycache__/
