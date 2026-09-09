@@ -30,7 +30,7 @@ def main() -> None:
         require(f"id:'{scene}'" in scene_js, f"Production Theatre scene missing: {scene}")
         require(f"ad2-env-{scene}" in scene_css, f"Scene environment CSS missing: {scene}")
 
-    require("'ad2-theatre-'+scene" in scene_js,
+    require("ad2-theatre-world ad2-theatre-" in scene_js and "+scene+" in scene_js,
             "Production Theatre must derive scene classes from the canonical scene id")
 
     js_markers = [
