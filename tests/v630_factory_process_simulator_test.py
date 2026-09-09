@@ -1,14 +1,15 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-INDEX = (ROOT / "static/index.html").read_text(encoding="utf-8")
+BOOT = (ROOT / "static/frontend/boot.js").read_text(encoding="utf-8")
 JS = (ROOT / "static/frontend/factory_process_simulator_v630.js").read_text(encoding="utf-8")
 CSS = (ROOT / "static/factory_process_simulator_v630.css").read_text(encoding="utf-8")
 
 
 def test_simulator_assets_are_loaded():
-    assert '/factory_process_simulator_v630.css' in INDEX
-    assert '/frontend/factory_process_simulator_v630.js' in INDEX
+    assert '/factory_process_simulator_v630.css' in BOOT
+    assert '/frontend/factory_process_simulator_v630.js' in BOOT
+    assert 'loadProductionSimulationEnhancements' in BOOT
 
 
 def test_six_process_stages_and_eighteen_operations():
