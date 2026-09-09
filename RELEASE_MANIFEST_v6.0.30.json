@@ -32,6 +32,7 @@
       "static/frontend/game_world_stage_c_v630.js",
       "static/game_world_stage_d_v630.css",
       "static/frontend/game_world_stage_d_v630.js",
+      "static/frontend/game_world_stage_d_i18n_v630.js",
       "static/frontend/game_chinese_localization_v630.js"
     ],
     "reduced_motion": true,
@@ -110,7 +111,8 @@
         "andon-takt-and-control-room-response"
       ],
       "interaction_feedback": "neutral-visual-process-cycle",
-      "per_answer_correctness_before_finish": false
+      "per_answer_correctness_before_finish": false,
+      "chinese_process_labels": true
     },
     "chinese_localization": {
       "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d"],
@@ -125,7 +127,8 @@
         "bom-components",
         "spec-labels",
         "production-scene-labels",
-        "mission-ui"
+        "mission-ui",
+        "stage-d-process-motion-labels"
       ]
     }
   },
@@ -171,6 +174,7 @@
     "static/frontend/game_world_stage_c_v630.js",
     "static/game_world_stage_d_v630.css",
     "static/frontend/game_world_stage_d_v630.js",
+    "static/frontend/game_world_stage_d_i18n_v630.js",
     "static/frontend/game_chinese_localization_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
