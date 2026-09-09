@@ -1,16 +1,18 @@
-/* MGC Language Lab PWA shell.
+/* MGC Language Lab PWA shell — v6.0.31 mobile/web experience.
  * Security invariant: only immutable/public static assets may enter Cache Storage.
  * Authentication, API, manager/admin and navigation responses are always network-only.
  */
 'use strict';
 
-const STATIC_CACHE = 'mgc-language-static';
+const STATIC_CACHE = 'mgc-language-static-v631-mobile';
 const OFFLINE_URL = '/offline.html';
 const PRECACHE = [
   OFFLINE_URL,
   '/manifest.webmanifest',
   '/icons/app-icon.svg',
-  '/icons/app-icon-maskable.svg'
+  '/icons/app-icon-maskable.svg',
+  '/mobile_experience_v631.css',
+  '/frontend/mobile_experience_v631.js'
 ];
 
 const SENSITIVE_PREFIXES = [
