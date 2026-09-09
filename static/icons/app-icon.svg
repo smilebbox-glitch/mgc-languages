@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MGC Language Lab">
+  <rect width="512" height="512" rx="112" fill="#f8fbfe"/>
+  <rect x="48" y="48" width="416" height="416" rx="96" fill="#13263b"/>
+  <path d="M132 350V162h54l70 96 70-96h54v188h-56V247l-68 88-68-88v103z" fill="#fff"/>
+  <path d="M116 396h280" stroke="#8fc7e8" stroke-width="18" stroke-linecap="round"/>
+</svg>
