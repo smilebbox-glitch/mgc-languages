@@ -1,28 +1,111 @@
-# MGC Languages — Company Pilot v6.0.29 RC1
+# MGC Languages — Company Pilot v6.0.30
 
-> **Актуальная версия репозитория: v6.0.29 RC1 (main).** README синхронизирован с текущим пилотом и последними исправлениями, включая улучшенный natural-voice TTS.
+> **Актуальная версия репозитория: v6.0.30 (main).**  
+> **Текущий продуктовый слой:** Stage E — Factory Journey 2.0.  
+> **Текущий этап эксплуатации:** controlled real-VM pilot handoff. `v6.0.29 RC1` остаётся архивной Pilot Freeze baseline и больше не является текущей версией.
 
-Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные производственные ситуации, тесты, курс, игровая практика и связанные производственные симуляции.
+Корпоративный языковой сервис для сотрудников автопрома: **китайский (путунхуа / Standard Mandarin) + английский**, профессиональная терминология, реальные производственные ситуации, тесты, курс, игровая практика и производственные симуляции.
 
-**Текущий статус:** `v6.0.29 RC1` на `main`, функциональный состав **Pilot Freeze**.
-
-## Зафиксированный состав RC1
+## Текущий состав пилота
 
 - **2029 китайских терминов** и **2029 английских терминов** в runtime.
 - Exact Chinese / English vocabulary parity.
 - **20 Automotive Arcade game types**.
 - Backend-игровая сессия ограничена **5 ответами**.
-- Anti-farm и XP-контур не менялись в v6.0.29.
-- 6 станций Factory Journey: Штамповка → Кузов/сварка → Окраска → Сборка → Качество → Логистика.
+- Server-side anti-farm, XP/scoring и canonical answer path сохранены в v6.0.30.
+- Factory Journey 2.0: семь связанных этапов Supplier → Logistics → Welding → Paint → Assembly → Quality → Engineering.
+- Digital Vehicle progression и Factory Twin status.
 - Daily Missions + Boss Shift + Arcade Mastery.
-- Production Game Depth и адаптивная сложность.
-- Production Decision Chains и Dynamic Factory Scenarios.
-- Shift Simulation из пяти связанных производственных эпизодов.
-- Personal Shift Analytics с историей под аккаунтом пользователя.
-- Manager / Team Analytics и Top-10 Leaderboard.
-- Adaptive Training Loop v6.0.27.
-- UX / Accessibility / Performance hardening v6.0.28.
+- Production Decision Chains, Dynamic Factory Scenarios и Shift Simulation.
+- Personal Shift Analytics, Manager / Team Analytics и Top-10 Leaderboard.
+- Adaptive Training Loop.
+- UX / Accessibility / Performance hardening.
 - PostgreSQL, Nginx, Docker Compose, LAN и Company Pilot deployment.
+- Game World v6.0.30 с производственными сценами и process-specific automotive motion.
+
+## v6.0.30 — Game World Expansion
+
+v6.0.30 развивает Automotive Arcade из каталога упражнений в производственный Game World, сохраняя established learning/security contracts и единый server-authoritative scoring path.
+
+### Production environments
+
+Семь основных визуальных сред:
+
+- Factory Hub;
+- Assembly;
+- Welding;
+- Paint;
+- Logistics;
+- Quality;
+- Engineering.
+
+Все 20 игр сопоставлены с производственными сценами и уровнями сложности.
+
+### Stage A — Production Gameplay Depth
+
+Добавлена более глубокая производственная подача для сборки, сварки, окраски и логистики: движение автомобиля по линии, роботизированная ячейка сварки, surface inspection, intralogistics route и связанные визуальные производственные контексты.
+
+### Stage B — Quality + Engineering
+
+Добавлены CMM-style inspection, nominal/tolerance visualization, PASS / REWORK / HOLD context, а также drawing → BOM → subsystem digital-thread presentation.
+
+### Stage C — Final Game Polish
+
+Все 20 игр получили Mission Briefing, видимый five-step Mission Flow, нейтральный transition после ответа и итоговый Mission Complete, основанный только на server-derived final score.
+
+### Stage D — Process-Specific Automotive Motion
+
+Производственные сцены работают как конкретные операции, а не как общий анимированный фон:
+
+- **Assembly:** установка детали, подход инструмента, torque verification, station beacon;
+- **Welding:** последовательные weld points, robot-arm motion, weld flash, safety/containment behavior;
+- **Paint:** spray-gun traverse, paint pass, optical scan, film-thickness visualization;
+- **Logistics:** AGV/container movement Dock → Market → Line и replenishment/Kanban motion;
+- **Quality:** CMM gantry/probe travel, actual-vs-nominal и tolerance-band visualization;
+- **Engineering:** blueprint, drawing-to-BOM data packets, component hierarchy и release-state feedback;
+- **Factory / communication:** Andon/takt board, communication pulse и control-room response.
+
+### Stage E — Factory Journey 2.0
+
+Stage E связывает существующие canonical games в одну производственную смену и не создаёт второй scoring/XP/API-контур.
+
+Семь последовательных этапов:
+
+1. **Supplier** — согласование актуальной ревизии чертежа до отгрузки.
+2. **Logistics** — дефицит материала и replenishment routing до остановки линии.
+3. **Welding** — остановка робота, safety interlock и containment language.
+4. **Paint** — идентификация и сообщение о дефекте поверхности.
+5. **Assembly** — крепление бампера, выбор инструмента и язык рабочей инструкции.
+6. **Quality** — gap measurement, tolerance interpretation и disposition context.
+7. **Engineering** — drawing/BOM mismatch и проверка актуальной ревизии.
+
+**Digital Vehicle** показывает продвижение автомобиля через material preparation, BIW, paint, final assembly, quality verification и engineering release на основе уже существующего canonical game progress.
+
+**Factory Twin** показывает состояние journey stages: trained / active / ready / pending.
+
+English mode использует английские рабочие фразы с русским operational context. Chinese mode использует китайские фразы с pinyin и русским operational context.
+
+Factory Journey 2.0 запускает только существующие `game-lab-v618` sessions и читает существующий `game-engagement-v618` progress. Нового game type, answer path, XP path, API endpoint или database migration не добавлено.
+
+Полное описание текущего слоя: `CHANGELOG_v6.0.30.md`.
+
+## Сохранённые контракты v6.0.30
+
+- ровно 20 game types;
+- максимум 5 ответов на игровую сессию;
+- server-side anti-farm без альтернативного пути начисления;
+- XP/scoring contract без второго контура;
+- API contract сохранён;
+- Stage E не добавляет database migration;
+- PWA private/API cache isolation сохранён;
+- `prefers-reduced-motion` поддерживается;
+- Chinese localization не изменяет canonical answer values.
+
+Машинно-проверяемая спецификация текущей версии:
+
+```text
+RELEASE_MANIFEST_v6.0.30.json
+```
 
 ## Automotive Arcade — 20 игр
 
@@ -62,110 +145,19 @@ data/v618_content_manifest.json
 mgc/content_v618.py
 ```
 
-## Производственные учебные слои
+## Историческая baseline v6.0.29 RC1
 
-### v6.0.19 — Factory Journey
-
-Автомобиль проходит шесть производственных станций. Следующая станция открывается после предыдущей; Journey работает поверх существующих backend game types и не создаёт новый игровой backend.
-
-### v6.0.20 — Daily Missions / Boss Shift / Arcade Mastery
-
-Ежедневные миссии комбинируют подразделение, игровую механику и слабую компетенцию. Arcade Mastery отслеживает терминологию, аудирование, производство, качество, логистику, инженерию и коммуникацию.
-
-### v6.0.21 — Production Game Depth
-
-20 игр используют производственные сцены сварки, окраски, логистики, сборки, качества, безопасности и инженерии. Доступны Учебный / Смена / Эксперт / Адаптивно.
-
-### v6.0.22 — Production Decision Chains
-
-На уровнях Смена и Эксперт пользователь принимает производственные решения до языкового задания: Andon/Line Stop, Quality Escalation, Material Shortage, Body Shop, Paint, Safety, Engineering Change и Supplier Escalation. Production judgement не создаёт отдельный XP.
-
-### v6.0.23 — Dynamic Factory Scenarios
-
-Предыдущие решения изменяют последующие условия: suspect window, line-stop risk, material run-out, containment, restart readiness, configuration risk и supplier response.
-
-### v6.0.24 — Shift Simulation
-
-Пять связанных эпизодов: 08:00, 09:35, 11:20, 14:05 и 16:25. На каждом пользователь выбирает приоритет, принимает техническое решение и выбирает рабочую формулировку. Невыбранные инциденты получают delay consequence.
-
-Live Shift State отслеживает стабильность линии, защиту качества, material runway, supplier control и нагрузку команды. Shift Simulation не добавляет `/api/games/*` и не меняет max-5 / anti-farm.
-
-### v6.0.25 — Personal Shift Analytics
-
-Shift Review сохраняется под корпоративным аккаунтом пользователя в PostgreSQL. Доступны история, тренд, повторяющаяся точка роста, слабая производственная область и следующая рекомендуемая тренировка.
-
-```text
-POST /api/shift-simulations
-GET  /api/shift-simulations/history
-```
-
-### v6.0.26 — Manager / Team Analytics + Top-10
-
-Руководитель видит department-scoped агрегаты обучения, а не HR-рейтинг. Top-10 сортируется по score, затем по серверному времени, при этом на сотрудника учитывается лучшая попытка.
-
-```text
-GET /api/manager/shift-analytics
-GET /api/leaderboards/games/{game_type}
-GET /api/leaderboards/shifts
-```
-
-### v6.0.27 — Adaptive Training Loop
-
-Персональная тренировка использует накопленные результаты и направляет пользователя в слабейшие практические области без создания нового game type или отдельного XP-контура.
-
-### v6.0.28 — UX / Accessibility / Performance Polish
-
-Добавлены skip-link, focus management, ARIA states, keyboard navigation, reduced-motion/high-contrast support и `content-visibility:auto` для тяжёлых offscreen-блоков. Старый DOM hardening больше не выполняет полный scan документа на каждую mutation; изменения пакетируются через `requestAnimationFrame`.
-
-## v6.0.29 — Release Candidate / Pilot Freeze
-
-v6.0.29 не добавляет новую пользовательскую функцию. Это release-control слой, который фиксирует текущий пилот как **RC1**.
-
-Машинно-проверяемая спецификация:
+`v6.0.29 RC1` зафиксировал предыдущий Pilot Freeze и остаётся архивной baseline для сравнения и regression-control.
 
 ```text
 RELEASE_MANIFEST_v6.0.29.json
 ```
 
-Guard:
-
-```bash
-python scripts/release_candidate_guard.py --json
-```
-
-Guard проверяет:
-
-- 2029/2029 vocabulary parity;
-- точный список 20 game types;
-- `MAX_GAME_ANSWERS == 5`;
-- frozen frontend `requiredModules`;
-- `pilotCandidate: v6.0.29`;
-- обязательные critical/deployment files;
-- отсутствие нового v6.0.29 runtime JS/CSS слоя.
-
-После RC1 без явного снятия freeze допускаются только blocker/security/deployment fixes, исправления документации и release/test gate fixes. Новые game types, frontend feature modules, migrations, XP paths и продуктовые функции запрещены manifest-контрактом.
-
-## UX hardening
-
-Сохранены release-specific **UX hardening** и пользовательские regression guards:
-
-- упрощённый интерфейс;
-- Pinyin fallback для китайской терминологии;
-- локальные/offline SVG;
-- браузерные TTS-голоса с приоритетом **Natural / Neural / Online / Premium**;
-- старый механизм произношения как fallback;
-- игровые backend-сессии ограничены **5 ответами**.
-
-Ключевые файлы:
-
-```text
-static/frontend/pilot_ux_hardening.js
-tests/v617_pilot_ux_regression_test.py
-```
+v6.0.30 является первым post-RC product layer, которому разрешены новые visual runtime assets; текущий `RELEASE_MANIFEST_v6.0.30.json` содержит `freeze: false`.
 
 ## GitHub Actions и тесты
 
-Основные release gates:
+Основные gates включают:
 
 ```text
 .github/workflows/ci.yml
@@ -174,28 +166,10 @@ tests/v617_pilot_ux_regression_test.py
 .github/workflows/ci-v627-adaptive-training.yml
 .github/workflows/ci-v628-ux-performance.yml
 .github/workflows/ci-v629-release-candidate.yml
+.github/workflows/ci-v630-game-world.yml
 ```
 
-Ключевые regressions:
-
-```text
-tests/v617_pilot_ux_regression_test.py
-tests/v618_content_games_regression_test.py
-tests/v619_factory_journey_test.py
-tests/v620_arcade_missions_test.py
-tests/v620_arcade_mastery_test.py
-tests/v621_game_depth_test.py
-tests/v622_decision_chains_test.py
-tests/v623_dynamic_factory_test.py
-tests/v624_shift_simulation_test.py
-tests/v625_shift_analytics_test.py
-tests/v626_team_leaderboard_test.py
-tests/v627_adaptive_training_test.py
-tests/v628_ux_performance_test.py
-tests/v629_release_candidate_test.py
-```
-
-Main CI выполняет Python/API regressions, release candidate guard, JavaScript syntax и реальный LAN PostgreSQL + Nginx + Docker Compose smoke.
+Main CI проверяет Python/API regressions, release contracts, JavaScript syntax и реальные Docker/LAN deployment paths, включая PostgreSQL + Nginx smoke.
 
 ## One-click Company Pilot
 
@@ -219,12 +193,46 @@ Preflight:
 python scripts/company_pilot_preflight.py --strict-corporate
 ```
 
+## Temporary shared VM pilot
+
+До появления выделенного GPU-хоста сервис поддерживает общий CPU-only/no-AI тестовый контур вместе с `window-to-china`. Временный VM-профиль отключает server-side TTS/AI-heavy layer и публикует только hardened nginx ingress на TCP `8080`.
+
+Общий operational runbook и порядок допуска пользователей находятся в соседнем репозитории `window-to-china`:
+
+```text
+CURRENT_VM_PILOT_HANDOFF.md
+IT_DUAL_VM_QUICKSTART.md
+VM_PILOT_ACCEPTANCE.md
+VM_DAILY_OPERATIONS.md
+```
+
+Порядок допуска:
+
+```text
+FIREWALL -> START -> ACCEPTANCE -> READINESS -> DAILY OPS
+```
+
+## Пилотная change policy
+
+Следующий приоритет — **реальная эксплуатация на тестовой VM**, а не дальнейшее добавление технических слоёв без подтверждённой потребности.
+
+До получения фактической обратной связи от пользователей и IT изменения следует концентрировать на:
+
+- blocker fixes;
+- security fixes;
+- VM/deployment compatibility;
+- data integrity и recovery;
+- подтверждённых UX/functional defects;
+- test/acceptance corrections.
+
+Новые продуктовые функции следует приоритизировать после реального пилотного цикла и измеримого пользовательского запроса.
+
 ## Корпоративная безопасность
 
 Для controlled company pilot предусмотрены OIDC/SSO, secure cookies, роли, PostgreSQL, Alembic/RLS, readiness checks, content governance и аудит. Финальная production-приёмка TLS/reverse proxy, backup/recovery, мониторинга и корпоративных политик остаётся задачей IT/Security.
 
 ---
 
-**Pilot:** MGC Languages v6.0.29 RC1  
-**Status:** Pilot Freeze  
+**Pilot:** MGC Languages v6.0.30 Stage E  
+**Status:** Controlled real-VM pilot handoff / post-RC  
 **Назначение:** корпоративное изучение китайского и английского языка для задач автомобильной промышленности.
