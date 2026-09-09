@@ -1,1 +1,31 @@
+# Default ownership
 * @smilebbox-glitch
+
+# Repository and CI policy
+/.github/workflows/ @smilebbox-glitch
+/.github/CODEOWNERS @smilebbox-glitch
+/.github/pull_request_template.md @smilebbox-glitch
+/SECURITY.md @smilebbox-glitch
+
+# Authentication / authorization / security
+/mgc/security.py @smilebbox-glitch
+/mgc/auth_core.py @smilebbox-glitch
+/mgc/config.py @smilebbox-glitch
+/mgc/routers/auth.py @smilebbox-glitch
+/mgc_core/security_bridge.py @smilebbox-glitch
+
+# Deployment and gateway
+/deploy/nginx/ @smilebbox-glitch
+/docker-compose.yml @smilebbox-glitch
+/docker-compose.lan.yml @smilebbox-glitch
+/docker-compose.server.yml @smilebbox-glitch
+
+# Release integrity and secret controls
+/RELEASE_MANIFEST_v6.0.29.json @smilebbox-glitch
+/scripts/release_candidate_guard.py @smilebbox-glitch
+/scripts/secret_preflight.py @smilebbox-glitch
+
+# PWA security boundary
+/static/service-worker.js @smilebbox-glitch
+/static/pwa-register.js @smilebbox-glitch
+/static/manifest.webmanifest @smilebbox-glitch
