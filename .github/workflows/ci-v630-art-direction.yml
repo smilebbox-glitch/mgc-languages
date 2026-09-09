@@ -44,6 +44,9 @@ jobs:
       - name: Powertrain + Assembly Operations regression
         run: python tests/v630_powertrain_operations_test.py
 
+      - name: Animation & Interaction Stage regression
+        run: python tests/v630_animation_interaction_test.py
+
       - name: Executive visual base regression
         run: python tests/v630_executive_visual_test.py
 
@@ -63,6 +66,7 @@ jobs:
           node --check static/frontend/assembly_builder_language_feedback_v630.js
           node --check static/frontend/assembly_operations_v630.js
           node --check static/frontend/powertrain_builder_v630.js
+          node --check static/frontend/animation_interaction_v630.js
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
