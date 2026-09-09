@@ -15,16 +15,16 @@ services:
     cpus: ${MGC_APP_CPU_LIMIT:-1.50}
 
   nginx:
-    # The VM profile exposes only nginx to the LAN. Keep its root filesystem
-    # immutable and return only the capabilities needed by the stock nginx
-    # master process to prepare cache directories and drop to its worker user.
+    # The LAN base profile already applies no-new-privileges. The VM override
+    # must not repeat that list item because Compose merges sequence values.
+    # Keep the exposed gateway immutable and return only the capabilities
+    # needed by the stock nginx master process to prepare cache directories
+    # and drop to its worker user.
     read_only: true
     tmpfs:
       - /var/cache/nginx:rw,noexec,nosuid,size=16m
       - /var/run:rw,noexec,nosuid,size=1m
       - /tmp:rw,noexec,nosuid,size=8m
-    security_opt:
-      - no-new-privileges:true
     cap_drop:
       - ALL
     cap_add:
