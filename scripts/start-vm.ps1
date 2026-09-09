@@ -24,6 +24,36 @@ function Set-SmallEnvValue([string]$Key, [string]$Value) {
     [System.IO.File]::WriteAllLines($EnvFile, $lines, [System.Text.UTF8Encoding]::new($false))
 }
 
+function Get-VmIPv4 {
+    try {
+        $route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -AddressFamily IPv4 -ErrorAction Stop |
+            Sort-Object RouteMetric, InterfaceMetric |
+            Select-Object -First 1
+        if ($route) {
+            $ip = Get-NetIPAddress -InterfaceIndex $route.InterfaceIndex -AddressFamily IPv4 -ErrorAction Stop |
+                Where-Object { $_.AddressState -eq 'Preferred' -and $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+                Select-Object -First 1 -ExpandProperty IPAddress
+            if ($ip) { return [string]$ip }
+        }
+    } catch {}
+
+    try {
+        $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
+            Where-Object { $_.AddressState -eq 'Preferred' -and $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+            Select-Object -First 1 -ExpandProperty IPAddress
+        if ($ip) { return [string]$ip }
+    } catch {}
+
+    try {
+        $ip = [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
+            Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork -and $_.IPAddressToString -notlike '127.*' -and $_.IPAddressToString -notlike '169.254.*' } |
+            Select-Object -First 1
+        if ($ip) { return $ip.IPAddressToString }
+    } catch {}
+
+    return $null
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { throw 'Docker is not installed or not in PATH.' }
 & docker info *> $null
 if ($LASTEXITCODE -ne 0) { throw 'Docker daemon is not running.' }
@@ -38,6 +68,13 @@ if (-not (Test-Path $EnvFile)) {
     Set-SmallEnvValue 'METRICS_TOKEN' (New-HexSecret)
     Write-Host 'Created .env.vm with generated local credentials.' -ForegroundColor Green
 }
+
+# APP_ENV=pilot rejects wildcard trusted hosts. Repair existing .env.vm files on
+# every start and allow only loopback plus the VM's detected primary IPv4.
+$vmIp = Get-VmIPv4
+$trustedHosts = 'localhost,127.0.0.1'
+if ($vmIp) { $trustedHosts = "$trustedHosts,$vmIp" }
+Set-SmallEnvValue 'MGC_TRUSTED_HOSTS' $trustedHosts
 
 $composeArgs = @('compose','--env-file','.env.vm','-f','docker-compose.lan.yml','-f','docker-compose.vm.yml')
 Write-Host 'Validating CPU-only / no-AI VM configuration...' -ForegroundColor Cyan
@@ -69,5 +106,7 @@ try { while (($line = $reader.ReadLine()) -ne $null) { if ($line.StartsWith('MGC
 
 Write-Host ''
 Write-Host '[GO] MGC Languages VM is ready (CPU-only, server-side AI/TTS disabled).' -ForegroundColor Green
-Write-Host "Open: http://127.0.0.1:$port" -ForegroundColor Green
+Write-Host "Local: http://127.0.0.1:$port" -ForegroundColor Green
+if ($vmIp) { Write-Host "LAN:   http://${vmIp}:$port" -ForegroundColor Green }
+Write-Host "Trusted hosts: $trustedHosts" -ForegroundColor DarkGray
 Write-Host 'Admin password is stored only in .env.vm on this VM.' -ForegroundColor Yellow
