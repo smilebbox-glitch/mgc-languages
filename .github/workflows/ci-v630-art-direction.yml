@@ -57,6 +57,7 @@ jobs:
           node --check static/frontend/digital_vehicle_3d_v630.js
           node --check static/frontend/digital_truck_3d_v630.js
           node --check static/frontend/assembly_builder_v630.js
+          node --check static/frontend/assembly_builder_language_feedback_v630.js
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json

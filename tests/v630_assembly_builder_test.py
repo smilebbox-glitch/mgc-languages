@@ -3,6 +3,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / 'static/frontend/assembly_builder_v630.js').read_text(encoding='utf-8')
+FEEDBACK_JS = (ROOT / 'static/frontend/assembly_builder_language_feedback_v630.js').read_text(encoding='utf-8')
 CSS = (ROOT / 'static/assembly_builder_v630.css').read_text(encoding='utf-8')
 INDEX = (ROOT / 'static/index.html').read_text(encoding='utf-8')
 
@@ -24,7 +25,9 @@ def task_ids(mode: str):
 def test_assets_loaded():
     assert '/assembly_builder_v630.css' in INDEX
     assert '/frontend/assembly_builder_v630.js' in INDEX
+    assert '/frontend/assembly_builder_language_feedback_v630.js' in INDEX
     assert "frontend.register('assembly-builder-v630'" in JS
+    assert "frontend.register('assembly-builder-language-feedback-v630'" in FEEDBACK_JS
 
 
 def test_four_builder_modes_and_node_counts():
@@ -55,6 +58,18 @@ def test_learning_languages_and_pinyin():
         assert token in JS
     assert "session.language==='mixed'" in JS
     assert 'Подсказки интерфейса остаются на русском' in JS
+
+
+def test_success_feedback_follows_learning_language():
+    for token in [
+        "if(value==='mixed')return index%2===0?'chinese':'english'",
+        'task.phraseEn', 'task.phraseZh', 'task.phrasePy', 'task.phraseRu',
+        "status.textContent.indexOf('Верно.')",
+    ]:
+        assert token in FEEDBACK_JS
+    forbidden = ['/api/games/', 'submitAnswer(', 'submitPractice(', 'fetch(']
+    for token in forbidden:
+        assert token not in FEEDBACK_JS
 
 
 def test_real_webgl_interaction_and_progressive_assembly():
@@ -90,6 +105,6 @@ def test_builder_does_not_own_api_xp_or_canonical_scoring():
 
 
 def test_no_external_assets_or_cdn():
-    lower = (JS + CSS).lower()
+    lower = (JS + FEEDBACK_JS + CSS).lower()
     for token in ['https://', 'http://', 'three.js', 'unpkg.com', 'cdn.jsdelivr.net']:
         assert token not in lower, token
