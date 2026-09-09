@@ -76,13 +76,15 @@ jobs:
       - name: v6.0.28 UX performance regression
         run: python tests/v628_ux_performance_test.py
 
-      - name: v6.0.29 release candidate freeze regression
-        run: python tests/v629_release_candidate_test.py
+      - name: v6.0.29 archived RC1 baseline
+        run: |
+          python tests/v629_release_candidate_test.py
+          python tests/v629_operability_smoke_test.py
 
-      - name: v6.0.29 operability smoke contract
-        run: python tests/v629_operability_smoke_test.py
+      - name: v6.0.30 Game World regression
+        run: python tests/v630_game_world_test.py
 
-      - name: Release candidate manifest guard
+      - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
 
       - name: JavaScript syntax
@@ -104,6 +106,7 @@ jobs:
           node --check static/frontend/adaptive_training_v627.js
           node --check static/frontend/ux_performance_v628.js
           node --check static/frontend/practice_games.js
+          node --check static/frontend/game_world_v630.js
           node --check static/frontend/navigation.js
           node --check static/frontend/boot.js
 
@@ -122,6 +125,7 @@ jobs:
           STATE_SECRET="$(openssl rand -hex 24)"
           METRICS_SECRET="$(openssl rand -hex 24)"
           {
+            echo 'APP_VERSION=6.0.30'
             echo 'MGC_BIND_ADDRESS=127.0.0.1'
             echo 'MGC_PORT=18080'
             echo 'MGC_TRUSTED_HOSTS=localhost,127.0.0.1'
@@ -185,21 +189,25 @@ jobs:
           curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
           curl -fsS http://127.0.0.1:18080/ > /tmp/lan-index.html
           grep -q '/frontend/boot.js' /tmp/lan-index.html
+          grep -q '/frontend/game_world_v630.js' /tmp/lan-index.html
+          grep -q '/game_world_v630.css' /tmp/lan-index.html
           curl -fsS http://127.0.0.1:18080/frontend/boot.js > /tmp/lan-boot.js
-          grep -q "pilotCandidate: 'v6.0.29'" /tmp/lan-boot.js
+          grep -q "pilotCandidate: 'v6.0.30'" /tmp/lan-boot.js
           for asset in \
             /frontend/game_lab_v618.js \
             /frontend/shift_simulation_v624.js \
             /frontend/team_leaderboard_v626.js \
             /frontend/adaptive_training_v627.js \
-            /frontend/ux_performance_v628.js; do
+            /frontend/ux_performance_v628.js \
+            /frontend/game_world_v630.js \
+            /game_world_v630.css; do
             curl -fsS "http://127.0.0.1:18080${asset}" > /dev/null
           done
           python - <<'PY'
           import json
           with open('/tmp/lan-meta.json', encoding='utf-8') as fh:
               meta = json.load(fh)
-          assert meta.get("version") == "6.0.29", meta
+          assert meta.get("version") == "6.0.30", meta
           assert meta.get("title") == "MGC Languages", meta
           assert meta.get("environment") == "pilot", meta
           assert meta.get("chinese_learning_standard"), meta

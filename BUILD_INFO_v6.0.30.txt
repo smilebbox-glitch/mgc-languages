@@ -1,0 +1,13 @@
+MGC Languages
+Release: v6.0.30
+Title: Game World Expansion
+Base release: v6.0.29 RC1
+Scope: Company Pilot
+Languages: Chinese + English
+Vocabulary: 2029 terms per language
+Automotive Arcade: 20 game types
+Max answers per game session: 5
+Anti-farm: unchanged
+Game World scenes: Factory, Assembly, Welding, Paint, Logistics, Quality, Engineering
+PWA/web app: preserved
+Database migrations: none

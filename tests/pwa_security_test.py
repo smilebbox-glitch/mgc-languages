@@ -13,7 +13,7 @@ worker = (STATIC / "service-worker.js").read_text(encoding="utf-8")
 register = (STATIC / "pwa-register.js").read_text(encoding="utf-8")
 offline = (STATIC / "offline.html").read_text(encoding="utf-8")
 boot = (STATIC / "frontend/boot.js").read_text(encoding="utf-8")
-release = json.loads((ROOT / "RELEASE_MANIFEST_v6.0.29.json").read_text(encoding="utf-8"))
+release = json.loads((ROOT / "RELEASE_MANIFEST_v6.0.30.json").read_text(encoding="utf-8"))
 
 # Installable web-app contract.
 assert manifest["name"] == "MGC Language Lab"
@@ -57,13 +57,13 @@ assert "Персональные данные" in offline
 assert "не сохраняются" in offline
 assert "<form" not in offline.lower()
 
-# This infrastructure addition must not change the frozen product version/module contract.
-assert release["release"] == "6.0.29"
-assert release["freeze"] is True
-assert "pilotCandidate: 'v6.0.29'" in boot
+# Product version can advance while the PWA security boundary remains unchanged.
+assert release["release"] == "6.0.30"
+assert release["invariants"]["pwa_private_cache_isolation"] == "preserved"
+assert "pilotCandidate: 'v6.0.30'" in boot
 assert "'pwa'" not in boot
 
 subprocess.run(["node", "--check", str(STATIC / "service-worker.js")], check=True, cwd=ROOT)
 subprocess.run(["node", "--check", str(STATIC / "pwa-register.js")], check=True, cwd=ROOT)
 
-print("PASS: PWA/web-app shell is installable, version-neutral and excludes private/API data from Cache Storage")
+print("PASS: PWA/web-app shell remains installable and excludes private/API data from Cache Storage in v6.0.30")
