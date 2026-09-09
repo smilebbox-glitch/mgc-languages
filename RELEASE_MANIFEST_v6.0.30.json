@@ -21,9 +21,30 @@
     "visual_only": true,
     "scenes": ["factory", "assembly", "welding", "paint", "logistics", "quality", "engineering"],
     "difficulty_labels": ["Базовый", "Средний", "Продвинутый"],
-    "assets": ["static/game_world_v630.css", "static/frontend/game_world_v630.js"],
+    "assets": [
+      "static/game_world_v630.css",
+      "static/frontend/game_world_v630.js",
+      "static/game_world_stage_a_v630.css",
+      "static/frontend/game_world_stage_a_v630.js"
+    ],
     "reduced_motion": true,
-    "mobile_adaptive": true
+    "mobile_adaptive": true,
+    "stage_a": {
+      "scope": ["assembly", "welding", "paint", "logistics"],
+      "production_context_only": true,
+      "scoring_path": "unchanged",
+      "answer_controls": "canonical-game-lab",
+      "covered_games": [
+        "match", "listening", "phrase", "hotspot", "assembly_order", "tool_select",
+        "safety_spot", "shift_incident", "defect_detective", "shop_route", "logistics_route", "kanban"
+      ],
+      "visual_processes": [
+        "assembly-operation-flow",
+        "welding-robot-cell",
+        "paint-optical-inspection",
+        "intralogistics-material-flow"
+      ]
+    }
   },
   "frontend_modules": [
     "error-boundary", "legacy-app", "service-status", "api-client", "app-state",
@@ -59,6 +80,8 @@
     "static/frontend/practice_games.js",
     "static/game_world_v630.css",
     "static/frontend/game_world_v630.js",
+    "static/game_world_stage_a_v630.css",
+    "static/frontend/game_world_stage_a_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",
     "mgc/services/practice_games.py",
