@@ -30,6 +30,9 @@
       "static/frontend/game_world_stage_b_v630.js",
       "static/game_world_stage_c_v630.css",
       "static/frontend/game_world_stage_c_v630.js",
+      "static/game_world_stage_d_v630.css",
+      "static/frontend/game_world_stage_d_v630.js",
+      "static/frontend/game_world_stage_d_i18n_v630.js",
       "static/frontend/game_chinese_localization_v630.js"
     ],
     "reduced_motion": true,
@@ -86,8 +89,33 @@
       "per_answer_correctness_before_finish": false,
       "result_source": "canonical-server-finish"
     },
+    "stage_d": {
+      "scope": ["all-20-games"],
+      "production_motion_only": true,
+      "scoring_path": "unchanged",
+      "answer_controls": "canonical-game-lab",
+      "covered_games": [
+        "match", "listening", "mistake", "phrase", "hotspot",
+        "assembly_order", "shop_route", "tool_select", "defect_detective", "safety_spot",
+        "quality_gate", "logistics_route", "kanban", "bom_builder", "spec_check",
+        "rapid_recall", "memory_pairs", "odd_one_out", "dialogue_choice", "shift_incident"
+      ],
+      "motion_families": ["assembly", "welding", "paint", "logistics", "quality", "engineering", "factory"],
+      "process_cycles": [
+        "part-install-and-torque-verify",
+        "robot-weld-sequence-and-safety-interlock",
+        "spray-pass-and-optical-film-scan",
+        "agv-material-route-and-kanban-replenishment",
+        "cmm-probe-and-tolerance-readout",
+        "drawing-to-bom-digital-thread",
+        "andon-takt-and-control-room-response"
+      ],
+      "interaction_feedback": "neutral-visual-process-cycle",
+      "per_answer_correctness_before_finish": false,
+      "chinese_process_labels": true
+    },
     "chinese_localization": {
-      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c"],
+      "scope": ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d"],
       "presentation_only": true,
       "canonical_answer_values": "unchanged",
       "scoring_path": "unchanged",
@@ -99,7 +127,8 @@
         "bom-components",
         "spec-labels",
         "production-scene-labels",
-        "mission-ui"
+        "mission-ui",
+        "stage-d-process-motion-labels"
       ]
     }
   },
@@ -143,6 +172,9 @@
     "static/frontend/game_world_stage_b_v630.js",
     "static/game_world_stage_c_v630.css",
     "static/frontend/game_world_stage_c_v630.js",
+    "static/game_world_stage_d_v630.css",
+    "static/frontend/game_world_stage_d_v630.js",
+    "static/frontend/game_world_stage_d_i18n_v630.js",
     "static/frontend/game_chinese_localization_v630.js",
     "static/service-worker.js",
     "static/pwa-register.js",

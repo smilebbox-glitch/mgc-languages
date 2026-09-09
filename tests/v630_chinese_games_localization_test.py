@@ -20,7 +20,9 @@ def require(condition: bool, message: str) -> None:
 
 def main() -> None:
     localization_path = ROOT / "static/frontend/game_chinese_localization_v630.js"
+    stage_d_i18n_path = ROOT / "static/frontend/game_world_stage_d_i18n_v630.js"
     source = localization_path.read_text(encoding="utf-8")
+    stage_d_i18n = stage_d_i18n_path.read_text(encoding="utf-8")
     index = (ROOT / "static/index.html").read_text(encoding="utf-8")
     manifest = json.loads((ROOT / "RELEASE_MANIFEST_v6.0.30.json").read_text(encoding="utf-8"))
     changelog = (ROOT / "CHANGELOG_v6.0.30.md").read_text(encoding="utf-8")
@@ -58,11 +60,27 @@ def main() -> None:
         require(repr(english) in source or f"'{english}'" in source, f"English leakage target not mapped: {english}")
         require(chinese in source, f"Chinese replacement missing for: {english}")
 
+    stage_d_required_pairs = {
+        "PROCESS LIVE": "生产过程 · 运行中",
+        "TORQUE VERIFY": "扭矩确认",
+        "SAFETY INTERLOCK": "安全联锁",
+        "AGV ROUTE": "AGV 路线",
+        "CMM PROBE": "三坐标测头",
+        "CONTROL ROOM": "控制室",
+        "PART INSTALL": "部件安装",
+        "SURFACE SCAN": "表面扫描",
+    }
+    for english, chinese in stage_d_required_pairs.items():
+        require(english in stage_d_i18n, f"Stage D process label not mapped: {english}")
+        require(chinese in stage_d_i18n, f"Stage D Chinese replacement missing for: {english}")
+
     require("question-pinyin gw30-zh-title-pinyin" in source, "Pinyin title presentation is missing")
     require("snapshot().language === 'chinese'" in source, "Localization must be scoped to Chinese mode")
+    require("snapshot().language === 'chinese'" in stage_d_i18n, "Stage D localization must be scoped to Chinese mode")
     require("WeakMap" in source, "Localization must preserve original DOM text for reversible language switching")
+    require("WeakMap" in stage_d_i18n, "Stage D localization must preserve original process labels")
 
-    # This file is strictly presentation-only. It may not introduce a parallel game/scoring path.
+    # Localization files are strictly presentation-only. They may not introduce a parallel game/scoring path.
     forbidden = [
         "submitAnswer(",
         "/api/games/",
@@ -71,23 +89,31 @@ def main() -> None:
         "spendable_xp",
         "gameAnswersV618.push",
     ]
-    for marker in forbidden:
-        require(marker not in source, f"Localization layer must not own scoring/API state: {marker}")
+    for layer_name, layer_source in (("Chinese localization", source), ("Stage D localization", stage_d_i18n)):
+        for marker in forbidden:
+            require(marker not in layer_source, f"{layer_name} must not own scoring/API state: {marker}")
 
     stage_c = index.find('/frontend/game_world_stage_c_v630.js')
+    stage_d = index.find('/frontend/game_world_stage_d_v630.js')
+    stage_d_i18n_pos = index.find('/frontend/game_world_stage_d_i18n_v630.js')
     localization = index.find('/frontend/game_chinese_localization_v630.js')
-    require(stage_c >= 0 and localization > stage_c, "Chinese localization must load after Stage C")
+    require(stage_c >= 0 and stage_d > stage_c, "Stage D must load after Stage C")
+    require(stage_d_i18n_pos > stage_d, "Stage D localization must load after Stage D motion")
+    require(localization > stage_d_i18n_pos, "General Chinese localization must load after Stage D localization")
 
     contract = manifest["game_world"].get("chinese_localization") or {}
-    require(contract.get("scope") == ["all-20-games", "stage-a", "stage-b", "stage-c"], "Localization scope drifted")
+    require(contract.get("scope") == ["all-20-games", "stage-a", "stage-b", "stage-c", "stage-d"], "Localization scope drifted")
     require(contract.get("presentation_only") is True, "Localization must remain presentation-only")
     require(contract.get("canonical_answer_values") == "unchanged", "Canonical answers must remain unchanged")
     require(contract.get("scoring_path") == "unchanged", "Scoring path must remain unchanged")
     require(contract.get("pinyin_game_titles") is True, "Pinyin title contract is missing")
+    require("stage-d-process-motion-labels" in contract.get("targets", []), "Stage D localization target missing")
     require("static/frontend/game_chinese_localization_v630.js" in manifest["game_world"]["assets"], "Localization asset missing from manifest")
+    require("static/frontend/game_world_stage_d_i18n_v630.js" in manifest["game_world"]["assets"], "Stage D localization asset missing from manifest")
     require("Chinese Game Localization Audit" in changelog, "Localization audit is missing from changelog")
+    require("Stage D — Process-Specific Motion" in changelog, "Stage D changelog entry is missing")
 
-    print("v6.0.30 Chinese games localization regression: OK")
+    print("v6.0.30 Chinese games localization regression through Stage D: OK")
 
 
 if __name__ == "__main__":

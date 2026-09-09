@@ -52,6 +52,21 @@ Stage C closes the Game World UX loop across all 20 game types while preserving 
 - `prefers-reduced-motion` remains supported.
 - Stage C covers all 20 game types without adding a second answer, API, XP or scoring path.
 
+## Stage D — Process-Specific Motion
+
+Stage D makes the production scenes behave like actual automotive operations instead of generic ambient animation. The motion reacts to canonical game interaction but remains neutral until server scoring finishes.
+
+- **Assembly:** part installation, tool approach, torque verification, station beacon and operation-progress motion.
+- **Welding:** sequential spot-weld illumination, robot-arm motion, weld flash and safety-interlock / containment beacon behavior.
+- **Paint:** spray-gun traverse, paint-cloud pass, optical scan and film-thickness visualization.
+- **Logistics:** AGV/container movement through Dock → Market → Line, plus Kanban/replenishment process motion.
+- **Quality:** CMM gantry/probe travel, actual-vs-nominal readout and animated tolerance-band measurement.
+- **Engineering:** animated blueprint, drawing-to-BOM data packets, component hierarchy cascade and release-state feedback.
+- **Factory / communication:** Andon/takt board, communication-node pulse and rapid decision/control-room response.
+- All 20 games now receive a distinct process-motion profile while continuing to use the canonical five-answer session and server scoring path.
+- Process labels are localized in Chinese mode; switching language does not alter canonical answer values.
+- Stage D remains presentation-only and contains no API, XP or alternate answer submission path.
+
 ## Chinese Game Localization Audit
 
 The Chinese Automotive Arcade surface was audited after Stage C because several hard-coded production and engineering labels still appeared in English even when the selected learning language was Chinese.
@@ -62,6 +77,7 @@ The Chinese Automotive Arcade surface was audited after Stage C because several 
 - Build the BOM presents automotive components in Chinese instead of leaking English component names.
 - Spec or NOK? presents 间隙 / 面差 / 扭矩 / 漆膜厚度 / 压力 instead of Gap / Flush / Torque / Film thickness / Pressure.
 - Stage A/B/C visual labels for assembly, welding, paint, logistics, quality, engineering and Mission UI are localized for Chinese mode.
+- Stage D process-motion labels are also localized for Chinese mode.
 - The localization layer is presentation-only and reversible when switching back to English; canonical answer values are untouched so order-game and server scoring contracts remain unchanged.
 
 ## Preserved contracts
