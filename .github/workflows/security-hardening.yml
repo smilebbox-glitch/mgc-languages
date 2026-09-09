@@ -11,6 +11,7 @@ on:
       - 'mgc/routers/auth.py'
       - 'deploy/nginx/**'
       - 'docker-compose.pilot.yml'
+      - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
       - 'tests/v574_security_primitives_test.py'
@@ -23,6 +24,7 @@ on:
       - 'mgc/routers/auth.py'
       - 'deploy/nginx/**'
       - 'docker-compose.pilot.yml'
+      - 'docker-compose.server-edge.yml'
       - '.env.company-pilot.example'
       - 'scripts/entrypoint.sh'
       - 'tests/v574_security_primitives_test.py'
@@ -38,7 +40,7 @@ permissions:
 jobs:
   security-contracts:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,6 +53,30 @@ jobs:
         run: python tests/v574_security_primitives_test.py
       - name: Verify server and mobile security contracts
         run: python tests/server_mobile_security_test.py
+      - name: Validate HTTPS gateway and composed server profile
+        run: |
+          mkdir -p .ci-tls
+          openssl req -x509 -nodes -newkey rsa:2048 \
+            -keyout .ci-tls/tls.key \
+            -out .ci-tls/tls.crt \
+            -days 1 \
+            -subj '/CN=mgc-language-ci.example.internal' \
+            -addext 'subjectAltName=DNS:mgc-language-ci.example.internal'
+          docker run --rm \
+            --add-host nginx:127.0.0.1 \
+            -v "$PWD/deploy/nginx/secure-gateway.conf:/etc/nginx/conf.d/default.conf:ro" \
+            -v "$PWD/.ci-tls/tls.crt:/etc/nginx/tls/tls.crt:ro" \
+            -v "$PWD/.ci-tls/tls.key:/etc/nginx/tls/tls.key:ro" \
+            nginx:1.27-alpine nginx -t
+          POSTGRES_PASSWORD=ci-database-password \
+          OIDC_STATE_SECRET=ci-state-secret-012345678901234567890123456789 \
+          METRICS_TOKEN=ci-metrics-token \
+          TLS_CERT_FILE=./.ci-tls/tls.crt \
+          TLS_KEY_FILE=./.ci-tls/tls.key \
+          docker compose -f docker-compose.pilot.yml -f docker-compose.server-edge.yml config > /tmp/mgc-secure-server-compose.yml
+          grep -q 'secure-gateway' /tmp/mgc-secure-server-compose.yml
+          grep -q '127.0.0.1:8080:8080' /tmp/mgc-secure-server-compose.yml
+          grep -q 'target: /etc/nginx/tls/tls.crt' /tmp/mgc-secure-server-compose.yml
       - name: Audit Python dependencies for known vulnerabilities
         run: |
           python -m pip install pip-audit
