@@ -3,43 +3,8 @@ name: Server and mobile security gate
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/security-hardening.yml'
-      - '.github/dependabot.yml'
-      - '.gitignore'
-      - 'mgc/security.py'
-      - 'mgc/auth_core.py'
-      - 'mgc/routers/auth.py'
-      - 'deploy/nginx/**'
-      - 'deploy/tls/**'
-      - 'docker-compose.pilot.yml'
-      - 'docker-compose.server-edge.yml'
-      - '.env.company-pilot.example'
-      - 'scripts/entrypoint.sh'
-      - 'scripts/secret_preflight.py'
-      - 'scripts/server_security_preflight.py'
-      - 'scripts/start-secure-server.sh'
-      - 'tests/v574_security_primitives_test.py'
-      - 'tests/server_mobile_security_test.py'
-      - 'requirements.txt'
   pull_request:
-    paths:
-      - '.gitignore'
-      - 'mgc/security.py'
-      - 'mgc/auth_core.py'
-      - 'mgc/routers/auth.py'
-      - 'deploy/nginx/**'
-      - 'deploy/tls/**'
-      - 'docker-compose.pilot.yml'
-      - 'docker-compose.server-edge.yml'
-      - '.env.company-pilot.example'
-      - 'scripts/entrypoint.sh'
-      - 'scripts/secret_preflight.py'
-      - 'scripts/server_security_preflight.py'
-      - 'scripts/start-secure-server.sh'
-      - 'tests/v574_security_primitives_test.py'
-      - 'tests/server_mobile_security_test.py'
-      - 'requirements.txt'
+    branches: [main]
   schedule:
     - cron: '29 3 * * 1'
   workflow_dispatch:
