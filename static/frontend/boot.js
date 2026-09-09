@@ -5,6 +5,32 @@
   const frontend = window.MGCFrontend;
   if (!frontend) throw new Error('MGCFrontend runtime is missing');
 
+  function loadOptionalStyle(href) {
+    if (document.querySelector('link[href="' + href + '"]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.dataset.mgcOptional = 'v630';
+    document.head.appendChild(link);
+  }
+
+  function loadOptionalScript(src) {
+    if (document.querySelector('script[src="' + src + '"]')) return;
+    const script = document.createElement('script');
+    script.src = src;
+    script.defer = true;
+    script.dataset.mgcOptional = 'v630';
+    script.onerror = function () { console.warn('Optional MGC module did not load:', src); };
+    document.body.appendChild(script);
+  }
+
+  function loadProductionSimulationEnhancements() {
+    loadOptionalStyle('/production_motion_v630.css');
+    loadOptionalStyle('/factory_process_simulator_v630.css');
+    loadOptionalScript('/frontend/production_motion_v630.js');
+    loadOptionalScript('/frontend/factory_process_simulator_v630.js');
+  }
+
   try {
     const requiredModules = [
       'error-boundary',
@@ -57,6 +83,7 @@
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
       detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.30'}
     }));
+    loadProductionSimulationEnhancements();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
