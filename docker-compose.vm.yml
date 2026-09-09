@@ -15,5 +15,21 @@ services:
     cpus: ${MGC_APP_CPU_LIMIT:-1.50}
 
   nginx:
+    # The VM profile exposes only nginx to the LAN. Keep its root filesystem
+    # immutable and return only the capabilities needed by the stock nginx
+    # master process to prepare cache directories and drop to its worker user.
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:rw,noexec,nosuid,size=16m
+      - /var/run:rw,noexec,nosuid,size=1m
+      - /tmp:rw,noexec,nosuid,size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
     mem_limit: ${MGC_NGINX_MEMORY_LIMIT:-128m}
     cpus: ${MGC_NGINX_CPU_LIMIT:-0.20}
