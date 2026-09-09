@@ -19,10 +19,11 @@ AUTO_CREATE_SCHEMA=false DATABASE_URL=<pilot-db> alembic current
 ```
 
 ## Runtime acceptance
-After deployment:
+After deployment, provide `METRICS_TOKEN` to the process from the approved runtime secret store. Do not paste the token into documentation, Git, or shell command history.
+
+Then run:
 ```bash
 MGC_BASE_URL=https://<pilot-host> \
-METRICS_TOKEN=<token> \
 python scripts/it_acceptance_v55.py --report IT_ACCEPTANCE_REPORT_v5.5.md
 ```
 
