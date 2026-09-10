@@ -1,0 +1,22 @@
+MGC Languages
+Release: v6.0.31
+Title: Pilot UI Simplification
+Base release: v6.0.30
+Scope: Company Pilot
+Languages: Chinese + English
+Vocabulary: 2029 terms per language
+Primary learner sections: Home, Topics, Test, Scenarios, 30-day Course, Games, Final Exam
+Presentation: not exposed in pilot UI
+3D / Digital Vehicle: not loaded or exposed in pilot UI
+Pilot visuals: local 2D SVG illustrations
+XP navigation/economy UI: removed from pilot UI
+AI Assistant navigation: removed from pilot UI
+Chinese scenarios: characters + pinyin + Russian meaning; Russian phonetic reading hidden
+30-day Course Activity block: removed from pilot UI
+Games canonical owner: practice-games
+Experimental Game Lab / Game World: not used as primary pilot Games route
+API contract: unchanged
+Server-side scoring: unchanged
+PWA: preserved
+Database migrations: none
+Deployment: PostgreSQL + Nginx + Docker Compose + LAN/Company Pilot preserved
