@@ -33,7 +33,18 @@ jobs:
         run: python scripts/api_contract_guard.py
 
       - name: Core content and backend game contract
-        run: python tests/v618_content_games_regression_test.py
+        run: |
+          python - <<'PY'
+          import app as runtime
+          from mgc.services.practice_games import GAME_TYPES, MAX_GAME_ANSWERS
+          assert len(runtime.TERMS['chinese']) == 2029
+          assert len(runtime.TERMS['english']) == 2029
+          assert len(runtime.TERMS['chinese']) == len(runtime.TERMS['english'])
+          assert len(GAME_TYPES) == 20
+          assert len(set(GAME_TYPES)) == 20
+          assert MAX_GAME_ANSWERS == 5
+          print('PASS: content parity and backend game contract')
+          PY
 
       - name: Archived RC1 integrity baseline
         run: |
