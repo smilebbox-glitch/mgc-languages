@@ -40,6 +40,11 @@
     loadOptionalScript('/frontend/visual_reset_v633.js');
   }
 
+  function loadExecutiveCleanV634() {
+    loadOptionalStyle('/executive_clean_v634.css');
+    loadOptionalScript('/frontend/executive_clean_v634.js');
+  }
+
   try {
     const requiredModules = [
       'error-boundary',
@@ -94,6 +99,7 @@
     }));
     loadProductionSimulationEnhancements();
     loadVisualResetV633();
+    loadExecutiveCleanV634();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
