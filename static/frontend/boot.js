@@ -1,4 +1,4 @@
-/* v6.0.30: validate modular frontend core and publish Game World pilot readiness. */
+/* v6.0.32: validate modular frontend core and publish the executive UI rescue layer. */
 (function () {
   'use strict';
 
@@ -10,7 +10,7 @@
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = href;
-    link.dataset.mgcOptional = 'v630';
+    link.dataset.mgcOptional = 'v632';
     document.head.appendChild(link);
   }
 
@@ -19,7 +19,7 @@
     const script = document.createElement('script');
     script.src = src;
     script.defer = true;
-    script.dataset.mgcOptional = 'v630';
+    script.dataset.mgcOptional = 'v632';
     script.onerror = function () { console.warn('Optional MGC module did not load:', src); };
     document.body.appendChild(script);
   }
@@ -33,6 +33,11 @@
     loadOptionalScript('/frontend/factory_process_simulator_v630.js');
     loadOptionalScript('/frontend/factory_simulator_stage2_v630.js');
     loadOptionalScript('/frontend/factory_training_intelligence_v631.js');
+  }
+
+  function loadExecutiveUiRescue() {
+    loadOptionalStyle('/executive_rescue_v632.css');
+    loadOptionalScript('/frontend/executive_rescue_v632.js');
   }
 
   try {
@@ -85,16 +90,17 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.30'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.32'}
     }));
     loadProductionSimulationEnhancements();
+    loadExecutiveUiRescue();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
     if (main) {
       main.innerHTML = '<div class="card"><h2>Не удалось загрузить интерфейс</h2><p>' +
         String(message).replace(/[&<>"']/g, function (char) {
-          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char];
         }) + '</p></div>';
     }
     throw error;
