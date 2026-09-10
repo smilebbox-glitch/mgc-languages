@@ -45,6 +45,11 @@
     loadOptionalScript('/frontend/executive_clean_v634.js');
   }
 
+  function loadThreeDLabV635() {
+    loadOptionalStyle('/three_d_lab_v635.css');
+    loadOptionalScript('/frontend/three_d_lab_v635.js');
+  }
+
   try {
     const requiredModules = [
       'error-boundary',
@@ -100,6 +105,7 @@
     loadProductionSimulationEnhancements();
     loadVisualResetV633();
     loadExecutiveCleanV634();
+    loadThreeDLabV635();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
