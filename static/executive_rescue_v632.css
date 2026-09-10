@@ -1,0 +1,137 @@
+/* v6.0.32 — Language Lab executive UI rescue.
+ * Presentation-only override loaded last. Keeps APIs, XP, scoring and learning semantics intact.
+ */
+:root{
+  --rescue-bg:#f4f7fb;
+  --rescue-surface:#ffffff;
+  --rescue-surface-2:#f8fafc;
+  --rescue-ink:#15283c;
+  --rescue-muted:#65778a;
+  --rescue-line:#dde5ed;
+  --rescue-blue:#2569d8;
+  --rescue-blue-soft:#edf4ff;
+  --rescue-shadow:0 10px 28px rgba(22,44,67,.08);
+  --rescue-shadow-strong:0 18px 46px rgba(22,44,67,.11);
+}
+
+body{background:var(--rescue-bg);color:var(--rescue-ink)}
+.main{padding:22px 24px 32px}
+.card,.pilot-panel,.pilot-progress,.pilot-topics,.pilot-rail-card,.topic-card,.term-card,.question-card{
+  border-color:var(--rescue-line)!important;
+  box-shadow:var(--rescue-shadow)!important;
+}
+
+/* Home: remove the overdesigned poster look and restore an executive dashboard hierarchy. */
+.pilot-dashboard{max-width:1440px;grid-template-columns:minmax(0,1fr) 280px;gap:20px}
+.pilot-primary{min-width:0}
+.pilot-hero{
+  min-height:235px;height:auto;padding:34px 38px;border-radius:22px;
+  background:linear-gradient(120deg,#ffffff 0%,#f6faff 56%,#e9f3ff 100%)!important;
+  border:1px solid var(--rescue-line)!important;box-shadow:var(--rescue-shadow-strong)!important;
+  color:var(--rescue-ink)!important;overflow:hidden;
+}
+.pilot-hero:before{
+  content:"";position:absolute;right:-34px;bottom:-48px;width:430px;height:230px;
+  background:url('/pilot/hero-chinese.svg') center/contain no-repeat;opacity:.24;filter:saturate(.72);
+  mask-image:linear-gradient(90deg,transparent 0,#000 32%);pointer-events:none;
+}
+.pilot-hero-english:before{background-image:url('/pilot/hero-english.svg')}
+.pilot-hero:after{display:none!important}
+.pilot-hero-copy{max-width:68%;position:relative;z-index:2}
+.pilot-kicker{font-size:11px;letter-spacing:.14em;color:#4e6d8d}
+.pilot-hero h1{font-size:clamp(36px,4vw,52px);line-height:1.03;letter-spacing:-.035em;margin:10px 0 12px;color:var(--rescue-ink)!important;text-shadow:none!important}
+.pilot-hero p{max-width:690px;font-size:15px;line-height:1.55;color:#4e6277!important}
+.pilot-hero-actions{margin-top:20px;gap:10px}
+.pilot-hero-actions .primary,.pilot-soft-button{min-height:44px;border-radius:10px;padding:11px 18px;font-weight:750}
+.pilot-soft-button{background:#fff;border:1px solid #ccd8e4;color:#315b87}
+.pilot-hero-quote,.pilot-hero-message{display:none!important}
+
+.pilot-next{margin-top:18px;padding:18px;border-radius:18px;background:#fff!important;border:1px solid var(--rescue-line)!important;box-shadow:var(--rescue-shadow)!important}
+.pilot-next-head{padding:0 2px 14px;border-bottom:1px solid #edf1f5;margin-bottom:14px}
+.pilot-next-head h2{font-size:18px}.pilot-next-head p{font-size:12px}.pilot-next-head blockquote{font-size:13px;color:#6b7e91}
+.pilot-next-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.pilot-panel{border-radius:15px!important;padding:16px!important;background:#fff!important}
+.pilot-quick{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pilot-quick>.pilot-panel-head{grid-column:1/-1;margin-bottom:0}
+.pilot-quick-row{margin:0;min-height:70px;border-radius:12px;background:#fbfcfe}
+.pilot-task{min-height:58px;border-radius:11px;background:#fbfcfe}
+.pilot-phrase{padding:0!important}.pilot-phrase .pilot-panel-head{padding:16px 16px 0}.pilot-phrase-copy{padding:2px 20px 14px}
+.pilot-phrase-copy strong{font-size:29px;line-height:1.18}.pilot-pinyin{font-size:13px}.pilot-phrase-copy p{font-size:13px}
+.pilot-phrase-image{height:116px;object-fit:cover;opacity:.9}
+
+.pilot-progress,.pilot-topics{margin-top:16px;border-radius:18px;padding:16px;background:#fff!important}
+.pilot-section-head{margin-bottom:14px}.pilot-section-head h2{font-size:18px}.pilot-section-head button{font-size:12px}
+.pilot-progress-grid{gap:12px}
+.pilot-metric{min-height:94px;border:1px solid #e4eaf0;border-radius:14px;padding:13px;grid-template-columns:42px 1fr}
+.pilot-metric>span{width:40px;height:40px;border-radius:11px;background:#edf6f4;color:#238f7f}
+.pilot-metric b{font-size:22px}.pilot-metric small{font-size:10px}.pilot-metric:after{display:none!important}
+
+/* Topic cards were too small at desktop widths. Three substantial cards per row are easier to scan. */
+.pilot-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pilot-topic{border-radius:15px;border:1px solid #dfe6ed;background:#fff;box-shadow:0 5px 15px rgba(22,44,67,.045)}
+.pilot-topic-thumb{height:104px;filter:saturate(.82) contrast(.96)}
+.pilot-topic b{font-size:14px;line-height:1.3;margin-top:11px;padding:0 12px}
+.pilot-topic small{font-size:11px;padding:0 12px;margin:4px 0 17px;color:#748598}
+.pilot-topic i{left:12px;bottom:8px;width:52px;height:3px;background:#6e9fcf}
+.pilot-topic:hover{transform:translateY(-2px)!important;box-shadow:0 12px 26px rgba(22,44,67,.09)!important}
+
+.pilot-rail{gap:14px}.pilot-rail-card{border-radius:16px;padding:16px;background:#fff}.pilot-quote-card{display:none!important}
+.pilot-week{gap:10px}.pilot-week>div{background:#f5f8fb}.pilot-week b{font-size:22px}
+
+/* Game World: replace the nightclub/cinematic palette with a calm digital-factory surface. */
+.game-world-v630{--gw30-bg:#f5f8fc;--gw30-panel:#ffffff;--gw30-text:#15283c;--gw30-muted:#66798c;color:var(--rescue-ink)}
+.gw30-stage{
+  top:-12px;height:292px;border-radius:22px;
+  background:linear-gradient(145deg,#f8fbff,#eef4fa 58%,#e6eef6)!important;
+  border:1px solid #dbe5ee;box-shadow:var(--rescue-shadow)!important;
+}
+.gw30-depth-grid{opacity:.38;background:linear-gradient(rgba(73,105,132,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(73,105,132,.08) 1px,transparent 1px);background-size:44px 44px}
+.gw30-ceiling{background:linear-gradient(90deg,transparent,rgba(79,118,151,.24),transparent);box-shadow:none}
+.gw30-conveyor{background:repeating-linear-gradient(90deg,#c9d5df 0 34px,#e4eaf0 34px 43px);border-color:#c9d4de;box-shadow:0 8px 15px rgba(36,58,78,.10)}
+.gw30-conveyor:before{background:repeating-linear-gradient(90deg,#9bb0c2 0 20px,#dbe4eb 20px 28px)}
+.gw30-car{filter:drop-shadow(0 15px 16px rgba(42,64,84,.18))}
+.gw30-body{background:linear-gradient(160deg,#72a9df,#3772b6 48%,#26578e);box-shadow:inset 0 2px 0 rgba(255,255,255,.45)}
+.gw30-cabin{background:linear-gradient(150deg,#cfe1ef,#5d7891 78%)}
+.gw30-robot i,.gw30-robot b{background:#859bab;box-shadow:none}
+.gw30-scan{opacity:.24;box-shadow:none;background:linear-gradient(transparent,#5ca5d6,transparent)}
+.game-world-v630 .page-head{min-height:165px;padding:28px 30px 22px;color:var(--rescue-ink)!important}
+.game-world-v630 .page-head h1{font-size:clamp(34px,4vw,50px);color:var(--rescue-ink)!important;text-shadow:none!important}
+.game-world-v630 .page-head p{color:#607386!important;font-size:14px}.game-world-v630 .page-head .kicker{color:#47749a!important}
+.gw30-hud{margin:0 18px 18px;padding:9px;border:1px solid #dbe4ec;border-radius:15px;background:rgba(255,255,255,.94);box-shadow:0 8px 20px rgba(31,53,74,.07);color:var(--rescue-ink);backdrop-filter:blur(10px)}
+.gw30-hud-main,.gw30-hud-chip{border:1px solid #e5ebf1;background:#f8fafc;border-radius:11px}
+.gw30-hud-main small,.gw30-hud-chip small{color:#7b8c9c}.gw30-hud-main b,.gw30-hud-chip b{color:#263d54}
+.gw30-live{background:#53a98d;box-shadow:0 0 0 4px rgba(83,169,141,.10)}
+.gw30-mission span{color:#75879a}
+.game-world-v630 .game-lab-card{border-radius:16px!important;box-shadow:0 6px 18px rgba(22,44,67,.06)!important}
+.game-world-v630 .game-lab-card:hover{transform:translateY(-2px)!important;box-shadow:0 12px 26px rgba(22,44,67,.10)!important}
+
+/* Factory simulators: same calm visual language as the learning product. */
+.fps-shell{max-width:1420px}.fps-head h1{font-size:clamp(30px,3.6vw,46px)}
+.fps-task,.fps-choices,.fps-visual{border-radius:16px!important;border-color:#dce5ed!important;background:#fff!important;box-shadow:var(--rescue-shadow)!important}
+.fps-scene{height:390px;border-radius:13px;background:linear-gradient(180deg,#fbfdff,#edf3f8)!important}
+.fps-route{gap:9px}.fps-stage{border-radius:11px;background:#fafcfe}.fps-stage.active{background:#edf5ff;border-color:#8eafd0}
+.factory-journey-v2-v630{border-radius:22px!important;background:linear-gradient(145deg,#f7faff,#edf3f8)!important;border:1px solid #dbe5ee!important;box-shadow:var(--rescue-shadow-strong)!important;color:var(--rescue-ink)!important}
+.factory-journey-v2-v630:before{opacity:.07!important}
+.fj2-workspace>article,.fj2-workspace>aside,.fj2-progress-card{background:#fff!important;color:var(--rescue-ink)!important;border-color:#dfe7ee!important;box-shadow:var(--rescue-shadow)!important}
+
+/* General desktop readability after the v6.0.30/31 visual stack. */
+.page-head{max-width:1440px;margin-left:auto;margin-right:auto}.page-head h1{letter-spacing:-.028em}
+.primary{box-shadow:none!important}.primary:hover{filter:brightness(.98)}
+
+@media(max-width:1180px){
+  .pilot-dashboard{grid-template-columns:1fr}.pilot-rail{grid-template-columns:repeat(3,minmax(0,1fr))}.pilot-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .gw30-hud{grid-template-columns:repeat(2,minmax(0,1fr))}.gw30-mission{grid-column:1/-1}
+}
+@media(max-width:820px){
+  .main{padding:16px}.pilot-hero{padding:28px 24px;min-height:250px}.pilot-hero-copy{max-width:100%}.pilot-hero:before{opacity:.10}
+  .pilot-next-grid{grid-template-columns:1fr}.pilot-quick{grid-column:auto;grid-template-columns:1fr}.pilot-quick>.pilot-panel-head{grid-column:auto}
+  .pilot-progress-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pilot-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pilot-rail{grid-template-columns:1fr}
+  .gw30-stage{height:250px}.game-world-v630 .page-head{min-height:150px;padding:22px}.gw30-hud{margin:0 8px 14px;grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .pilot-hero{padding:24px 20px}.pilot-hero h1{font-size:34px}.pilot-progress-grid,.pilot-topic-grid{grid-template-columns:1fr}.pilot-topic-thumb{height:122px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .pilot-topic,.game-world-v630 .game-lab-card,.gw30-car,.gw30-conveyor,.gw30-scan,.gw30-particles i{animation:none!important;transition:none!important}
+}
