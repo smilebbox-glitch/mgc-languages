@@ -1,6 +1,6 @@
 /* v6.0.31: simplified pilot navigation.
- * Games have one canonical owner: practice-games.
- * Home prefers the premium editorial workspace and falls back to pilot-home.
+ * Games now have one canonical owner: practice-games. The experimental
+ * Game Lab / Game World stack remains outside the pilot route.
  */
 (function () {
   'use strict';
@@ -21,18 +21,9 @@
     };
   }
 
-  function syncHomeChrome(view) {
-    if (!document.body) return;
-    document.body.classList.toggle('v631-premium-home-active', String(view || 'home') === 'home');
-  }
-
   function setView(view) {
     view = String(view || 'home');
-    syncHomeChrome(view);
 
-    if (frontend.has('premium-home') && frontend.get('premium-home').owns(view)) {
-      return frontend.get('premium-home').navigate(view);
-    }
     if (frontend.has('pilot-home') && frontend.get('pilot-home').owns(view)) {
       return frontend.get('pilot-home').navigate(view);
     }
@@ -86,10 +77,7 @@
     setView: setView,
     loadLanguage: function () { return legacy().loadLanguage(); },
     showApp: function () { return legacy().showApp(); },
-    showAuth: function () {
-      syncHomeChrome('auth');
-      return legacy().showAuth();
-    },
+    showAuth: function () { return legacy().showAuth(); },
     enterUserSession: async function (user) {
       const state = frontend.get('app-state');
       state.patch({
@@ -101,7 +89,6 @@
       await setView('home');
     },
     leaveUserSession: function () {
-      syncHomeChrome('auth');
       frontend.get('app-state').set('user', null);
       legacy().showAuth();
     }
