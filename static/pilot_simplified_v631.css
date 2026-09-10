@@ -1,0 +1,63 @@
+/* v6.0.31 — simplified pilot UI.
+ * Keep the pilot focused on language learning: topics, tests, scenarios,
+ * 30-day course, games and final assessment. Presentation/3D/XP/assistant
+ * surfaces are intentionally absent from the pilot navigation.
+ */
+:root{
+  --ps-bg:#f5f8fc;
+  --ps-surface:#ffffff;
+  --ps-ink:#14283f;
+  --ps-muted:#64778d;
+  --ps-line:#e1e9f1;
+  --ps-blue:#176fd3;
+  --ps-blue-soft:#edf5ff;
+  --ps-radius:16px;
+  --ps-shadow:0 8px 26px rgba(28,61,94,.07);
+}
+
+body{background:var(--ps-bg)!important;color:var(--ps-ink)}
+.main{padding:20px 24px 30px!important}
+.topbar{height:66px!important;padding:0 20px!important;background:rgba(255,255,255,.98)!important;border-bottom:1px solid var(--ps-line)!important;box-shadow:none!important}
+.brand-button{margin-right:auto!important}.brand-button small{opacity:.72}
+.pilot-search-wrap{display:none!important}
+.language-switch{background:#f1f5f9!important;border:1px solid #e4ebf2!important;padding:3px!important}
+.language-switch button{border-radius:8px!important}.language-switch button.active{box-shadow:none!important}
+.sidebar{background:#fff!important;border-right:1px solid var(--ps-line)!important;padding:18px 10px!important}
+.nav-group{gap:4px!important}.nav-item{border-radius:10px!important;padding:11px 12px!important;font-weight:700!important}.nav-item.active{box-shadow:none!important;background:var(--ps-blue-soft)!important;color:var(--ps-blue)!important}
+
+/* Explicitly keep pilot-only removals out of the UI even if stale markup is cached. */
+#xpPill,[data-view="xp"],[data-go="xp"],.xp-overview,#mgcShowcaseTrigger,#mgcExecutiveShowcase,.mgc-showcase,.mgc-hero-visual,.mgc-hero-floor,.mgc-hero-beacon,.dv3d-shell,.dv3d-stage,.digital-vehicle-3d,.digital-truck-3d{display:none!important}
+[data-view="assistant"],.assistant-launcher,.assistant-floating,.assistant-panel{display:none!important}
+
+/* Home: flatter hierarchy, fewer decorative layers, image-led learning content. */
+.pilot-dashboard{max-width:1360px!important;gap:16px!important}
+.pilot-hero{height:280px!important;border-radius:var(--ps-radius)!important;border:1px solid var(--ps-line)!important;box-shadow:var(--ps-shadow)!important;padding:34px!important}
+.pilot-hero-copy{max-width:58%!important}.pilot-hero h1{font-size:clamp(34px,4vw,50px)!important;line-height:1.02!important}.pilot-hero p{font-size:15px!important;max-width:590px!important}
+.pilot-hero-message{display:none!important}.pilot-hero-quote{right:7%!important;top:48px!important;max-width:230px!important;background:rgba(255,255,255,.82);backdrop-filter:blur(8px);padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.75)}
+.pilot-next,.pilot-progress,.pilot-topics,.pilot-rail-card{border-color:var(--ps-line)!important;box-shadow:none!important;background:var(--ps-surface)!important}
+.pilot-panel{border-color:var(--ps-line)!important;box-shadow:none!important;border-radius:12px!important}
+.pilot-progress-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.pilot-progress-grid .pilot-metric:nth-child(4){display:none!important}
+.pilot-topic-grid{gap:10px!important}.pilot-topic{border-color:var(--ps-line)!important;border-radius:12px!important;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}.pilot-topic:hover{transform:translateY(-2px);border-color:#bfd4e9!important;box-shadow:var(--ps-shadow)}
+.pilot-topic-thumb{height:82px!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
+.pilot-topic-1{background-image:url('/pilot/topics/assembly.svg')!important}.pilot-topic-2{background-image:url('/pilot/topics/welding.svg')!important}.pilot-topic-3{background-image:url('/pilot/topics/paint.svg')!important}.pilot-topic-4{background-image:url('/pilot/topics/stamping.svg')!important}.pilot-topic-5{background-image:url('/pilot/topics/quality.svg')!important}.pilot-topic-6{background-image:url('/pilot/topics/logistics.svg')!important}
+
+/* Generic learning pages. */
+.page-head{margin-bottom:18px!important}.page-head h1{letter-spacing:-.025em!important}.card,.topic-card,.term-card,.scenario-question{border-color:var(--ps-line)!important;box-shadow:none!important;border-radius:14px!important}
+.topic-card{transition:transform .15s ease,border-color .15s ease}.topic-card:hover{transform:translateY(-2px);border-color:#bdd3e9!important}
+.primary{background:var(--ps-blue)!important;box-shadow:none!important}.ghost{border-color:#d7e2ec!important;background:#fff!important}
+
+/* Chinese scenarios: keep characters + pinyin + meaning, remove Russian phonetic spelling. */
+.scenario-stage .reading-line,.scenario-question .reading-line,.scenario-option .reading-line{display:none!important}
+.scenario-toolbar{align-items:flex-start!important}.scenario-stats b{display:none!important}.scenario-stage{max-width:980px;margin-inline:auto}.scenario-question{padding:24px!important}.scenario-option{border-radius:12px!important}
+
+/* 30-day course: remove the “Активность / Соберите пару” block entirely. */
+.course-content{grid-template-columns:minmax(0,1fr)!important}.course-content>.pair-game,.pair-game{display:none!important}
+
+/* Games: present only the lightweight canonical game catalog. */
+.game-world,.game-world-shell,.gw-stage,.fj2-shell,.factory-journey,.arcade-hub,.game-lab-hero{display:none!important}
+.games-grid,.game-grid{gap:14px!important}.game-card{border:1px solid var(--ps-line)!important;border-radius:14px!important;box-shadow:none!important;background:#fff!important}.game-card:hover{border-color:#bad1e7!important;transform:translateY(-2px)}
+
+/* Mobile / smaller laptops. */
+@media(max-width:1100px){.pilot-hero-copy{max-width:67%!important}.pilot-hero-quote{display:none!important}.pilot-progress-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:820px){.main{padding:14px!important}.topbar{padding:0 12px!important}.pilot-hero{height:auto!important;min-height:250px;padding:24px!important}.pilot-hero-copy{max-width:100%!important}.pilot-progress-grid{grid-template-columns:1fr!important}.pilot-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:520px){.pilot-topic-grid{grid-template-columns:1fr!important}.language-switch button{padding:7px 9px!important;font-size:11px!important}}
