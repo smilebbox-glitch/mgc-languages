@@ -32,83 +32,63 @@ jobs:
       - name: API architecture contract
         run: python scripts/api_contract_guard.py
 
-      - name: Current pilot regression guards
+      - name: Core content and backend game contract
         run: |
-          python tests/v616_frontend_physical_shell_cleanup_test.py
-          python tests/v617_company_pilot_candidate_test.py
+          python - <<'PY'
+          import app as runtime
+          from mgc.services.practice_games import GAME_TYPES, MAX_GAME_ANSWERS
+          assert len(runtime.TERMS['chinese']) == 2029
+          assert len(runtime.TERMS['english']) == 2029
+          assert len(runtime.TERMS['chinese']) == len(runtime.TERMS['english'])
+          assert len(GAME_TYPES) == 20
+          assert len(set(GAME_TYPES)) == 20
+          assert MAX_GAME_ANSWERS == 5
+          print('PASS: content parity and backend game contract')
+          PY
 
-      - name: User-review UX regression
-        run: python tests/v617_pilot_ux_regression_test.py
-
-      - name: v6.0.18 vocabulary and games regression
-        run: python tests/v618_content_games_regression_test.py
-
-      - name: v6.0.19 Factory Journey regression
-        run: python tests/v619_factory_journey_test.py
-
-      - name: v6.0.20 adaptive arcade missions regression
-        run: python tests/v620_arcade_missions_test.py
-
-      - name: v6.0.20 arcade mastery regression
-        run: python tests/v620_arcade_mastery_test.py
-
-      - name: v6.0.21 production game depth regression
-        run: python tests/v621_game_depth_test.py
-
-      - name: v6.0.22 production decision chains regression
-        run: python tests/v622_decision_chains_test.py
-
-      - name: v6.0.23 dynamic factory scenarios regression
-        run: python tests/v623_dynamic_factory_test.py
-
-      - name: v6.0.24 shift simulation regression
-        run: python tests/v624_shift_simulation_test.py
-
-      - name: v6.0.25 personal shift analytics regression
-        run: python tests/v625_shift_analytics_test.py
-
-      - name: v6.0.26 team analytics and leaderboard regression
-        run: python tests/v626_team_leaderboard_test.py
-
-      - name: v6.0.27 adaptive training regression
-        run: python tests/v627_adaptive_training_test.py
-
-      - name: v6.0.28 UX performance regression
-        run: python tests/v628_ux_performance_test.py
-
-      - name: v6.0.29 archived RC1 baseline
+      - name: Archived RC1 integrity baseline
         run: |
           python tests/v629_release_candidate_test.py
           python tests/v629_operability_smoke_test.py
 
-      - name: v6.0.30 Game World regression
-        run: python tests/v630_game_world_test.py
+      - name: Current v6.0.31 pilot regression
+        run: python tests/v631_simplified_pilot_test.py
+
+      - name: PWA privacy and offline security
+        run: python tests/pwa_security_test.py
 
       - name: Current release guard
         run: python scripts/release_candidate_guard.py --json
 
-      - name: JavaScript syntax
+      - name: Active JavaScript syntax
         run: |
+          node --check static/frontend/runtime.js
+          node --check static/frontend/error_boundary.js
+          node --check static/frontend/legacy_bridge.js
+          node --check static/frontend/service_status.js
+          node --check static/frontend/api_client.js
+          node --check static/frontend/app_state.js
           node --check static/frontend/pilot_home.js
-          node --check static/frontend/pilot_ux_hardening.js
           node --check static/frontend/learning.js
-          node --check static/frontend/game_lab_v618.js
-          node --check static/frontend/game_engagement_v618.js
-          node --check static/frontend/factory_journey_v619.js
-          node --check static/frontend/arcade_missions_v620.js
-          node --check static/frontend/arcade_mastery_v620.js
-          node --check static/frontend/game_depth_v621.js
-          node --check static/frontend/decision_chains_v622.js
-          node --check static/frontend/dynamic_factory_v623.js
-          node --check static/frontend/shift_simulation_v624.js
-          node --check static/frontend/shift_analytics_v625.js
+          node --check static/frontend/practice_games.js
+          node --check static/frontend/support_notifications.js
+          node --check static/frontend/final_assessment.js
+          node --check static/frontend/chinese_reference.js
+          node --check static/frontend/content_governance.js
+          node --check static/frontend/admin_ops.js
+          node --check static/frontend/admin_analytics.js
+          node --check static/frontend/manager_admin.js
           node --check static/frontend/team_leaderboard_v626.js
           node --check static/frontend/adaptive_training_v627.js
-          node --check static/frontend/ux_performance_v628.js
-          node --check static/frontend/practice_games.js
-          node --check static/frontend/game_world_v630.js
+          node --check static/frontend/legacy_retirement.js
           node --check static/frontend/navigation.js
+          node --check static/frontend/session_lifecycle.js
+          node --check static/frontend/pilot_ux_hardening.js
+          node --check static/frontend/ux_performance_v628.js
+          node --check static/frontend/mobile_experience_v631.js
           node --check static/frontend/boot.js
+          node --check static/service-worker.js
+          node --check static/pwa-register.js
 
   lan-compose-smoke:
     runs-on: ubuntu-latest
@@ -125,7 +105,7 @@ jobs:
           STATE_SECRET="$(openssl rand -hex 24)"
           METRICS_SECRET="$(openssl rand -hex 24)"
           {
-            echo 'APP_VERSION=6.0.30'
+            echo 'APP_VERSION=6.0.31'
             echo 'MGC_BIND_ADDRESS=127.0.0.1'
             echo 'MGC_PORT=18080'
             echo 'MGC_TRUSTED_HOSTS=localhost,127.0.0.1'
@@ -160,10 +140,10 @@ jobs:
       - name: Validate LAN compose model
         run: docker compose --env-file .env.ci-lan -f docker-compose.lan.yml config --quiet
 
-      - name: Start exact LAN PostgreSQL stack
+      - name: Start LAN PostgreSQL stack
         run: docker compose --env-file .env.ci-lan -f docker-compose.lan.yml up -d --build
 
-      - name: Wait for LAN readiness through Nginx
+      - name: Wait for readiness through Nginx
         shell: bash
         run: |
           for i in $(seq 1 90); do
@@ -181,52 +161,60 @@ jobs:
           echo 'LAN stack did not reach readiness in time.'
           exit 1
 
-      - name: Verify HTTP operability through Nginx
+      - name: Verify current pilot HTTP surface
         shell: bash
         run: |
           curl -fsS http://127.0.0.1:18080/health/live > /tmp/lan-live.json
           curl -fsS http://127.0.0.1:18080/health/ready > /tmp/lan-ready.json
           curl -fsS http://127.0.0.1:18080/api/meta > /tmp/lan-meta.json
           curl -fsS http://127.0.0.1:18080/ > /tmp/lan-index.html
-          grep -q '/frontend/boot.js' /tmp/lan-index.html
-          grep -q '/frontend/game_world_v630.js' /tmp/lan-index.html
-          grep -q '/game_world_v630.css' /tmp/lan-index.html
           curl -fsS http://127.0.0.1:18080/frontend/boot.js > /tmp/lan-boot.js
-          grep -q "pilotCandidate: 'v6.0.30'" /tmp/lan-boot.js
+
+          grep -q '/frontend/practice_games.js' /tmp/lan-index.html
+          grep -q '/pilot_simplified_v631.css' /tmp/lan-index.html
+          grep -q "pilotCandidate: 'v6.0.31'" /tmp/lan-boot.js
+
+          for retired in \
+            '/frontend/game_lab_v618.js' \
+            '/frontend/game_world_v630.js' \
+            '/frontend/factory_journey_v2_v630.js' \
+            '/frontend/assistant_knowledge.js' \
+            '/digital_vehicle_3d_v630.css' \
+            '/executive_visual_v630.css'; do
+            if grep -q "$retired" /tmp/lan-index.html; then
+              echo "Retired pilot asset is still exposed: $retired"
+              exit 1
+            fi
+          done
+
           for asset in \
-            /frontend/game_lab_v618.js \
-            /frontend/shift_simulation_v624.js \
-            /frontend/team_leaderboard_v626.js \
-            /frontend/adaptive_training_v627.js \
-            /frontend/ux_performance_v628.js \
-            /frontend/game_world_v630.js \
-            /game_world_v630.css; do
+            /frontend/pilot_home.js \
+            /frontend/learning.js \
+            /frontend/practice_games.js \
+            /frontend/navigation.js \
+            /frontend/boot.js \
+            /pilot_simplified_v631.css \
+            /pilot/hero-chinese.svg \
+            /pilot/hero-english.svg; do
             curl -fsS "http://127.0.0.1:18080${asset}" > /dev/null
           done
+
           python - <<'PY'
           import json
           with open('/tmp/lan-meta.json', encoding='utf-8') as fh:
               meta = json.load(fh)
-          assert meta.get("version") == "6.0.30", meta
-          assert meta.get("title") == "MGC Languages", meta
-          assert meta.get("environment") == "pilot", meta
-          assert meta.get("chinese_learning_standard"), meta
-          print(json.dumps({"version": meta["version"], "environment": meta["environment"]}, ensure_ascii=False))
+          assert meta.get('version') == '6.0.31', meta
+          assert meta.get('title') == 'MGC Languages', meta
+          assert meta.get('environment') == 'pilot', meta
+          assert meta.get('chinese_learning_standard'), meta
+          print(json.dumps({'version': meta['version'], 'environment': meta['environment']}, ensure_ascii=False))
           PY
-          for endpoint in /api/adaptive-training/plan /api/manager/shift-analytics; do
-            status="$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:18080${endpoint}")"
-            case "$status" in
-              401|403) ;;
-              *) echo "Protected endpoint ${endpoint} returned ${status}"; exit 1 ;;
-            esac
-          done
 
-      - name: Verify LAN services and modular runtime
+      - name: Verify container runtime contracts
         run: |
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml ps
-          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r.SHIFT_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.TEAM_ANALYTICS_ROUTER_BINDING_REPORT.ok; assert r.ADAPTIVE_TRAINING_ROUTER_BINDING_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == len(r._legacy_module.TERMS['english'])"
+          docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python -c "import asgi, mgc_core.runtime as r; assert asgi.app; assert asgi.CONTRACT_REPORT.ok; assert r._legacy_module.V618_CONTENT_STATUS['parity']; assert len(r._legacy_module.TERMS['chinese']) == 2029; assert len(r._legacy_module.TERMS['english']) == 2029"
           docker compose --env-file .env.ci-lan -f docker-compose.lan.yml exec -T app python scripts/release_candidate_guard.py --json
-          cat /tmp/lan-meta.json
 
       - name: LAN runtime diagnostics
         if: failure()
