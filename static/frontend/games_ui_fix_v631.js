@@ -69,15 +69,19 @@
 
     buttons.forEach(function (button, index) {
       if (index >= options.length) {
-        button.hidden = true;
-        button.disabled = true;
-        button.removeAttribute('data-game-answer');
+        if (!button.hidden) button.hidden = true;
+        if (!button.disabled) button.disabled = true;
+        if (button.hasAttribute('data-game-answer')) button.removeAttribute('data-game-answer');
         return;
       }
-      button.hidden = false;
-      button.disabled = false;
-      button.dataset.gameAnswer = String(index);
-      button.textContent = String(options[index]);
+
+      const answerIndex = String(index);
+      const answerText = String(options[index]);
+
+      if (button.hidden) button.hidden = false;
+      if (button.disabled) button.disabled = false;
+      if (button.dataset.gameAnswer !== answerIndex) button.dataset.gameAnswer = answerIndex;
+      if (button.textContent !== answerText) button.textContent = answerText;
     });
   }
 
