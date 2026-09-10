@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,6 +41,8 @@ def test_pilot_index_is_lightweight() -> None:
         '/frontend/game_lab_v618.js',
         '/frontend/game_world_v630.js',
         '/frontend/factory_journey_v2_v630.js',
+        '/frontend/premium_home_v631.js',
+        '/premium_home_v631.css',
         '/executive_visual_v630.css',
         '/executive_polish_v630.css',
         '/art_direction_v630.css',
@@ -51,6 +54,7 @@ def test_pilot_index_is_lightweight() -> None:
 
     assert '/pilot_simplified_v631.css' in index
     assert '/frontend/practice_games.js' in index
+    assert '/frontend/games_ui_fix_v631.js' in index
 
 
 def test_games_have_one_pilot_owner() -> None:
@@ -58,6 +62,22 @@ def test_games_have_one_pilot_owner() -> None:
     assert "practice-games" in navigation
     assert "game-lab-v618').navigate('games')" not in navigation
     assert '[data-view="games"], [data-go="games"], [data-pilot-target="games"]' in navigation
+
+
+def test_games_ui_fix_contract() -> None:
+    fix = read("static/frontend/games_ui_fix_v631.js")
+    assert "session.game_type !== 'match'" in fix
+    assert "Array.isArray(item.options)" in fix
+    assert "button.dataset.gameAnswer = String(index)" in fix
+    assert "button.textContent = String(options[index])" in fix
+    assert "button.textContent = '← К играм'" in fix
+    assert "gameSession: null" in fix
+    assert "games.renderGames()" in fix
+    subprocess.run(
+        ["node", "--check", str(ROOT / "static/frontend/games_ui_fix_v631.js")],
+        check=True,
+        cwd=ROOT,
+    )
 
 
 def test_course_and_scenarios_are_simplified() -> None:
@@ -104,6 +124,7 @@ if __name__ == "__main__":
     test_release_identity_and_scope()
     test_pilot_index_is_lightweight()
     test_games_have_one_pilot_owner()
+    test_games_ui_fix_contract()
     test_course_and_scenarios_are_simplified()
     test_boot_contract_matches_manifest()
     test_version_and_feature_defaults()
