@@ -10,6 +10,7 @@ on:
       - 'deploy/vm/**'
       - 'deploy/nginx/vm-https.conf'
       - 'tests/v631_vm_deployment_kit_test.py'
+      - 'tests/v631_3d_cold_start_deployment_test.py'
       - '.github/workflows/ci-v631-vm-deployment-kit.yml'
   pull_request:
     paths:
@@ -19,6 +20,7 @@ on:
       - 'deploy/vm/**'
       - 'deploy/nginx/vm-https.conf'
       - 'tests/v631_vm_deployment_kit_test.py'
+      - 'tests/v631_3d_cold_start_deployment_test.py'
       - '.github/workflows/ci-v631-vm-deployment-kit.yml'
   workflow_dispatch:
 
@@ -37,7 +39,9 @@ jobs:
           python-version: '3.12'
 
       - name: VM kit static regression
-        run: python tests/v631_vm_deployment_kit_test.py
+        run: |
+          python tests/v631_vm_deployment_kit_test.py
+          python tests/v631_3d_cold_start_deployment_test.py
 
       - name: Shell syntax
         run: bash -n deploy/vm/*.sh
@@ -101,6 +105,59 @@ jobs:
               *) echo "Protected endpoint ${endpoint} returned ${status}"; exit 1 ;;
             esac
           done
+
+      - name: Browser-like cold-start asset burst
+        shell: bash
+        run: |
+          python - <<'PY'
+          import concurrent.futures
+          import re
+          import ssl
+          import urllib.error
+          import urllib.request
+
+          base = "https://127.0.0.1:18443"
+          ctx = ssl._create_unverified_context()
+          with urllib.request.urlopen(base + "/", context=ctx, timeout=10) as response:
+              html = response.read().decode("utf-8")
+          paths = set(re.findall(r'(?:src|href)="(/[^"#?]+)', html))
+          paths.update({
+              "/production_motion_v630.css",
+              "/factory_process_simulator_v630.css",
+              "/factory_simulator_stage2_v630.css",
+              "/factory_training_intelligence_v631.css",
+              "/frontend/production_motion_v630.js",
+              "/frontend/factory_process_simulator_v630.js",
+              "/frontend/factory_simulator_stage2_v630.js",
+              "/frontend/factory_training_intelligence_v631.js",
+              "/frontend/digital_vehicle_3d_v630.js",
+              "/frontend/digital_truck_3d_v630.js",
+              "/frontend/assembly_builder_v630.js",
+              "/frontend/powertrain_builder_v630.js",
+              "/frontend/factory_digital_thread_v630.js",
+          })
+          paths = sorted(p for p in paths if not p.startswith("/api/"))
+          assert len(paths) > 72, f"cold-start regression needs >72 assets, got {len(paths)}"
+
+          def fetch(path):
+              req = urllib.request.Request(base + path, headers={"User-Agent": "MGC-Cold-Start-Smoke/1.0"})
+              try:
+                  with urllib.request.urlopen(req, context=ctx, timeout=15) as response:
+                      body = response.read(128)
+                      return path, response.status, len(body)
+              except urllib.error.HTTPError as exc:
+                  return path, exc.code, 0
+              except Exception as exc:
+                  return path, type(exc).__name__, 0
+
+          with concurrent.futures.ThreadPoolExecutor(max_workers=32) as pool:
+              results = list(pool.map(fetch, paths))
+          bad = [item for item in results if item[1] != 200]
+          if bad:
+              print("Cold-start asset failures:", bad)
+              raise SystemExit(1)
+          print(f"PASS: {len(results)} browser-like startup assets returned HTTP 200 with no throttled 3D modules")
+          PY
 
       - name: VM runtime diagnostics
         if: failure()

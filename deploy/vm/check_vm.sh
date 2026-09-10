@@ -26,6 +26,28 @@ curl -kfsS --connect-timeout 3 --max-time 10 "$url/api/meta" >/tmp/mgc-vm-meta.j
 curl -kfsS --connect-timeout 3 --max-time 10 "$url/" >/tmp/mgc-vm-index.html
 grep -q '/frontend/boot.js' /tmp/mgc-vm-index.html
 
+# Critical client-side 3D assets are part of the pilot acceptance contract.
+# WebGL executes on the user's browser/device; the VM must reliably serve every
+# renderer and simulator asset on a cold load.
+critical_3d_assets=(
+  "/digital_vehicle_3d_v630.css"
+  "/assembly_builder_v630.css"
+  "/powertrain_builder_v630.css"
+  "/factory_digital_thread_v630.css"
+  "/frontend/digital_vehicle_3d_v630.js"
+  "/frontend/digital_truck_3d_v630.js"
+  "/frontend/assembly_builder_v630.js"
+  "/frontend/powertrain_builder_v630.js"
+  "/frontend/factory_digital_thread_v630.js"
+  "/frontend/production_motion_v630.js"
+  "/frontend/factory_process_simulator_v630.js"
+  "/frontend/factory_simulator_stage2_v630.js"
+  "/frontend/factory_training_intelligence_v631.js"
+)
+for asset in "${critical_3d_assets[@]}"; do
+  curl -kfsS --connect-timeout 3 --max-time 10 "$url$asset" >/dev/null
+done
+
 openssl x509 -in "$CERT_DIR/server.crt" -noout -checkend 86400 >/dev/null
 
 if [[ -n "$(compose port db 5432 2>/dev/null || true)" ]]; then
@@ -41,6 +63,7 @@ printf 'OK: HTTPS %s\n' "$url"
 printf 'OK: PostgreSQL internal readiness\n'
 printf 'OK: application readiness\n'
 printf 'OK: PWA/web shell reachable\n'
+printf 'OK: critical 3D/WebGL assets reachable\n'
 printf 'OK: TLS certificate valid for >24h\n'
 printf 'OK: DB and app have no host-published ports\n'
 compose ps
