@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 STATIC_DIR = ROOT / "static"
-APP_VERSION = os.getenv("APP_VERSION", "6.0.30").strip() or "6.0.30"
+APP_VERSION = os.getenv("APP_VERSION", "6.0.31").strip() or "6.0.31"
 INSTANCE_ID = os.getenv("INSTANCE_ID", os.getenv("HOSTNAME", "local")).strip() or "local"
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'mgc.db'}")
 APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
@@ -121,10 +121,10 @@ RTO_TARGET_MINUTES = max(1, min(60 * 24, int(os.getenv("RTO_TARGET_MINUTES", "60
 RECOVERY_EVIDENCE_REQUIRED = os.getenv("RECOVERY_EVIDENCE_REQUIRED", "false").lower() == "true"
 
 BUILTIN_FEATURE_FLAGS = {
-    "games": {"title":"Automotive Arcade", "description":"20 игровых режимов: слова, аудио, автомобильные детали, производство, качество, логистика и рабочие сценарии", "default_enabled":True},
-    "xp_economy": {"title":"XP и помощь", "description":"Расходуемый XP, подсказки и персональные пакеты", "default_enabled":True},
+    "games": {"title":"Automotive Arcade", "description":"Игровая практика для терминов, аудио и рабочих фраз", "default_enabled":True},
+    "xp_economy": {"title":"XP и помощь", "description":"Историческая XP-механика, отключённая в упрощённом пилоте", "default_enabled":False},
     "learning_nudges": {"title":"Мягкие напоминания", "description":"Learning Nudge Engine без давления", "default_enabled":True},
     "chinese_reference": {"title":"Информация о китайском", "description":"Pinyin, тоны, Путунхуа и справка о диалектах", "default_enabled":True},
     "server_audio": {"title":"Серверное аудио", "description":"Offline TTS; browser voice остаётся fallback", "default_enabled":True},
-    "ai_assistant": {"title":"ИИ-помощник", "description":"Дополнительный AI/RAG учебный помощник", "default_enabled":True},
+    "ai_assistant": {"title":"ИИ-помощник", "description":"Исторический AI/RAG слой, отключённый в текущем пилоте", "default_enabled":False},
 }

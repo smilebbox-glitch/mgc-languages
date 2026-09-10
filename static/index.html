@@ -17,35 +17,9 @@
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/pilot.css">
   <link rel="stylesheet" href="/pilot_overrides.css">
-  <link rel="stylesheet" href="/game_lab_v618.css">
-  <link rel="stylesheet" href="/game_engagement_v618.css">
-  <link rel="stylesheet" href="/factory_journey_v619.css">
-  <link rel="stylesheet" href="/arcade_missions_v620.css">
-  <link rel="stylesheet" href="/arcade_mastery_v620.css">
-  <link rel="stylesheet" href="/game_depth_v621.css">
-  <link rel="stylesheet" href="/decision_chains_v622.css">
-  <link rel="stylesheet" href="/dynamic_factory_v623.css">
-  <link rel="stylesheet" href="/shift_simulation_v624.css">
-  <link rel="stylesheet" href="/shift_analytics_v625.css">
-  <link rel="stylesheet" href="/team_leaderboard_v626.css">
-  <link rel="stylesheet" href="/adaptive_training_v627.css">
   <link rel="stylesheet" href="/ux_performance_v628.css">
-  <link rel="stylesheet" href="/game_world_v630.css">
-  <link rel="stylesheet" href="/game_world_stage_a_v630.css">
-  <link rel="stylesheet" href="/game_world_stage_b_v630.css">
-  <link rel="stylesheet" href="/game_world_stage_c_v630.css">
-  <link rel="stylesheet" href="/game_world_stage_d_v630.css">
-  <link rel="stylesheet" href="/factory_journey_v2_v630.css">
-  <link rel="stylesheet" href="/executive_visual_v630.css">
-  <link rel="stylesheet" href="/executive_polish_v630.css">
-  <link rel="stylesheet" href="/art_direction_v630.css">
-  <link rel="stylesheet" href="/digital_vehicle_3d_v630.css">
-  <link rel="stylesheet" href="/assembly_builder_v630.css">
-  <link rel="stylesheet" href="/assembly_operations_v630.css">
-  <link rel="stylesheet" href="/powertrain_builder_v630.css">
-  <link rel="stylesheet" href="/animation_interaction_v630.css">
-  <link rel="stylesheet" href="/factory_digital_thread_v630.css">
   <link rel="stylesheet" href="/mobile_experience_v631.css">
+  <link rel="stylesheet" href="/pilot_simplified_v631.css">
 </head>
 <body>
   <a class="v628-skip-link" href="#main">Перейти к основному содержимому</a>
@@ -108,11 +82,9 @@
         <span class="brand-mark small">M</span>
         <span><b>MGC Language Lab</b><small>People · Languages · Automotive</small></span>
       </button>
-      <label class="pilot-search-wrap" aria-label="Поиск по темам"><input id="pilotSearch" class="pilot-search" type="search" autocomplete="off" placeholder="Поиск по темам…"></label>
       <div class="language-switch" role="group" aria-label="Изучаемый язык"><button data-language="chinese">Китайский язык · 中文</button><button data-language="english">English</button></div>
       <button id="pinyinToggle" class="pinyin-toggle hidden" type="button" title="Показать или скрыть Pinyin">拼 Pinyin: вкл</button>
       <button id="notificationButton" class="icon-button" data-view="notifications" title="Уведомления" aria-label="Уведомления">◌</button>
-      <button id="xpPill" class="xp-pill" data-view="xp" title="XP и помощь">0 XP</button>
       <div class="pilot-profile" aria-label="Профиль пользователя"><span class="pilot-profile-avatar">M</span><span class="pilot-profile-copy"><b id="userProfileName">Пользователь</b><small id="userProfileDept"></small></span></div>
       <button id="logoutButton" class="icon-button" title="Выйти" aria-label="Выйти">↪</button>
     </header>
@@ -126,10 +98,9 @@
           <button class="nav-item" data-view="roleplay"><span>◉</span>Сценарии</button>
           <button class="nav-item" data-view="course30"><span>30</span>Курс 30 дней</button>
           <button class="nav-item" data-view="games"><span>◇</span>Игры</button>
-          <button class="nav-item" data-view="xp"><span>XP</span>XP</button>
           <button class="nav-item" data-view="exam"><span>★</span>Итоговый экзамен</button>
         </div>
-        <div class="nav-group"><button class="nav-item" data-view="assistant"><span>✦</span>Помощник</button><button id="chineseBasicsNav" class="nav-item hidden" data-view="chinese-basics"><span>i</span>Информация о китайском</button></div>
+        <div class="nav-group"><button id="chineseBasicsNav" class="nav-item hidden" data-view="chinese-basics"><span>i</span>Информация о китайском</button></div>
         <div id="managerNav" class="nav-group hidden"><button class="nav-item" data-view="manager"><span>♙</span>Руководитель</button></div>
         <div id="adminNav" class="nav-group hidden"><button class="nav-item" data-view="admin"><span>⚙</span>Админ</button></div>
       </aside>
@@ -148,37 +119,8 @@
   <script src="/frontend/app_state.js" defer></script>
   <script src="/frontend/pilot_home.js" defer></script>
   <script src="/frontend/learning.js" defer></script>
-  <script src="/frontend/game_lab_v618.js" defer></script>
-  <script src="/frontend/game_engagement_v618.js" defer></script>
-  <script src="/frontend/factory_journey_v619.js" defer></script>
-  <script src="/frontend/arcade_missions_v620.js" defer></script>
-  <script src="/frontend/arcade_mastery_v620.js" defer></script>
-  <script src="/frontend/game_depth_v621.js" defer></script>
-  <script src="/frontend/decision_chains_v622.js" defer></script>
-  <script src="/frontend/dynamic_factory_v623.js" defer></script>
-  <script src="/frontend/shift_simulation_v624.js" defer></script>
-  <script src="/frontend/shift_analytics_v625.js" defer></script>
   <script src="/frontend/practice_games.js" defer></script>
-  <script src="/frontend/game_world_v630.js" defer></script>
-  <script src="/frontend/game_world_stage_a_v630.js" defer></script>
-  <script src="/frontend/game_world_stage_b_v630.js" defer></script>
-  <script src="/frontend/game_world_stage_c_v630.js" defer></script>
-  <script src="/frontend/game_world_stage_d_v630.js" defer></script>
-  <script src="/frontend/game_world_stage_d_i18n_v630.js" defer></script>
-  <script src="/frontend/factory_journey_v2_v630.js" defer></script>
-  <script src="/frontend/game_chinese_localization_v630.js" defer></script>
-  <script src="/frontend/chinese_learning_surface_v630.js" defer></script>
-  <script src="/frontend/art_direction_v630.js" defer></script>
-  <script src="/frontend/digital_vehicle_3d_v630.js" defer></script>
-  <script src="/frontend/digital_truck_3d_v630.js" defer></script>
-  <script src="/frontend/assembly_builder_v630.js" defer></script>
-  <script src="/frontend/assembly_builder_language_feedback_v630.js" defer></script>
-  <script src="/frontend/assembly_operations_v630.js" defer></script>
-  <script src="/frontend/powertrain_builder_v630.js" defer></script>
-  <script src="/frontend/animation_interaction_v630.js" defer></script>
-  <script src="/frontend/factory_digital_thread_v630.js" defer></script>
   <script src="/frontend/support_notifications.js" defer></script>
-  <script src="/frontend/assistant_knowledge.js" defer></script>
   <script src="/frontend/final_assessment.js" defer></script>
   <script src="/frontend/chinese_reference.js" defer></script>
   <script src="/frontend/content_governance.js" defer></script>

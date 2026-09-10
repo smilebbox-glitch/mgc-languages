@@ -1,0 +1,58 @@
+name: mgc-languages-v631-simplified-pilot
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mgc-v631-simplified-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simplified-pilot-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: v6.0.31 simplified UI regression
+        run: python tests/v631_simplified_pilot_test.py
+
+      - name: Current release guard
+        run: python scripts/release_candidate_guard.py --json
+
+      - name: Python compile
+        run: python -m compileall -q app.py asgi.py mgc mgc_core scripts
+
+      - name: Active JavaScript syntax
+        run: |
+          node --check static/frontend/pilot_home.js
+          node --check static/frontend/learning.js
+          node --check static/frontend/practice_games.js
+          node --check static/frontend/navigation.js
+          node --check static/frontend/boot.js
+          node --check static/frontend/final_assessment.js
+          node --check static/frontend/chinese_reference.js
+          node --check static/frontend/mobile_experience_v631.js
+          node --check static/service-worker.js
+          node --check static/pwa-register.js
+
+      - name: Release identity
+        run: |
+          grep -q '"release": "6.0.31"' RELEASE_MANIFEST_v6.0.31.json
+          grep -q '"status": "pilot-ui-simplification"' RELEASE_MANIFEST_v6.0.31.json
+          grep -q "pilotCandidate: 'v6.0.31'" static/frontend/boot.js
+          grep -q 'APP_VERSION = os.getenv("APP_VERSION", "6.0.31")' mgc/config.py
+          grep -q 'Release: v6.0.31' BUILD_INFO_v6.0.31.txt
+          grep -q 'Pilot UI Simplification' CHANGELOG_v6.0.31.md
