@@ -1,0 +1,89 @@
+{
+  "release": "6.0.31",
+  "status": "pilot-ui-simplification",
+  "base_release": "6.0.30",
+  "freeze": false,
+  "scope": "Company Pilot",
+  "languages": ["chinese", "english"],
+  "vocabulary_terms_per_language": 2029,
+  "pilot_ui": {
+    "learner_navigation": [
+      "home",
+      "topics",
+      "quiz",
+      "roleplay",
+      "course30",
+      "games",
+      "exam"
+    ],
+    "chinese_reference": true,
+    "presentation_exposed": false,
+    "three_d_exposed": false,
+    "xp_navigation_exposed": false,
+    "assistant_navigation_exposed": false,
+    "course30_activity_exposed": false,
+    "visual_strategy": "local-2d-svg"
+  },
+  "chinese_scenarios": {
+    "characters": true,
+    "pinyin": true,
+    "russian_meaning": true,
+    "russian_phonetic_reading": false
+  },
+  "games": {
+    "canonical_pilot_owner": "practice-games",
+    "catalog": ["match", "listening", "phrase", "mistake"],
+    "experimental_game_lab_primary_route": false,
+    "game_world_primary_route": false,
+    "server_side_scoring": "unchanged"
+  },
+  "visual_assets": {
+    "hero_chinese": "static/pilot/hero-chinese.svg",
+    "hero_english": "static/pilot/hero-english.svg",
+    "topic_assets": [
+      "static/pilot/topics/assembly.svg",
+      "static/pilot/topics/welding.svg",
+      "static/pilot/topics/paint.svg",
+      "static/pilot/topics/stamping.svg",
+      "static/pilot/topics/quality.svg",
+      "static/pilot/topics/logistics.svg"
+    ],
+    "pilot_style": "static/pilot_simplified_v631.css"
+  },
+  "not_loaded_by_pilot_index": [
+    "static/executive_visual_v630.css",
+    "static/executive_polish_v630.css",
+    "static/art_direction_v630.css",
+    "static/digital_vehicle_3d_v630.css",
+    "static/frontend/art_direction_v630.js",
+    "static/frontend/digital_vehicle_3d_v630.js",
+    "static/frontend/digital_truck_3d_v630.js"
+  ],
+  "deployment_contract": {
+    "compose_files": ["docker-compose.lan.yml", "docker-compose.pilot.yml"],
+    "environment_templates": [".env.lan.example", ".env.company-pilot.example"],
+    "health_endpoints": ["/health/live", "/health/ready", "/api/meta"],
+    "database": "PostgreSQL",
+    "reverse_proxy": "Nginx",
+    "one_click_windows": "START_COMPANY_PILOT.bat"
+  },
+  "invariants": {
+    "database_migrations": "none",
+    "api_contract": "unchanged",
+    "game_scoring": "unchanged",
+    "pwa_private_cache_isolation": "preserved"
+  },
+  "critical_files": [
+    "static/index.html",
+    "static/frontend/navigation.js",
+    "static/frontend/practice_games.js",
+    "static/frontend/learning.js",
+    "static/pilot_simplified_v631.css",
+    "static/pilot/hero-chinese.svg",
+    "static/pilot/hero-english.svg",
+    "static/service-worker.js",
+    "static/pwa-register.js",
+    "docker-compose.lan.yml",
+    "docker-compose.pilot.yml"
+  ]
+}
