@@ -1,39 +1,13 @@
-/* v6.0.30: validate modular frontend core and publish Game World pilot readiness. */
+/* v6.0.31: lightweight Company Pilot boot contract.
+ * Only modules exposed by the simplified language-learning pilot are required.
+ * Experimental Game World, 3D, executive presentation and AI-assistant layers
+ * are intentionally not loaded by static/index.html.
+ */
 (function () {
   'use strict';
 
   const frontend = window.MGCFrontend;
   if (!frontend) throw new Error('MGCFrontend runtime is missing');
-
-  function loadOptionalStyle(href) {
-    if (document.querySelector('link[href="' + href + '"]')) return;
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.dataset.mgcOptional = 'v630';
-    document.head.appendChild(link);
-  }
-
-  function loadOptionalScript(src) {
-    if (document.querySelector('script[src="' + src + '"]')) return;
-    const script = document.createElement('script');
-    script.src = src;
-    script.defer = true;
-    script.dataset.mgcOptional = 'v630';
-    script.onerror = function () { console.warn('Optional MGC module did not load:', src); };
-    document.body.appendChild(script);
-  }
-
-  function loadProductionSimulationEnhancements() {
-    loadOptionalStyle('/production_motion_v630.css');
-    loadOptionalStyle('/factory_process_simulator_v630.css');
-    loadOptionalStyle('/factory_simulator_stage2_v630.css');
-    loadOptionalStyle('/factory_training_intelligence_v631.css');
-    loadOptionalScript('/frontend/production_motion_v630.js');
-    loadOptionalScript('/frontend/factory_process_simulator_v630.js');
-    loadOptionalScript('/frontend/factory_simulator_stage2_v630.js');
-    loadOptionalScript('/frontend/factory_training_intelligence_v631.js');
-  }
 
   try {
     const requiredModules = [
@@ -44,19 +18,8 @@
       'app-state',
       'pilot-home',
       'learning',
-      'game-lab-v618',
-      'game-engagement-v618',
-      'factory-journey-v619',
-      'arcade-missions-v620',
-      'arcade-mastery-v620',
-      'game-depth-v621',
-      'decision-chains-v622',
-      'dynamic-factory-v623',
-      'shift-simulation-v624',
-      'shift-analytics-v625',
       'practice-games',
       'support-notifications',
-      'assistant-knowledge',
       'final-assessment',
       'chinese-reference',
       'content-governance',
@@ -85,9 +48,8 @@
     frontend.markReady();
     frontend.get('error-boundary').reconcile();
     document.dispatchEvent(new CustomEvent('mgc:frontend-ready', {
-      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.30'}
+      detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.31'}
     }));
-    loadProductionSimulationEnhancements();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
