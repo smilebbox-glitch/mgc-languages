@@ -70,6 +70,8 @@ def test_games_ui_fix_contract() -> None:
     assert "Array.isArray(item.options)" in fix
     assert "button.dataset.gameAnswer = String(index)" in fix
     assert "button.textContent = String(options[index])" in fix
+    assert "payload.answers = payload.answers.map" in fix
+    assert "/^\\d+$/.test(value) ? Number(value) : value" in fix
     assert "button.textContent = '← К играм'" in fix
     assert "gameSession: null" in fix
     assert "games.renderGames()" in fix
