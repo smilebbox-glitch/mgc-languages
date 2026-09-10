@@ -1,11 +1,12 @@
 /* v6.0.31: focused games UI compatibility fix.
  * Keeps the approved pilot design unchanged while repairing Word Match
- * answer rendering and adding an in-game return path to the game catalog.
+ * answer rendering/scoring and adding an in-game return path to the game catalog.
  */
 (function (root) {
   'use strict';
 
   let observer = null;
+  let fetchNormalized = false;
 
   function runtime() { return root.MGCFrontend; }
 
@@ -22,6 +23,35 @@
   function current() {
     const state = appState();
     return state ? state.current() : {};
+  }
+
+  function normalizeMatchFinishPayload() {
+    if (fetchNormalized || typeof root.fetch !== 'function') return;
+    const nativeFetch = root.fetch.bind(root);
+
+    root.fetch = function (input, init) {
+      const snapshot = current();
+      const session = snapshot.gameSession;
+      const url = typeof input === 'string' ? input : (input && input.url ? String(input.url) : '');
+      const isMatchFinish = session && session.game_type === 'match' && /\/api\/games\/[^/]+\/finish(?:\?|$)/.test(url);
+
+      if (!isMatchFinish || !init || typeof init.body !== 'string') {
+        return nativeFetch(input, init);
+      }
+
+      try {
+        const payload = JSON.parse(init.body);
+        if (Array.isArray(payload.answers)) {
+          payload.answers = payload.answers.map(function (value) {
+            return typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+          });
+          init = Object.assign({}, init, {body: JSON.stringify(payload)});
+        }
+      } catch (_) {}
+
+      return nativeFetch(input, init);
+    };
+    fetchNormalized = true;
   }
 
   function repairWordMatchAnswers(main) {
@@ -65,6 +95,8 @@
     button.dataset.backToGames = '1';
     button.textContent = '← К играм';
     button.setAttribute('aria-label', 'Вернуться к выбору игр');
+    button.style.marginBottom = '16px';
+    button.style.alignSelf = 'flex-start';
     stage.insertBefore(button, stage.firstChild);
 
     button.addEventListener('click', function () {
@@ -100,6 +132,7 @@
   function install() {
     const main = document.getElementById('main');
     if (!main || observer) return;
+    normalizeMatchFinishPayload();
     repair();
     observer = new MutationObserver(function () { repair(); });
     observer.observe(main, {childList: true, subtree: true});
