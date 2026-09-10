@@ -68,8 +68,11 @@ def test_games_ui_fix_contract() -> None:
     fix = read("static/frontend/games_ui_fix_v631.js")
     assert "session.game_type !== 'match'" in fix
     assert "Array.isArray(item.options)" in fix
-    assert "button.dataset.gameAnswer = String(index)" in fix
-    assert "button.textContent = String(options[index])" in fix
+    assert "const answerIndex = String(index)" in fix
+    assert "const answerText = String(options[index])" in fix
+    assert "if (button.dataset.gameAnswer !== answerIndex) button.dataset.gameAnswer = answerIndex" in fix
+    assert "if (button.textContent !== answerText) button.textContent = answerText" in fix
+    assert "button.textContent = String(options[index])" not in fix
     assert "payload.answers = payload.answers.map" in fix
     assert "/^\\d+$/.test(value) ? Number(value) : value" in fix
     assert "button.textContent = '← К играм'" in fix
