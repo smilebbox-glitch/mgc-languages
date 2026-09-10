@@ -35,6 +35,11 @@
     loadOptionalScript('/frontend/factory_training_intelligence_v631.js');
   }
 
+  function loadVisualResetV633() {
+    loadOptionalStyle('/visual_reset_v633.css');
+    loadOptionalScript('/frontend/visual_reset_v633.js');
+  }
+
   try {
     const requiredModules = [
       'error-boundary',
@@ -88,6 +93,7 @@
       detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.30'}
     }));
     loadProductionSimulationEnhancements();
+    loadVisualResetV633();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
