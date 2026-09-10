@@ -57,7 +57,13 @@
     "static/digital_vehicle_3d_v630.css",
     "static/frontend/art_direction_v630.js",
     "static/frontend/digital_vehicle_3d_v630.js",
-    "static/frontend/digital_truck_3d_v630.js"
+    "static/frontend/digital_truck_3d_v630.js",
+    "static/frontend/game_lab_v618.js",
+    "static/frontend/game_engagement_v618.js",
+    "static/frontend/factory_journey_v619.js",
+    "static/frontend/game_world_v630.js",
+    "static/frontend/factory_journey_v2_v630.js",
+    "static/frontend/assistant_knowledge.js"
   ],
   "deployment_contract": {
     "compose_files": ["docker-compose.lan.yml", "docker-compose.pilot.yml"],
@@ -75,6 +81,7 @@
   },
   "critical_files": [
     "static/index.html",
+    "static/frontend/boot.js",
     "static/frontend/navigation.js",
     "static/frontend/practice_games.js",
     "static/frontend/learning.js",
