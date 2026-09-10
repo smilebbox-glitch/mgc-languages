@@ -35,6 +35,21 @@
     loadOptionalScript('/frontend/factory_training_intelligence_v631.js');
   }
 
+  function loadVisualResetV633() {
+    loadOptionalStyle('/visual_reset_v633.css');
+    loadOptionalScript('/frontend/visual_reset_v633.js');
+  }
+
+  function loadExecutiveCleanV634() {
+    loadOptionalStyle('/executive_clean_v634.css');
+    loadOptionalScript('/frontend/executive_clean_v634.js');
+  }
+
+  function loadThreeDLabV635() {
+    loadOptionalStyle('/three_d_lab_v635.css');
+    loadOptionalScript('/frontend/three_d_lab_v635.js');
+  }
+
   try {
     const requiredModules = [
       'error-boundary',
@@ -88,6 +103,9 @@
       detail: {version: frontend.version, modules: frontend.list(), pilotCandidate: 'v6.0.30'}
     }));
     loadProductionSimulationEnhancements();
+    loadVisualResetV633();
+    loadExecutiveCleanV634();
+    loadThreeDLabV635();
   } catch (error) {
     const message = frontend.fail(error);
     const main = document.getElementById('main');
