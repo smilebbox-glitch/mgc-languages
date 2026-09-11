@@ -37,12 +37,26 @@ function isSensitivePath(pathname) {
   });
 }
 
+function hasSensitiveRequestHeaders(request) {
+  return request.headers.has('authorization') ||
+    request.headers.has('cookie') ||
+    request.headers.has('range');
+}
+
 function isCacheableStaticRequest(request, url) {
   if (request.method !== 'GET') return false;
   if (url.origin !== self.location.origin) return false;
   if (isSensitivePath(url.pathname)) return false;
-  if (request.headers.has('authorization')) return false;
+  if (hasSensitiveRequestHeaders(request)) return false;
   return STATIC_ASSET_RE.test(url.pathname);
+}
+
+function isCacheableStaticResponse(response) {
+  if (!response || !response.ok || response.type !== 'basic') return false;
+  const cacheControl = (response.headers.get('cache-control') || '').toLowerCase();
+  if (cacheControl.includes('no-store') || cacheControl.includes('private')) return false;
+  if (response.headers.has('set-cookie')) return false;
+  return true;
 }
 
 self.addEventListener('install', function (event) {
@@ -74,8 +88,9 @@ self.addEventListener('fetch', function (event) {
 
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-  // Sensitive endpoints are never intercepted, cached or replaced with offline data.
-  if (isSensitivePath(url.pathname) || request.headers.has('authorization')) return;
+  // Sensitive endpoints and credential/range-shaped requests are never intercepted,
+  // cached or replaced with offline data.
+  if (isSensitivePath(url.pathname) || hasSensitiveRequestHeaders(request)) return;
 
   // HTML/navigation can contain authentication state. Always go to the server.
   // Only a generic, non-user-specific page is available when the network is down.
@@ -93,7 +108,7 @@ self.addEventListener('fetch', function (event) {
     caches.open(STATIC_CACHE).then(function (cache) {
       return cache.match(request).then(function (cached) {
         const refreshed = fetch(request, {cache: 'no-store'}).then(function (response) {
-          if (response && response.ok && response.type === 'basic') {
+          if (isCacheableStaticResponse(response)) {
             cache.put(request, response.clone()).catch(function () {});
           }
           return response;

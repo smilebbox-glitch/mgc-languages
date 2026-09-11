@@ -10,6 +10,7 @@
 
   const standalone = !!(
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    (window.matchMedia && window.matchMedia('(display-mode: window-controls-overlay)').matches) ||
     window.navigator.standalone === true
   );
   if (standalone) document.documentElement.classList.add('pwa-standalone');
